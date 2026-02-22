@@ -1,5 +1,6 @@
 {
-    "buildCommand": "npx --yes vite build",
+    "buildCommand": "npm run build",
+    "installCommand": "npm install && chmod +x node_modules/.bin/vite",
     "outputDirectory": "dist",
     "rewrites": [
         {
