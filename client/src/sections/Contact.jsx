@@ -1,13 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaLinkedin, FaPaperPlane } from 'react-icons/fa';
+import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaLinkedin, FaPaperPlane, FaGithub } from 'react-icons/fa';
 import { SiTryhackme } from 'react-icons/si';
-import { contactAPI } from '../utils/api';
+import { contactAPI, settingsAPI } from '../utils/api';
+
+const defaultSocials = {
+    email: 'shivar6277@gmail.com',
+    github: 'https://github.com/Siva-R-Git33',
+    linkedin: 'https://linkedin.com/in/sivarr31',
+    tryhackme: 'https://tryhackme.com/p/rsshiva403'
+};
+
+const defaultAbout = {
+    location: 'Tenkasi, Tamil Nadu, India'
+};
 
 export default function Contact() {
+    const [socials, setSocials] = useState(defaultSocials);
+    const [about, setAbout] = useState(defaultAbout);
+
     const [form, setForm] = useState({ name: '', email: '', message: '' });
     const [status, setStatus] = useState(null); // 'success' | 'error' | 'loading'
     const [statusMsg, setStatusMsg] = useState('');
+
+    useEffect(() => {
+        Promise.all([
+            settingsAPI.get('social_links'),
+            settingsAPI.get('about_content')
+        ]).then(([sRes, aRes]) => {
+            if (sRes.data) setSocials(sRes.data);
+            if (aRes.data) setAbout(aRes.data);
+        }).catch(() => { });
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -24,6 +48,19 @@ export default function Contact() {
             setTimeout(() => setStatus(null), 5000);
         }
     };
+
+    const contactInfo = [
+        { icon: FaEnvelope, label: 'Email', value: socials.email, href: socials.email ? `mailto:${socials.email}` : null },
+        { icon: FaPhone, label: 'Phone', value: '+91 9150782041', href: 'tel:+919150782041' },
+        { icon: FaMapMarkerAlt, label: 'Location', value: about.location },
+    ].filter(c => c.value);
+
+    const socialIcons = [
+        { icon: FaLinkedin, href: socials.linkedin, label: 'LinkedIn', color: 'hover:bg-blue-600/20 hover:text-blue-400' },
+        { icon: FaGithub, href: socials.github, label: 'GitHub', color: 'hover:bg-gray-600/20 hover:text-gray-300' },
+        { icon: SiTryhackme, href: socials.tryhackme, label: 'TryHackMe', color: 'hover:bg-neon-green/20 hover:text-neon-green' },
+        { icon: FaEnvelope, href: socials.email ? `mailto:${socials.email}` : null, label: 'Email', color: 'hover:bg-neon-red/20 hover:text-neon-red' },
+    ].filter(s => s.href);
 
     return (
         <section id="contact" className="py-20 px-4">
@@ -49,11 +86,7 @@ export default function Contact() {
                         <div className="cyber-card">
                             <h3 className="text-xl font-bold text-neon-green mb-6">Contact Information</h3>
                             <div className="space-y-4">
-                                {[
-                                    { icon: FaEnvelope, label: 'Email', value: 'shivar6277@gmail.com', href: 'mailto:shivar6277@gmail.com' },
-                                    { icon: FaPhone, label: 'Phone', value: '+91 9150782041', href: 'tel:+919150782041' },
-                                    { icon: FaMapMarkerAlt, label: 'Location', value: 'Tenkasi, Tamil Nadu, India' },
-                                ].map((item) => (
+                                {contactInfo.map((item) => (
                                     <div key={item.label} className="flex items-center gap-4">
                                         <div className="w-10 h-10 rounded-lg bg-neon-green/10 flex items-center justify-center shrink-0">
                                             <item.icon className="text-neon-green" />
@@ -76,11 +109,7 @@ export default function Contact() {
                         <div className="cyber-card">
                             <h3 className="text-lg font-bold text-neon-blue mb-4">Connect with me</h3>
                             <div className="flex gap-3">
-                                {[
-                                    { icon: FaLinkedin, href: 'https://linkedin.com/in/sivarr31', label: 'LinkedIn', color: 'hover:bg-blue-600/20 hover:text-blue-400' },
-                                    { icon: SiTryhackme, href: 'https://tryhackme.com/p/rsshiva403', label: 'TryHackMe', color: 'hover:bg-neon-green/20 hover:text-neon-green' },
-                                    { icon: FaEnvelope, href: 'mailto:shivar6277@gmail.com', label: 'Email', color: 'hover:bg-neon-red/20 hover:text-neon-red' },
-                                ].map((social) => (
+                                {socialIcons.map((social) => (
                                     <motion.a
                                         key={social.label}
                                         href={social.href}
@@ -156,8 +185,8 @@ export default function Contact() {
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     className={`mt-4 px-4 py-3 rounded-lg text-sm font-mono ${status === 'success'
-                                            ? 'bg-neon-green/10 text-neon-green border border-neon-green/30'
-                                            : 'bg-neon-red/10 text-neon-red border border-neon-red/30'
+                                        ? 'bg-neon-green/10 text-neon-green border border-neon-green/30'
+                                        : 'bg-neon-red/10 text-neon-red border border-neon-red/30'
                                         }`}
                                 >
                                     {statusMsg}

@@ -1,14 +1,31 @@
+import { useState, useEffect } from 'react';
 import { FaLinkedin, FaGithub, FaEnvelope, FaHeart } from 'react-icons/fa';
 import { SiTryhackme } from 'react-icons/si';
+import { settingsAPI } from '../utils/api';
 
-const socialLinks = [
-    { icon: FaLinkedin, href: 'https://linkedin.com/in/sivarr31', label: 'LinkedIn' },
-    { icon: SiTryhackme, href: 'https://tryhackme.com/p/rsshiva403', label: 'TryHackMe' },
-    { icon: FaGithub, href: 'https://github.com/Siva-R-Git33', label: 'GitHub' },
-    { icon: FaEnvelope, href: 'mailto:shivar6277@gmail.com', label: 'Email' },
-];
+const defaultSocials = {
+    email: 'shivar6277@gmail.com',
+    github: 'https://github.com/Siva-R-Git33',
+    linkedin: 'https://linkedin.com/in/sivarr31',
+    tryhackme: 'https://tryhackme.com/p/rsshiva403'
+};
 
 export default function Footer() {
+    const [socials, setSocials] = useState(defaultSocials);
+
+    useEffect(() => {
+        settingsAPI.get('social_links')
+            .then((res) => { if (res.data) setSocials(res.data); })
+            .catch(() => { });
+    }, []);
+
+    const socialLinks = [
+        { icon: FaLinkedin, href: socials.linkedin, label: 'LinkedIn' },
+        { icon: SiTryhackme, href: socials.tryhackme, label: 'TryHackMe' },
+        { icon: FaGithub, href: socials.github, label: 'GitHub' },
+        { icon: FaEnvelope, href: socials.email ? `mailto:${socials.email}` : null, label: 'Email' },
+    ].filter(link => link.href);
+
     return (
         <footer className="border-t border-cyber-border bg-cyber-dark/50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

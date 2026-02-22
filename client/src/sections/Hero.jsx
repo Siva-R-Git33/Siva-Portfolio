@@ -1,30 +1,52 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaChevronDown, FaLinkedin } from 'react-icons/fa';
+import { FaChevronDown, FaLinkedin, FaGithub } from 'react-icons/fa';
 import { SiTryhackme } from 'react-icons/si';
 import { HiMail } from 'react-icons/hi';
+import { settingsAPI } from '../utils/api';
 
-const roles = [
-    'Cybersecurity Enthusiast',
-    'Ethical Hacker',
-    'Blue Team Defender',
-    'Security Analyst',
-];
+const defaultHero = {
+    name: 'Siva R',
+    titles: ['Cybersecurity Enthusiast', 'Ethical Hacker'],
+    description: 'Aspiring Ethical Hacker and Blue Team professional focused on vulnerability assessment, threat detection, and responsible cybersecurity practices.',
+    resumeUrl: '/Siva R-Resume.pdf'
+};
+
+const defaultSocials = {
+    email: 'shivar6277@gmail.com',
+    github: 'https://github.com/Siva-R-Git33',
+    linkedin: 'https://linkedin.com/in/sivarr31',
+    tryhackme: 'https://tryhackme.com/p/rsshiva403'
+};
 
 export default function Hero() {
+    const [hero, setHero] = useState(defaultHero);
+    const [socials, setSocials] = useState(defaultSocials);
+
     const [roleIndex, setRoleIndex] = useState(0);
     const [displayText, setDisplayText] = useState('');
     const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
-        const currentRole = roles[roleIndex];
+        Promise.all([
+            settingsAPI.get('hero_content'),
+            settingsAPI.get('social_links')
+        ]).then(([hRes, sRes]) => {
+            if (hRes.data) setHero(hRes.data);
+            if (sRes.data) setSocials(sRes.data);
+        }).catch(() => { });
+    }, []);
+
+    useEffect(() => {
+        const roles = hero.titles && hero.titles.length > 0 ? hero.titles : ['Loading...'];
+        const currentRole = roles[roleIndex % roles.length];
         let timeout;
 
         if (!isDeleting && displayText === currentRole) {
             timeout = setTimeout(() => setIsDeleting(true), 2000);
         } else if (isDeleting && displayText === '') {
             setIsDeleting(false);
-            setRoleIndex((prev) => (prev + 1) % roles.length);
+            setRoleIndex((prev) => (prev + 1));
         } else {
             timeout = setTimeout(
                 () => {
@@ -39,7 +61,14 @@ export default function Hero() {
         }
 
         return () => clearTimeout(timeout);
-    }, [displayText, isDeleting, roleIndex]);
+    }, [displayText, isDeleting, roleIndex, hero.titles]);
+
+    const socialIcons = [
+        { icon: FaGithub, href: socials.github, label: 'GitHub' },
+        { icon: FaLinkedin, href: socials.linkedin, label: 'LinkedIn' },
+        { icon: SiTryhackme, href: socials.tryhackme, label: 'TryHackMe' },
+        { icon: HiMail, href: `mailto:${socials.email}`, label: 'Email' },
+    ].filter(s => s.href);
 
     return (
         <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -47,7 +76,7 @@ export default function Hero() {
             <div className="absolute top-1/4 -left-32 w-96 h-96 bg-neon-green/5 rounded-full blur-3xl" />
             <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-neon-blue/5 rounded-full blur-3xl" />
 
-            <div className="relative z-10 max-w-5xl mx-auto px-4 text-center">
+            <div className="relative z-10 max-w-5xl mx-auto px-4 text-center mt-20 md:mt-0">
                 {/* Greeting */}
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -68,7 +97,7 @@ export default function Hero() {
                     className="text-5xl md:text-7xl lg:text-8xl font-black mb-6"
                 >
                     <span className="text-gray-100">I'm </span>
-                    <span className="text-gradient">Siva R</span>
+                    <span className="text-gradient">{hero.name}</span>
                 </motion.h1>
 
                 {/* Typing role */}
@@ -90,8 +119,7 @@ export default function Hero() {
                     transition={{ duration: 0.6, delay: 0.8 }}
                     className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
                 >
-                    Aspiring Ethical Hacker and Blue Team professional focused on vulnerability assessment,
-                    threat detection, and responsible cybersecurity practices.
+                    {hero.description}
                 </motion.p>
 
                 {/* CTA Buttons */}
@@ -104,9 +132,11 @@ export default function Hero() {
                     <a href="#projects" className="cyber-btn-solid">
                         View Projects
                     </a>
-                    <a href="#contact" className="cyber-btn">
-                        Contact Me
-                    </a>
+                    {hero.resumeUrl && (
+                        <a href={hero.resumeUrl} target="_blank" rel="noopener noreferrer" className="cyber-btn">
+                            Download Resume
+                        </a>
+                    )}
                 </motion.div>
 
                 {/* Social Links */}
@@ -116,11 +146,7 @@ export default function Hero() {
                     transition={{ duration: 0.6, delay: 1.2 }}
                     className="flex items-center justify-center gap-6"
                 >
-                    {[
-                        { icon: FaLinkedin, href: 'https://linkedin.com/in/sivarr31', label: 'LinkedIn' },
-                        { icon: SiTryhackme, href: 'https://tryhackme.com/p/rsshiva403', label: 'TryHackMe' },
-                        { icon: HiMail, href: 'mailto:shivar6277@gmail.com', label: 'Email' },
-                    ].map((social) => (
+                    {socialIcons.map((social) => (
                         <motion.a
                             key={social.label}
                             href={social.href}

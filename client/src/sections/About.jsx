@@ -1,40 +1,30 @@
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaGraduationCap, FaBullseye, FaMapMarkerAlt, FaGamepad, FaDumbbell, FaMusic, FaPlane } from 'react-icons/fa';
+import { FaGraduationCap, FaBullseye, FaMapMarkerAlt, FaGamepad, FaDumbbell, FaMusic, FaPlane, FaStar } from 'react-icons/fa';
 import Terminal from '../components/Terminal';
+import { settingsAPI } from '../utils/api';
 
-const education = [
-    {
-        degree: 'MSc Cyber Security',
-        school: 'Bharathiar University',
-        year: '2025 – Present',
-        score: null,
-    },
-    {
-        degree: 'BSc Computer Science (Cognitive Systems)',
-        school: 'Karpagam Academy of Higher Education',
-        year: '2021 – 2024',
-        score: '88.30%',
-    },
-    {
-        degree: 'HSC',
-        school: 'Nadar Committee Higher Secondary School',
-        year: '2021',
-        score: '85.54%',
-    },
-    {
-        degree: 'SSLC',
-        school: 'Nadar Committee Higher Secondary School',
-        year: '2019',
-        score: '79.20%',
-    },
-];
+const defaultAbout = {
+    objective: 'Aspiring Ethical Hacker and Blue Team professional focused on vulnerability assessment, threat detection, and responsible cybersecurity practices. Seeking an entry-level opportunity to grow in offensive and defensive security domains.',
+    location: 'Tenkasi, Tamil Nadu, India',
+    education: [
+        { degree: 'MSc Cyber Security', school: 'Bharathiar University', year: '2025 – Present', score: '' },
+        { degree: 'BSc Computer Science (Cognitive Systems)', school: 'Karpagam Academy of Higher Education', year: '2021 – 2024', score: '88.30%' },
+    ],
+    hobbies: ['Playing Cricket', 'Exercise', 'Listening Music', 'Traveling'],
+    platforms: [
+        { name: 'TryHackMe', tag: 'Primary', link: 'https://tryhackme.com/p/rsshiva403' },
+        { name: 'Hack The Box', tag: 'HTB', link: '' },
+    ]
+};
 
-const hobbies = [
-    { icon: FaGamepad, name: 'Playing Cricket' },
-    { icon: FaDumbbell, name: 'Exercise' },
-    { icon: FaMusic, name: 'Listening Music' },
-    { icon: FaPlane, name: 'Traveling' },
-];
+const hobbyIcons = {
+    'Playing Cricket': FaGamepad,
+    'Exercise': FaDumbbell,
+    'Listening Music': FaMusic,
+    'Traveling': FaPlane,
+    'Default': FaStar
+};
 
 const containerVariants = {
     hidden: {},
@@ -47,6 +37,18 @@ const itemVariants = {
 };
 
 export default function About() {
+    const [about, setAbout] = useState(defaultAbout);
+
+    useEffect(() => {
+        settingsAPI.get('about_content')
+            .then(res => { if (res.data) setAbout(res.data); })
+            .catch(() => { });
+    }, []);
+
+    const getHobbyIcon = (name) => {
+        return hobbyIcons[name] || hobbyIcons['Default'];
+    };
+
     return (
         <section id="about" className="py-20 px-4">
             <div className="max-w-7xl mx-auto">
@@ -78,7 +80,7 @@ export default function About() {
                             <FaGraduationCap /> Education
                         </h3>
                         <div className="space-y-4">
-                            {education.map((edu, i) => (
+                            {about.education?.map((edu, i) => (
                                 <motion.div
                                     key={i}
                                     variants={itemVariants}
@@ -112,14 +114,14 @@ export default function About() {
                                 <FaBullseye /> Career Objective
                             </h3>
                             <p className="text-gray-300 leading-relaxed">
-                                Aspiring Ethical Hacker and Blue Team professional focused on vulnerability assessment,
-                                threat detection, and responsible cybersecurity practices. Seeking an entry-level opportunity
-                                to grow in offensive and defensive security domains.
+                                {about.objective}
                             </p>
-                            <div className="mt-4 flex items-center gap-2 text-gray-500 text-sm">
-                                <FaMapMarkerAlt className="text-neon-green" />
-                                Tenkasi, Tamil Nadu, India
-                            </div>
+                            {about.location && (
+                                <div className="mt-4 flex items-center gap-2 text-gray-500 text-sm">
+                                    <FaMapMarkerAlt className="text-neon-green" />
+                                    {about.location}
+                                </div>
+                            )}
                         </motion.div>
 
                         <motion.div
@@ -131,15 +133,18 @@ export default function About() {
                         >
                             <h3 className="text-xl font-bold text-neon-blue mb-4">🎯 Hobbies</h3>
                             <div className="grid grid-cols-2 gap-3">
-                                {hobbies.map((hobby, i) => (
-                                    <div
-                                        key={i}
-                                        className="flex items-center gap-2 text-gray-300 text-sm px-3 py-2 rounded-lg bg-cyber-gray/50"
-                                    >
-                                        <hobby.icon className="text-neon-green" />
-                                        {hobby.name}
-                                    </div>
-                                ))}
+                                {about.hobbies?.map((hobby, i) => {
+                                    const Icon = getHobbyIcon(hobby);
+                                    return (
+                                        <div
+                                            key={i}
+                                            className="flex items-center gap-2 text-gray-300 text-sm px-3 py-2 rounded-lg bg-cyber-gray/50"
+                                        >
+                                            <Icon className="text-neon-green" />
+                                            {hobby}
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </motion.div>
 
@@ -153,13 +158,17 @@ export default function About() {
                         >
                             <h3 className="text-xl font-bold text-neon-green mb-4">🧪 Hands-on Platforms</h3>
                             <div className="space-y-2">
-                                {[
-                                    { name: 'TryHackMe', tag: 'Primary', link: 'https://tryhackme.com/p/rsshiva403' },
-                                    { name: 'Hack The Box', tag: 'HTB' },
-                                    { name: 'Blue Team Labs Online', tag: 'BTLO' },
-                                ].map((platform, i) => (
+                                {about.platforms?.map((platform, i) => (
                                     <div key={i} className="flex items-center justify-between px-3 py-2 rounded-lg bg-cyber-gray/50">
-                                        <span className="text-gray-300 text-sm">{platform.name}</span>
+                                        <span className="text-gray-300 text-sm">
+                                            {platform.link ? (
+                                                <a href={platform.link} target="_blank" rel="noopener noreferrer" className="hover:text-neon-green transition-colors">
+                                                    {platform.name}
+                                                </a>
+                                            ) : (
+                                                platform.name
+                                            )}
+                                        </span>
                                         <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-neon-green/10 text-neon-green">
                                             {platform.tag}
                                         </span>
