@@ -1,19 +1,35 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPlus, FaEdit, FaTrash, FaTimes, FaSave, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { blogsAPI } from '../utils/api';
+import { blogsAPI, settingsAPI } from '../utils/api';
 
 export default function ManageBlogs() {
     const [posts, setPosts] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [editing, setEditing] = useState(null);
+    const [showBlogSection, setShowBlogSection] = useState(true);
     const [form, setForm] = useState({
         title: '', slug: '', content: '', excerpt: '', tags: '', published: false,
     });
 
     const load = () => blogsAPI.getAllAdmin().then((res) => setPosts(res.data)).catch(() => { });
 
-    useEffect(() => { load(); }, []);
+    useEffect(() => {
+        load();
+        settingsAPI.get('showBlogSection').then((r) => {
+            if (r.data !== null) setShowBlogSection(r.data);
+        }).catch(() => { });
+    }, []);
+
+    const toggleBlogSection = async () => {
+        const next = !showBlogSection;
+        setShowBlogSection(next);
+        try {
+            await settingsAPI.set('showBlogSection', next);
+        } catch {
+            setShowBlogSection(!next); // revert on error
+        }
+    };
 
     const openNew = () => {
         setEditing(null);
@@ -64,6 +80,50 @@ export default function ManageBlogs() {
                 <button onClick={openNew} className="cyber-btn-solid text-sm flex items-center gap-2">
                     <FaPlus /> New Post
                 </button>
+            </div>
+
+            {/* Blog Section Visibility Toggle */}
+            <div className="cyber-card mb-6">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div>
+                        <h2 style={{ color: '#ffffff', fontWeight: '600', marginBottom: '4px' }}>Blog Section Visibility</h2>
+                        <p style={{ color: '#9ca3af', fontSize: '13px' }}>Show or hide the entire Blog section on your portfolio homepage.</p>
+                        <p style={{ fontSize: '11px', fontFamily: 'monospace', marginTop: '8px', color: showBlogSection ? '#00ff41' : '#6b7280' }}>
+                            {showBlogSection ? '● Visible on site' : '○ Hidden from site'}
+                        </p>
+                    </div>
+                    <button
+                        onClick={toggleBlogSection}
+                        style={{
+                            position: 'relative',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            width: '56px',
+                            height: '28px',
+                            borderRadius: '9999px',
+                            border: 'none',
+                            cursor: 'pointer',
+                            transition: 'background 0.3s',
+                            background: showBlogSection ? '#00ff41' : '#1a1a2e',
+                            outline: '1px solid #2a2a4a',
+                            flexShrink: 0,
+                            marginLeft: '16px',
+                        }}
+                    >
+                        <span
+                            style={{
+                                display: 'inline-block',
+                                width: '20px',
+                                height: '20px',
+                                borderRadius: '50%',
+                                background: 'white',
+                                boxShadow: '0 1px 4px rgba(0,0,0,0.4)',
+                                transition: 'transform 0.3s',
+                                transform: showBlogSection ? 'translateX(32px)' : 'translateX(4px)',
+                            }}
+                        />
+                    </button>
+                </div>
             </div>
 
             <div className="space-y-3">

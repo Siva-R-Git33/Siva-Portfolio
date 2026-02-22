@@ -1,20 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaProjectDiagram, FaBlog, FaCogs, FaEnvelope, FaSignOutAlt, FaHome, FaTachometerAlt, FaCertificate, FaEdit, FaToggleOn } from 'react-icons/fa';
+import { FaProjectDiagram, FaBlog, FaCogs, FaEnvelope, FaSignOutAlt, FaHome, FaTachometerAlt, FaCertificate, FaEdit } from 'react-icons/fa';
 import { isAuthenticated, logout } from '../utils/auth';
 import ManageProjects from '../admin/ManageProjects';
 import ManageBlogs from '../admin/ManageBlogs';
 import ManageSkills from '../admin/ManageSkills';
 import ManageCertifications from '../admin/ManageCertifications';
 import ManageContent from '../admin/ManageContent';
-import ManageSections from '../admin/ManageSections';
 import Messages from '../admin/Messages';
 
 const menuItems = [
     { path: '/admin/dashboard', label: 'Dashboard', icon: FaTachometerAlt },
     { path: '/admin/content', label: 'Site Content', icon: FaEdit },
-    { path: '/admin/sections', label: 'Section Visibility', icon: FaToggleOn },
     { path: '/admin/projects', label: 'Projects', icon: FaProjectDiagram },
     { path: '/admin/blogs', label: 'Blog Posts', icon: FaBlog },
     { path: '/admin/skills', label: 'Skills', icon: FaCogs },
@@ -107,7 +105,6 @@ export default function AdminDashboard() {
                     <Routes>
                         <Route path="dashboard" element={<DashboardHome />} />
                         <Route path="content" element={<ManageContent />} />
-                        <Route path="sections" element={<ManageSections />} />
                         <Route path="projects" element={<ManageProjects />} />
                         <Route path="blogs" element={<ManageBlogs />} />
                         <Route path="skills" element={<ManageSkills />} />
