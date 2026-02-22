@@ -32,8 +32,20 @@ export const authAPI = {
 };
 
 export const projectsAPI = {
-    getAll: () => handleResponse(supabase.from('projects').select('*').order('created_at', { ascending: false })),
-    getOne: (id) => handleResponse(supabase.from('projects').select('*').eq('id', id).single()),
+    getAll: async () => {
+        const res = await handleResponse(supabase.from('projects').select('*').order('created_at', { ascending: false }));
+        return {
+            data: res.data.map(p => ({
+                ...p, techStack: p.tech_stack, githubLink: p.github_link, liveLink: p.live_link
+            }))
+        };
+    },
+    getOne: async (id) => {
+        const res = await handleResponse(supabase.from('projects').select('*').eq('id', id).single());
+        return {
+            data: { ...res.data, techStack: res.data.tech_stack, githubLink: res.data.github_link, liveLink: res.data.live_link }
+        };
+    },
     create: (data) => {
         const payload = {
             title: data.title,
@@ -60,15 +72,22 @@ export const projectsAPI = {
 };
 
 export const blogsAPI = {
-    getAll: (tag) => {
+    getAll: async (tag) => {
         let query = supabase.from('blogs').select('*').eq('published', true).order('created_at', { ascending: false });
         if (tag) {
             query = query.contains('tags', [tag]);
         }
-        return handleResponse(query);
+        const res = await handleResponse(query);
+        return { data: res.data.map(b => ({ ...b, coverImage: b.cover_image })) };
     },
-    getAllAdmin: () => handleResponse(withAuth().from('blogs').select('*').order('created_at', { ascending: false })),
-    getBySlug: (slug) => handleResponse(supabase.from('blogs').select('*').eq('slug', slug).single()),
+    getAllAdmin: async () => {
+        const res = await handleResponse(withAuth().from('blogs').select('*').order('created_at', { ascending: false }));
+        return { data: res.data.map(b => ({ ...b, coverImage: b.cover_image })) };
+    },
+    getBySlug: async (slug) => {
+        const res = await handleResponse(supabase.from('blogs').select('*').eq('slug', slug).single());
+        return { data: { ...res.data, coverImage: res.data.cover_image } };
+    },
     create: (data) => {
         const payload = {
             title: data.title,
