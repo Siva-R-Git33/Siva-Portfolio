@@ -78,11 +78,11 @@ export const blogsAPI = {
             query = query.contains('tags', [tag]);
         }
         const res = await handleResponse(query);
-        return { data: res.data.map(b => ({ ...b, coverImage: b.cover_image })) };
+        return { data: res.data.map(b => ({ ...b, coverImage: b.cover_image, createdAt: b.created_at })) };
     },
     getAllAdmin: async () => {
         const res = await handleResponse(withAuth().from('blogs').select('*').order('created_at', { ascending: false }));
-        return { data: res.data.map(b => ({ ...b, coverImage: b.cover_image })) };
+        return { data: res.data.map(b => ({ ...b, coverImage: b.cover_image, createdAt: b.created_at })) };
     },
     getBySlug: async (slug) => {
         const res = await handleResponse(supabase.from('blogs').select('*').eq('slug', slug).single());
