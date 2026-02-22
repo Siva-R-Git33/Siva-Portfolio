@@ -34,8 +34,28 @@ export const authAPI = {
 export const projectsAPI = {
     getAll: () => handleResponse(supabase.from('projects').select('*').order('created_at', { ascending: false })),
     getOne: (id) => handleResponse(supabase.from('projects').select('*').eq('id', id).single()),
-    create: (data) => handleResponse(withAuth().from('projects').insert([data]).select()),
-    update: (id, data) => handleResponse(withAuth().from('projects').update(data).eq('id', id).select()),
+    create: (data) => {
+        const payload = {
+            title: data.title,
+            description: data.description,
+            tech_stack: data.techStack,
+            github_link: data.githubLink,
+            live_link: data.liveLink,
+            featured: data.featured
+        };
+        return handleResponse(withAuth().from('projects').insert([payload]).select());
+    },
+    update: (id, data) => {
+        const payload = {
+            title: data.title,
+            description: data.description,
+            tech_stack: data.techStack,
+            github_link: data.githubLink,
+            live_link: data.liveLink,
+            featured: data.featured
+        };
+        return handleResponse(withAuth().from('projects').update(payload).eq('id', id).select());
+    },
     delete: (id) => handleResponse(withAuth().from('projects').delete().eq('id', id)),
 };
 
@@ -49,8 +69,30 @@ export const blogsAPI = {
     },
     getAllAdmin: () => handleResponse(withAuth().from('blogs').select('*').order('created_at', { ascending: false })),
     getBySlug: (slug) => handleResponse(supabase.from('blogs').select('*').eq('slug', slug).single()),
-    create: (data) => handleResponse(withAuth().from('blogs').insert([data]).select()),
-    update: (id, data) => handleResponse(withAuth().from('blogs').update(data).eq('id', id).select()),
+    create: (data) => {
+        const payload = {
+            title: data.title,
+            slug: data.slug,
+            content: data.content,
+            tags: data.tags,
+            excerpt: data.excerpt,
+            cover_image: data.coverImage,
+            published: data.published
+        };
+        return handleResponse(withAuth().from('blogs').insert([payload]).select());
+    },
+    update: (id, data) => {
+        const payload = {
+            title: data.title,
+            slug: data.slug,
+            content: data.content,
+            tags: data.tags,
+            excerpt: data.excerpt,
+            cover_image: data.coverImage,
+            published: data.published
+        };
+        return handleResponse(withAuth().from('blogs').update(payload).eq('id', id).select());
+    },
     delete: (id) => handleResponse(withAuth().from('blogs').delete().eq('id', id)),
 };
 
