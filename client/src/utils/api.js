@@ -18,6 +18,17 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+// Intercept Vercel HTML rewrites
+api.interceptors.response.use(
+    (response) => {
+        if (typeof response.data === 'string' && response.data.match(/<html/i)) {
+            return Promise.reject(new Error('API returned HTML'));
+        }
+        return response;
+    },
+    (error) => Promise.reject(error)
+);
+
 // API functions
 export const authAPI = {
     login: (credentials) => api.post('/auth/login', credentials),
