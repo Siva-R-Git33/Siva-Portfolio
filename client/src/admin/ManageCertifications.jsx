@@ -111,16 +111,33 @@ export default function ManageCertifications() {
                                 </div>
                                 <div>
                                     <label className="block text-gray-400 text-sm mb-2 font-mono">Theme Color</label>
-                                    <div className="flex gap-3">
-                                        {colorOptions.map(color => (
+                                    <div className="flex gap-3 flex-wrap">
+                                        {[
+                                            { key: 'neon-green', hex: '#00ff41', label: 'Green' },
+                                            { key: 'neon-blue', hex: '#00b4d8', label: 'Blue' },
+                                            { key: 'neon-purple', hex: '#a855f7', label: 'Purple' },
+                                            { key: 'neon-red', hex: '#ff2d55', label: 'Red' },
+                                        ].map(({ key, hex, label }) => (
                                             <button
-                                                key={color} type="button"
-                                                onClick={() => setForm({ ...form, color })}
-                                                className={`w-8 h-8 rounded-full border-2 transition-all ${form.color === color ? 'border-white scale-110' : 'border-transparent opacity-50 hover:opacity-100'} bg-${color.replace('neon-', '')}-500`}
-                                                style={{ backgroundColor: `var(--${color})` }}
+                                                key={key} type="button"
+                                                onClick={() => setForm({ ...form, color: key })}
+                                                title={label}
+                                                style={{
+                                                    width: '36px',
+                                                    height: '36px',
+                                                    borderRadius: '50%',
+                                                    backgroundColor: hex,
+                                                    border: form.color === key ? '3px solid white' : '3px solid transparent',
+                                                    outline: form.color === key ? `2px solid ${hex}` : 'none',
+                                                    transform: form.color === key ? 'scale(1.15)' : 'scale(1)',
+                                                    transition: 'all 0.2s',
+                                                    cursor: 'pointer',
+                                                    boxShadow: form.color === key ? `0 0 10px ${hex}` : 'none',
+                                                }}
                                             />
                                         ))}
                                     </div>
+                                    <p className="text-gray-500 font-mono text-xs mt-2">Selected: <span style={{ color: { 'neon-green': '#00ff41', 'neon-blue': '#00b4d8', 'neon-purple': '#a855f7', 'neon-red': '#ff2d55' }[form.color] }}>{form.color}</span></p>
                                 </div>
                                 <button type="submit" className="w-full cyber-btn-solid flex items-center justify-center gap-2 mt-6">
                                     <FaSave /> {editing ? 'Update' : 'Create'}
