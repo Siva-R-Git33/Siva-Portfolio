@@ -86,3 +86,21 @@ INSERT INTO projects (title, description, tech_stack, github_link, featured) VAL
 
 INSERT INTO blogs (title, slug, content, tags, excerpt) VALUES
 ('Getting Started with TryHackMe', 'getting-started-thm', 'TryHackMe is a great platform for beginners. In this post, I will walk you through setting up your VPN connection and solving your first room...', ARRAY['CTF', 'Writeup'], 'A quick guide to starting your cybersecurity journey with TryHackMe.');
+
+-- Insert Admin Auth User (Login: admin@siva-portfolio.com / Password: AdminPassword123!)
+-- NOTE: In Supabase, it is highly recommended to do this via the UI (Authentication -> Users)
+-- But if you run this, it will manually bypass the API and create an active user:
+INSERT INTO auth.users (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+VALUES (
+  gen_random_uuid(),
+  '00000000-0000-0000-0000-000000000000',
+  'authenticated',
+  'authenticated',
+  'admin@siva-portfolio.com',
+  crypt('AdminPassword123!', gen_salt('bf')),
+  now(),
+  '{"provider":"email","providers":["email"]}',
+  '{}',
+  now(),
+  now()
+);
