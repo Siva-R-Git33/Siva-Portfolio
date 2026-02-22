@@ -4,16 +4,6 @@ import { Link } from 'react-router-dom';
 import { FaCalendar, FaArrowRight } from 'react-icons/fa';
 import { blogsAPI, settingsAPI } from '../utils/api';
 
-const containerVariants = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.1 } },
-};
-
-const cardVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-};
-
 const tagColors = {
     CTF: 'bg-neon-green/10 text-neon-green',
     'Blue Team': 'bg-neon-blue/10 text-neon-blue',
@@ -28,7 +18,6 @@ export default function Blog() {
     const [showSection, setShowSection] = useState(true);
 
     useEffect(() => {
-        // Load toggle setting
         settingsAPI.get('showBlogSection').then((r) => {
             if (r.data !== null) setShowSection(r.data);
         }).catch(() => { });
@@ -91,16 +80,17 @@ export default function Blog() {
                     ))}
                 </motion.div>
 
-                {/* Blog Posts — use animate (not whileInView) so cards show after data loads */}
-                {loaded && posts.length > 0 ? (
-                    <motion.div
-                        variants={containerVariants}
-                        initial="hidden"
-                        animate="visible"
+                {/* Blog Posts — plain grid, no Framer Motion variants to avoid race conditions */}
+                {loaded && posts.length > 0 && (
+                    <div
                         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                        style={{ animation: 'fadeInUp 0.5s ease forwards' }}
                     >
-                        {posts.map((post) => (
-                            <motion.div key={post.id} variants={cardVariants}>
+                        {posts.map((post, i) => (
+                            <div
+                                key={post.id}
+                                style={{ animation: `fadeInUp 0.4s ease ${i * 0.1}s both` }}
+                            >
                                 <Link
                                     to={`/blog/${post.slug}`}
                                     className="cyber-card block group h-full"
@@ -131,15 +121,13 @@ export default function Blog() {
                                         </span>
                                     </div>
                                 </Link>
-                            </motion.div>
+                            </div>
                         ))}
-                    </motion.div>
-                ) : loaded ? (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="text-center py-20"
-                    >
+                    </div>
+                )}
+
+                {loaded && posts.length === 0 && (
+                    <div className="text-center py-20" style={{ animation: 'fadeInUp 0.4s ease both' }}>
                         <div className="terminal-window max-w-md mx-auto">
                             <div className="terminal-header">
                                 <div className="terminal-dot bg-red-500" />
@@ -153,8 +141,8 @@ export default function Blog() {
                                 <p className="text-gray-600 font-mono text-xs mt-2">CTF writeups and security blogs in progress</p>
                             </div>
                         </div>
-                    </motion.div>
-                ) : null}
+                    </div>
+                )}
             </div>
         </section>
     );
