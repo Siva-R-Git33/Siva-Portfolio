@@ -66,6 +66,30 @@ ALTER TABLE contact_messages ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public can insert contact messages" ON contact_messages FOR INSERT WITH CHECK (true);
 CREATE POLICY "Auth can manage contact messages" ON contact_messages USING (auth.role() = 'authenticated');
 
+-- Create Certifications Table
+CREATE TABLE certifications (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name TEXT NOT NULL,
+  issuer TEXT NOT NULL,
+  color TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+
+ALTER TABLE certifications ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public can view certifications" ON certifications FOR SELECT USING (true);
+CREATE POLICY "Auth can manage certifications" ON certifications USING (auth.role() = 'authenticated');
+
+-- Create Settings Table (for global toggles)
+CREATE TABLE settings (
+  key TEXT PRIMARY KEY,
+  value JSONB NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+
+ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public can view settings" ON settings FOR SELECT USING (true);
+CREATE POLICY "Auth can manage settings" ON settings USING (auth.role() = 'authenticated');
+
 -- Insert Initial Seed Data
 INSERT INTO skills (name, category, icon) VALUES
 ('Python', 'Programming', 'SiPython'),

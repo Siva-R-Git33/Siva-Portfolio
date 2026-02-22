@@ -1,19 +1,42 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaPlus, FaEdit, FaTrash, FaTimes, FaSave } from 'react-icons/fa';
-import { projectsAPI } from '../utils/api';
+import { FaPlus, FaEdit, FaTrash, FaTimes, FaSave, FaGithub } from 'react-icons/fa';
+import { projectsAPI, settingsAPI } from '../utils/api';
 
 export default function ManageProjects() {
     const [projects, setProjects] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [editing, setEditing] = useState(null);
+    const [showGithubRepos, setShowGithubRepos] = useState(true);
     const [form, setForm] = useState({
         title: '', description: '', techStack: '', githubLink: '', liveLink: '', featured: false,
     });
 
-    const load = () => projectsAPI.getAll().then((res) => setProjects(res.data)).catch(() => { });
+    const load = async () => {
+        try {
+            const [projRes, settingsRes] = await Promise.all([
+                projectsAPI.getAll(),
+                settingsAPI.get('showGitHubRepos')
+            ]);
+            setProjects(projRes.data || []);
+            setShowGithubRepos(settingsRes.data !== false);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     useEffect(() => { load(); }, []);
+
+    const toggleGithubRepos = async () => {
+        const newValue = !showGithubRepos;
+        setShowGithubRepos(newValue);
+        try {
+            await settingsAPI.set('showGitHubRepos', newValue);
+        } catch (err) {
+            alert('Failed to update setting');
+            setShowGithubRepos(!newValue); // revert on fail
+        }
+    };
 
     const openNew = () => {
         setEditing(null);
@@ -56,8 +79,18 @@ export default function ManageProjects() {
 
     return (
         <div>
-            <div className="flex items-center justify-between mb-6">
-                <h1 className="text-2xl font-bold text-white">Projects</h1>
+            <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+                <div className="flex items-center gap-6">
+                    <h1 className="text-2xl font-bold text-white">Projects</h1>
+                    <label className="flex items-center gap-2 cursor-pointer bg-cyber-dark px-3 py-1.5 rounded-lg border border-cyber-border">
+                        <FaGithub className="text-gray-400" />
+                        <span className="text-sm text-gray-300 font-mono hidden sm:inline">Show GitHub Repos</span>
+                        <div className="relative inline-flex items-center">
+                            <input type="checkbox" className="sr-only peer" checked={showGithubRepos} onChange={toggleGithubRepos} />
+                            <div className="w-9 h-5 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-neon-green"></div>
+                        </div>
+                    </label>
+                </div>
                 <button onClick={openNew} className="cyber-btn-solid text-sm flex items-center gap-2">
                     <FaPlus /> Add Project
                 </button>

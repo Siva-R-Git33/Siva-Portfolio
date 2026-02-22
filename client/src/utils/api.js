@@ -146,6 +146,17 @@ export const githubAPI = {
     },
 };
 
+export const settingsAPI = {
+    get: async (key) => {
+        const { data, error } = await supabase.from('settings').select('value').eq('key', key).single();
+        if (error && error.code !== 'PGRST116') throw new Error(error.message); // Ignore "not found" error
+        return { data: data ? data.value : null };
+    },
+    set: async (key, value) => {
+        return handleResponse(withAuth().from('settings').upsert({ key, value, updated_at: new Date().toISOString() }).select());
+    },
+};
+
 // We don't export the generic axios instance anymore.
 // We just export the individual API route collections.
-export default { authAPI, projectsAPI, blogsAPI, skillsAPI, certificationsAPI, contactAPI, githubAPI };
+export default { authAPI, projectsAPI, blogsAPI, skillsAPI, certificationsAPI, contactAPI, githubAPI, settingsAPI };

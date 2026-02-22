@@ -23,6 +23,7 @@ const cardVariants = {
 export default function Projects() {
     const [projects, setProjects] = useState([featuredFallback]);
     const [githubRepos, setGithubRepos] = useState([]);
+    const [showRepos, setShowRepos] = useState(true);
 
     useEffect(() => {
         projectsAPI.getAll()
@@ -31,9 +32,25 @@ export default function Projects() {
             })
             .catch(() => { });
 
-        githubAPI.getRepos()
-            .then((res) => setGithubRepos(res.data))
-            .catch(() => { });
+        // Add a query for the settings toggle
+        import('../utils/api').then(({ settingsAPI }) => {
+            settingsAPI.get('showGitHubRepos')
+                .then((res) => {
+                    const isVisible = res.data !== false; // default true
+                    setShowRepos(isVisible);
+                    if (isVisible) {
+                        githubAPI.getRepos()
+                            .then((res) => setGithubRepos(res.data))
+                            .catch(() => { });
+                    }
+                })
+                .catch(() => {
+                    // Fallback to true if settings fail
+                    githubAPI.getRepos()
+                        .then((res) => setGithubRepos(res.data))
+                        .catch(() => { });
+                });
+        });
     }, []);
 
     const languageColors = {
@@ -111,7 +128,7 @@ export default function Projects() {
                 </motion.div>
 
                 {/* GitHub Repos */}
-                {githubRepos.length > 0 && (
+                {(showRepos && githubRepos.length > 0) && (
                     <motion.div
                         variants={containerVariants}
                         initial="hidden"
