@@ -3,13 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaPlus, FaEdit, FaTrash, FaTimes, FaSave } from 'react-icons/fa';
 import { skillsAPI } from '../utils/api';
 
-const categories = ['Programming', 'Operating Systems', 'Cybersecurity Tools', 'Security Knowledge'];
+const defaultCategories = ['Programming', 'Operating Systems', 'Cybersecurity Tools', 'Security Knowledge'];
 
 export default function ManageSkills() {
     const [skills, setSkills] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [editing, setEditing] = useState(null);
-    const [form, setForm] = useState({ name: '', category: categories[0] });
+    const [customCategory, setCustomCategory] = useState('');
+    const [form, setForm] = useState({ name: '', category: defaultCategories[0] });
 
     const load = () => skillsAPI.getAll().then((res) => setSkills(res.data)).catch(() => { });
 
@@ -17,23 +18,29 @@ export default function ManageSkills() {
 
     const openNew = () => {
         setEditing(null);
-        setForm({ name: '', category: categories[0] });
+        setCustomCategory('');
+        setForm({ name: '', category: defaultCategories[0] });
         setShowModal(true);
     };
 
     const openEdit = (s) => {
         setEditing(s);
-        setForm({ name: s.name, category: s.category });
+        const isCustom = !defaultCategories.includes(s.category);
+        setCustomCategory(isCustom ? s.category : '');
+        setForm({ name: s.name, category: isCustom ? '+ Custom...' : s.category });
         setShowModal(true);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const finalCategory = form.category === '+ Custom...' ? customCategory.trim() : form.category;
+        if (!finalCategory) return alert('Please enter a custom category name.');
+        const data = { ...form, category: finalCategory };
         try {
             if (editing) {
-                await skillsAPI.update(editing.id, form);
+                await skillsAPI.update(editing.id, data);
             } else {
-                await skillsAPI.create(form);
+                await skillsAPI.create(data);
             }
             setShowModal(false);
             load();
@@ -47,6 +54,15 @@ export default function ManageSkills() {
         await skillsAPI.delete(id);
         load();
     };
+
+    // All unique categories (defaults + any from DB)
+    const allCategories = [
+        ...defaultCategories,
+        ...Object.keys(
+            skills.reduce((acc, s) => { acc[s.category] = true; return acc; }, {})
+        ).filter((c) => !defaultCategories.includes(c)),
+        '+ Custom...',
+    ];
 
     // Group by category
     const grouped = {};
@@ -111,10 +127,25 @@ export default function ManageSkills() {
                                 </div>
                                 <div>
                                     <label className="block text-gray-400 text-sm mb-1 font-mono">Category</label>
-                                    <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
-                                        className="w-full bg-cyber-gray border border-cyber-border rounded-lg px-4 py-2 text-white focus:border-neon-green focus:outline-none text-sm">
-                                        {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+                                    <select
+                                        value={form.category}
+                                        onChange={(e) => setForm({ ...form, category: e.target.value })}
+                                        className="w-full bg-cyber-gray border border-cyber-border rounded-lg px-4 py-2 text-white focus:border-neon-green focus:outline-none text-sm"
+                                    >
+                                        {allCategories.map((c) => (
+                                            <option key={c} value={c}>{c}</option>
+                                        ))}
                                     </select>
+                                    {form.category === '+ Custom...' && (
+                                        <input
+                                            type="text"
+                                            required
+                                            placeholder="Type new category name..."
+                                            value={customCategory}
+                                            onChange={(e) => setCustomCategory(e.target.value)}
+                                            className="w-full mt-2 bg-cyber-gray border border-neon-green/50 rounded-lg px-4 py-2 text-white focus:border-neon-green focus:outline-none text-sm"
+                                        />
+                                    )}
                                 </div>
                                 <button type="submit" className="w-full cyber-btn-solid flex items-center justify-center gap-2">
                                     <FaSave /> {editing ? 'Update' : 'Create'}
