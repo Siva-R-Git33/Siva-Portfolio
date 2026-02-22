@@ -1,4 +1,15 @@
 import { supabase } from './supabase';
+import { getToken } from './auth';
+
+const withAuth = () => {
+    const token = getToken();
+    if (token) {
+        supabase.realtime.setAuth(token);
+        // Ensure REST requests use the token
+        supabase.auth.setSession({ access_token: token, refresh_token: '' });
+    }
+    return supabase;
+};
 
 const handleResponse = async (promise) => {
     const { data, error } = await promise;
@@ -9,7 +20,6 @@ const handleResponse = async (promise) => {
     return { data };
 };
 
-// API functions mapped to Supabase
 export const authAPI = {
     login: async (credentials) => {
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -24,9 +34,9 @@ export const authAPI = {
 export const projectsAPI = {
     getAll: () => handleResponse(supabase.from('projects').select('*').order('created_at', { ascending: false })),
     getOne: (id) => handleResponse(supabase.from('projects').select('*').eq('id', id).single()),
-    create: (data) => handleResponse(supabase.from('projects').insert([data]).select()),
-    update: (id, data) => handleResponse(supabase.from('projects').update(data).eq('id', id).select()),
-    delete: (id) => handleResponse(supabase.from('projects').delete().eq('id', id)),
+    create: (data) => handleResponse(withAuth().from('projects').insert([data]).select()),
+    update: (id, data) => handleResponse(withAuth().from('projects').update(data).eq('id', id).select()),
+    delete: (id) => handleResponse(withAuth().from('projects').delete().eq('id', id)),
 };
 
 export const blogsAPI = {
@@ -37,25 +47,32 @@ export const blogsAPI = {
         }
         return handleResponse(query);
     },
-    getAllAdmin: () => handleResponse(supabase.from('blogs').select('*').order('created_at', { ascending: false })),
+    getAllAdmin: () => handleResponse(withAuth().from('blogs').select('*').order('created_at', { ascending: false })),
     getBySlug: (slug) => handleResponse(supabase.from('blogs').select('*').eq('slug', slug).single()),
-    create: (data) => handleResponse(supabase.from('blogs').insert([data]).select()),
-    update: (id, data) => handleResponse(supabase.from('blogs').update(data).eq('id', id).select()),
-    delete: (id) => handleResponse(supabase.from('blogs').delete().eq('id', id)),
+    create: (data) => handleResponse(withAuth().from('blogs').insert([data]).select()),
+    update: (id, data) => handleResponse(withAuth().from('blogs').update(data).eq('id', id).select()),
+    delete: (id) => handleResponse(withAuth().from('blogs').delete().eq('id', id)),
 };
 
 export const skillsAPI = {
     getAll: () => handleResponse(supabase.from('skills').select('*').order('created_at', { ascending: false })),
-    create: (data) => handleResponse(supabase.from('skills').insert([data]).select()),
-    update: (id, data) => handleResponse(supabase.from('skills').update(data).eq('id', id).select()),
-    delete: (id) => handleResponse(supabase.from('skills').delete().eq('id', id)),
+    create: (data) => handleResponse(withAuth().from('skills').insert([data]).select()),
+    update: (id, data) => handleResponse(withAuth().from('skills').update(data).eq('id', id).select()),
+    delete: (id) => handleResponse(withAuth().from('skills').delete().eq('id', id)),
+};
+
+export const certificationsAPI = {
+    getAll: () => handleResponse(supabase.from('certifications').select('*').order('created_at', { ascending: false })),
+    create: (data) => handleResponse(withAuth().from('certifications').insert([data]).select()),
+    update: (id, data) => handleResponse(withAuth().from('certifications').update(data).eq('id', id).select()),
+    delete: (id) => handleResponse(withAuth().from('certifications').delete().eq('id', id)),
 };
 
 export const contactAPI = {
     send: (data) => handleResponse(supabase.from('contact_messages').insert([data]).select()),
-    getAll: () => handleResponse(supabase.from('contact_messages').select('*').order('created_at', { ascending: false })),
-    markRead: (id) => handleResponse(supabase.from('contact_messages').update({ read: true }).eq('id', id).select()),
-    delete: (id) => handleResponse(supabase.from('contact_messages').delete().eq('id', id)),
+    getAll: () => handleResponse(withAuth().from('contact_messages').select('*').order('created_at', { ascending: false })),
+    markRead: (id) => handleResponse(withAuth().from('contact_messages').update({ read: true }).eq('id', id).select()),
+    delete: (id) => handleResponse(withAuth().from('contact_messages').delete().eq('id', id)),
 };
 
 export const githubAPI = {
@@ -70,4 +87,4 @@ export const githubAPI = {
 
 // We don't export the generic axios instance anymore.
 // We just export the individual API route collections.
-export default { authAPI, projectsAPI, blogsAPI, skillsAPI, contactAPI, githubAPI };
+export default { authAPI, projectsAPI, blogsAPI, skillsAPI, certificationsAPI, contactAPI, githubAPI };

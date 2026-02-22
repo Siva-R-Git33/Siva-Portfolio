@@ -1,15 +1,7 @@
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaCertificate, FaExternalLinkAlt } from 'react-icons/fa';
-
-const certifications = [
-    { name: 'Python Programming', issuer: 'NPTEL', color: 'neon-green' },
-    { name: 'Ethical Hacking', issuer: 'NPTEL', color: 'neon-green' },
-    { name: 'Networking Basics', issuer: 'Cisco', color: 'neon-blue' },
-    { name: 'Introduction to Cyber Security', issuer: 'Cisco', color: 'neon-blue' },
-    { name: 'Cybersecurity Career Starter Certification', issuer: 'CCSC', color: 'neon-purple' },
-    { name: 'Certified Phishing Prevention Specialist', issuer: 'CPPS', color: 'neon-red' },
-    { name: 'Blue Team Fundamentals', issuer: 'Cyber Warfare Labs', color: 'neon-blue' },
-];
+import { FaCertificate } from 'react-icons/fa';
+import { certificationsAPI } from '../utils/api';
 
 const containerVariants = {
     hidden: {},
@@ -22,6 +14,25 @@ const cardVariants = {
 };
 
 export default function Certifications() {
+    const [certifications, setCertifications] = useState([]);
+
+    useEffect(() => {
+        certificationsAPI.getAll()
+            .then((res) => {
+                if (res.data.length > 0) setCertifications(res.data);
+            })
+            .catch((err) => console.error("Failed to load certs:", err));
+    }, []);
+
+    // If API fails or is empty, use standard fallback
+    const displayCerts = certifications.length > 0 ? certifications : [
+        { name: 'Python Programming', issuer: 'NPTEL', color: 'neon-green' },
+        { name: 'Ethical Hacking', issuer: 'NPTEL', color: 'neon-green' },
+        { name: 'Networking Basics', issuer: 'Cisco', color: 'neon-blue' },
+        { name: 'Cybersecurity Career Starter Certification', issuer: 'CCSC', color: 'neon-purple' },
+        { name: 'Certified Phishing Prevention Specialist', issuer: 'CPPS', color: 'neon-red' },
+    ];
+
     return (
         <section id="certifications" className="py-20 px-4">
             <div className="max-w-7xl mx-auto">
@@ -42,9 +53,9 @@ export default function Certifications() {
                     viewport={{ once: true }}
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
                 >
-                    {certifications.map((cert, i) => (
+                    {displayCerts.map((cert, i) => (
                         <motion.div
-                            key={i}
+                            key={cert.id || i}
                             variants={cardVariants}
                             whileHover={{ scale: 1.03, y: -4 }}
                             className="cyber-card group cursor-default"

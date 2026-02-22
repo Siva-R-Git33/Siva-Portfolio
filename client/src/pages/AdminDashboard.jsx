@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaProjectDiagram, FaBlog, FaCogs, FaEnvelope, FaSignOutAlt, FaHome, FaTachometerAlt } from 'react-icons/fa';
+import { FaProjectDiagram, FaBlog, FaCogs, FaEnvelope, FaSignOutAlt, FaHome, FaTachometerAlt, FaCertificate } from 'react-icons/fa';
 import { isAuthenticated, logout } from '../utils/auth';
 import ManageProjects from '../admin/ManageProjects';
 import ManageBlogs from '../admin/ManageBlogs';
 import ManageSkills from '../admin/ManageSkills';
+import ManageCertifications from '../admin/ManageCertifications';
 import Messages from '../admin/Messages';
 
 const menuItems = [
@@ -13,6 +14,7 @@ const menuItems = [
     { path: '/admin/projects', label: 'Projects', icon: FaProjectDiagram },
     { path: '/admin/blogs', label: 'Blog Posts', icon: FaBlog },
     { path: '/admin/skills', label: 'Skills', icon: FaCogs },
+    { path: '/admin/certifications', label: 'Certifications', icon: FaCertificate },
     { path: '/admin/messages', label: 'Messages', icon: FaEnvelope },
 ];
 
@@ -23,6 +25,7 @@ function DashboardHome() {
                 { label: 'Projects', icon: FaProjectDiagram, color: 'neon-green', path: '/admin/projects' },
                 { label: 'Blog Posts', icon: FaBlog, color: 'neon-blue', path: '/admin/blogs' },
                 { label: 'Skills', icon: FaCogs, color: 'neon-purple', path: '/admin/skills' },
+                { label: 'Certifications', icon: FaCertificate, color: 'neon-blue', path: '/admin/certifications' },
                 { label: 'Messages', icon: FaEnvelope, color: 'neon-red', path: '/admin/messages' },
             ].map((item) => (
                 <Link
@@ -68,8 +71,8 @@ export default function AdminDashboard() {
                             key={item.path}
                             to={item.path}
                             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 ${location.pathname === item.path
-                                    ? 'bg-neon-green/10 text-neon-green'
-                                    : 'text-gray-400 hover:text-white hover:bg-cyber-gray'
+                                ? 'bg-neon-green/10 text-neon-green'
+                                : 'text-gray-400 hover:text-white hover:bg-cyber-gray'
                                 }`}
                         >
                             <item.icon className="shrink-0" />
@@ -107,6 +110,7 @@ export default function AdminDashboard() {
                             <Route path="projects" element={<ManageProjects />} />
                             <Route path="blogs" element={<ManageBlogs />} />
                             <Route path="skills" element={<ManageSkills />} />
+                            <Route path="certifications" element={<ManageCertifications />} />
                             <Route path="messages" element={<Messages />} />
                         </Routes>
                     </motion.div>
