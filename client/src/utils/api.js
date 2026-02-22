@@ -149,7 +149,12 @@ export const githubAPI = {
 export const settingsAPI = {
     get: async (key) => {
         const { data, error } = await supabase.from('settings').select('value').eq('key', key).single();
-        if (error && error.code !== 'PGRST116') throw new Error(error.message); // Ignore "not found" error
+        if (error) {
+            if (error.code === 'PGRST116') {
+                return { data: null }; // Return null gracefully if setting doesn't exist
+            }
+            throw new Error(error.message);
+        }
         return { data: data ? data.value : null };
     },
     set: async (key, value) => {

@@ -11,7 +11,7 @@ const containerVariants = {
 
 const cardVariants = {
     hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
 };
 
 const tagColors = {
@@ -24,11 +24,16 @@ const tagColors = {
 export default function Blog() {
     const [posts, setPosts] = useState([]);
     const [activeTag, setActiveTag] = useState(null);
+    const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
+        setLoaded(false);
         blogsAPI.getAll(activeTag)
-            .then((res) => setPosts(res.data))
-            .catch(() => { });
+            .then((res) => {
+                setPosts(res.data);
+                setLoaded(true);
+            })
+            .catch(() => { setLoaded(true); });
     }, [activeTag]);
 
     const tags = ['CTF', 'Blue Team', 'Pentesting', 'Writeup'];
@@ -42,7 +47,7 @@ export default function Blog() {
                     viewport={{ once: true }}
                     className="text-center mb-16"
                 >
-                    <h2 className="section-title">Blog & CTF Writeups</h2>
+                    <h2 className="section-title">Blog &amp; CTF Writeups</h2>
                     <p className="section-subtitle">Sharing knowledge and documenting challenges</p>
                 </motion.div>
 
@@ -76,13 +81,12 @@ export default function Blog() {
                     ))}
                 </motion.div>
 
-                {/* Blog Posts */}
-                {posts.length > 0 ? (
+                {/* Blog Posts — animate based on loaded state, not viewport */}
+                {loaded && posts.length > 0 ? (
                     <motion.div
                         variants={containerVariants}
                         initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
+                        animate="visible"
                         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                     >
                         {posts.map((post) => (
@@ -120,11 +124,10 @@ export default function Blog() {
                             </motion.div>
                         ))}
                     </motion.div>
-                ) : (
+                ) : loaded ? (
                     <motion.div
                         initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
+                        animate={{ opacity: 1 }}
                         className="text-center py-20"
                     >
                         <div className="terminal-window max-w-md mx-auto">
@@ -141,7 +144,7 @@ export default function Blog() {
                             </div>
                         </div>
                     </motion.div>
-                )}
+                ) : null}
             </div>
         </section>
     );
