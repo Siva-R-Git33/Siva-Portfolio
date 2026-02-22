@@ -1,0 +1,187 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: #0a0a0f;
+    color: #e6edf3;
+    overflow-x: hidden;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #0a0a0f;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #00ff41;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #00cc33;
+  }
+
+  ::selection {
+    background: rgba(0, 255, 65, 0.3);
+    color: #00ff41;
+  }
+}
+
+@layer components {
+  .glass {
+    background: rgba(13, 17, 23, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 255, 65, 0.1);
+  }
+
+  .glass-blue {
+    background: rgba(13, 17, 23, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 212, 255, 0.15);
+  }
+
+  .neon-text {
+    color: #00ff41;
+    text-shadow: 0 0 7px #00ff41, 0 0 10px #00ff41, 0 0 21px #00ff41;
+  }
+
+  .neon-text-blue {
+    color: #00d4ff;
+    text-shadow: 0 0 7px #00d4ff, 0 0 10px #00d4ff, 0 0 21px #00d4ff;
+  }
+
+  .neon-border {
+    border: 1px solid #00ff41;
+    box-shadow: 0 0 5px rgba(0, 255, 65, 0.3), inset 0 0 5px rgba(0, 255, 65, 0.1);
+  }
+
+  .neon-border-blue {
+    border: 1px solid #00d4ff;
+    box-shadow: 0 0 5px rgba(0, 212, 255, 0.3), inset 0 0 5px rgba(0, 212, 255, 0.1);
+  }
+
+  .cyber-card {
+    @apply glass rounded-xl p-6 transition-all duration-300;
+  }
+
+  .cyber-card:hover {
+    border-color: rgba(0, 255, 65, 0.4);
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.15), 0 8px 32px rgba(0, 0, 0, 0.4);
+    transform: translateY(-4px);
+  }
+
+  .cyber-btn {
+    @apply px-6 py-3 rounded-lg font-semibold text-sm uppercase tracking-wider transition-all duration-300;
+    background: linear-gradient(135deg, rgba(0, 255, 65, 0.15), rgba(0, 212, 255, 0.15));
+    border: 1px solid rgba(0, 255, 65, 0.3);
+    color: #00ff41;
+  }
+
+  .cyber-btn:hover {
+    background: linear-gradient(135deg, rgba(0, 255, 65, 0.3), rgba(0, 212, 255, 0.3));
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .cyber-btn-solid {
+    @apply px-6 py-3 rounded-lg font-semibold text-sm uppercase tracking-wider transition-all duration-300;
+    background: linear-gradient(135deg, #00ff41, #00d4ff);
+    color: #0a0a0f;
+  }
+
+  .cyber-btn-solid:hover {
+    box-shadow: 0 0 30px rgba(0, 255, 65, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl font-bold mb-2;
+    background: linear-gradient(135deg, #00ff41, #00d4ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .section-subtitle {
+    @apply text-gray-400 text-lg mb-12;
+  }
+
+  .terminal-window {
+    @apply glass rounded-xl overflow-hidden;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .terminal-header {
+    @apply flex items-center gap-2 px-4 py-3;
+    background: rgba(22, 27, 34, 0.9);
+    border-bottom: 1px solid rgba(0, 255, 65, 0.1);
+  }
+
+  .terminal-dot {
+    @apply w-3 h-3 rounded-full;
+  }
+
+  .terminal-body {
+    @apply p-4 min-h-[200px] text-sm leading-relaxed;
+    color: #00ff41;
+  }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  /* Matrix rain canvas overlay */
+  .matrix-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.05;
+  }
+
+  /* Blog markdown styling */
+  .markdown-content h1 { @apply text-3xl font-bold text-neon-green mb-4 mt-8; }
+  .markdown-content h2 { @apply text-2xl font-bold text-neon-blue mb-3 mt-6; }
+  .markdown-content h3 { @apply text-xl font-semibold text-gray-200 mb-2 mt-4; }
+  .markdown-content p { @apply text-gray-300 leading-relaxed mb-4; }
+  .markdown-content ul { @apply list-disc list-inside text-gray-300 mb-4 space-y-1; }
+  .markdown-content ol { @apply list-decimal list-inside text-gray-300 mb-4 space-y-1; }
+  .markdown-content code { @apply bg-cyber-gray px-2 py-0.5 rounded text-neon-green font-mono text-sm; }
+  .markdown-content pre { @apply bg-cyber-gray rounded-lg p-4 mb-4 overflow-x-auto; }
+  .markdown-content pre code { @apply bg-transparent p-0; }
+  .markdown-content blockquote { @apply border-l-4 border-neon-green pl-4 italic text-gray-400 my-4; }
+  .markdown-content a { @apply text-neon-blue hover:text-neon-green underline transition-colors; }
+  .markdown-content img { @apply rounded-lg my-4 max-w-full; }
+  .markdown-content table { @apply w-full border-collapse my-4; }
+  .markdown-content th { @apply bg-cyber-gray px-4 py-2 text-left text-neon-green border border-cyber-border; }
+  .markdown-content td { @apply px-4 py-2 border border-cyber-border text-gray-300; }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #00ff41, #00d4ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
