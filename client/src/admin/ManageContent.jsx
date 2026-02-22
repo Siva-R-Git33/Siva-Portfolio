@@ -85,7 +85,7 @@ export default function ManageContent() {
         <div className="space-y-10 pb-20">
             <h1 className="text-2xl font-bold text-white mb-6">Site Content Manager</h1>
 
-            {/* Blog Section Toggle */}
+            {/* v2: Blog Section Toggle */}
             <div className="cyber-card">
                 <div className="flex justify-between items-center">
                     <div>
