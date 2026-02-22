@@ -56,8 +56,8 @@ export default function Blog() {
                     <button
                         onClick={() => setActiveTag(null)}
                         className={`px-4 py-2 rounded-lg text-sm font-mono transition-all duration-300 ${!activeTag
-                                ? 'bg-neon-green/20 text-neon-green border border-neon-green/30'
-                                : 'bg-cyber-gray text-gray-400 border border-cyber-border hover:text-neon-green'
+                            ? 'bg-neon-green/20 text-neon-green border border-neon-green/30'
+                            : 'bg-cyber-gray text-gray-400 border border-cyber-border hover:text-neon-green'
                             }`}
                     >
                         All
@@ -67,8 +67,8 @@ export default function Blog() {
                             key={tag}
                             onClick={() => setActiveTag(tag)}
                             className={`px-4 py-2 rounded-lg text-sm font-mono transition-all duration-300 ${activeTag === tag
-                                    ? 'bg-neon-green/20 text-neon-green border border-neon-green/30'
-                                    : 'bg-cyber-gray text-gray-400 border border-cyber-border hover:text-neon-green'
+                                ? 'bg-neon-green/20 text-neon-green border border-neon-green/30'
+                                : 'bg-cyber-gray text-gray-400 border border-cyber-border hover:text-neon-green'
                                 }`}
                         >
                             {tag}
@@ -86,7 +86,7 @@ export default function Blog() {
                         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                     >
                         {posts.map((post) => (
-                            <motion.div key={post._id} variants={cardVariants}>
+                            <motion.div key={post.id} variants={cardVariants}>
                                 <Link
                                     to={`/blog/${post.slug}`}
                                     className="cyber-card block group h-full"

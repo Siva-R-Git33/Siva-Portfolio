@@ -1,72 +1,73 @@
-import axios from 'axios';
+import { supabase } from './supabase';
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
-
-const api = axios.create({
-    baseURL: `${API_BASE}/api`,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
-
-// Add auth token to requests
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+const handleResponse = async (promise) => {
+    const { data, error } = await promise;
+    if (error) {
+        console.error('Supabase Error:', error);
+        throw new Error(error.message);
     }
-    return config;
-});
+    return { data };
+};
 
-// Intercept Vercel HTML rewrites
-api.interceptors.response.use(
-    (response) => {
-        if (typeof response.data === 'string' && response.data.match(/<html/i)) {
-            return Promise.reject(new Error('API returned HTML'));
-        }
-        return response;
-    },
-    (error) => Promise.reject(error)
-);
-
-// API functions
+// API functions mapped to Supabase
 export const authAPI = {
-    login: (credentials) => api.post('/auth/login', credentials),
+    login: async (credentials) => {
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: credentials.username, // UI uses 'username' but Supabase uses email
+            password: credentials.password
+        });
+        if (error) throw new Error(error.message);
+        return { data: { token: data.session.access_token } };
+    },
 };
 
 export const projectsAPI = {
-    getAll: () => api.get('/projects'),
-    getOne: (id) => api.get(`/projects/${id}`),
-    create: (data) => api.post('/projects', data),
-    update: (id, data) => api.put(`/projects/${id}`, data),
-    delete: (id) => api.delete(`/projects/${id}`),
+    getAll: () => handleResponse(supabase.from('projects').select('*').order('created_at', { ascending: false })),
+    getOne: (id) => handleResponse(supabase.from('projects').select('*').eq('id', id).single()),
+    create: (data) => handleResponse(supabase.from('projects').insert([data]).select()),
+    update: (id, data) => handleResponse(supabase.from('projects').update(data).eq('id', id).select()),
+    delete: (id) => handleResponse(supabase.from('projects').delete().eq('id', id)),
 };
 
 export const blogsAPI = {
-    getAll: (tag) => api.get('/blogs', { params: tag ? { tag } : {} }),
-    getAllAdmin: () => api.get('/blogs/all'),
-    getBySlug: (slug) => api.get(`/blogs/${slug}`),
-    create: (data) => api.post('/blogs', data),
-    update: (id, data) => api.put(`/blogs/${id}`, data),
-    delete: (id) => api.delete(`/blogs/${id}`),
+    getAll: (tag) => {
+        let query = supabase.from('blogs').select('*').eq('published', true).order('created_at', { ascending: false });
+        if (tag) {
+            query = query.contains('tags', [tag]);
+        }
+        return handleResponse(query);
+    },
+    getAllAdmin: () => handleResponse(supabase.from('blogs').select('*').order('created_at', { ascending: false })),
+    getBySlug: (slug) => handleResponse(supabase.from('blogs').select('*').eq('slug', slug).single()),
+    create: (data) => handleResponse(supabase.from('blogs').insert([data]).select()),
+    update: (id, data) => handleResponse(supabase.from('blogs').update(data).eq('id', id).select()),
+    delete: (id) => handleResponse(supabase.from('blogs').delete().eq('id', id)),
 };
 
 export const skillsAPI = {
-    getAll: () => api.get('/skills'),
-    create: (data) => api.post('/skills', data),
-    update: (id, data) => api.put(`/skills/${id}`, data),
-    delete: (id) => api.delete(`/skills/${id}`),
+    getAll: () => handleResponse(supabase.from('skills').select('*').order('created_at', { ascending: false })),
+    create: (data) => handleResponse(supabase.from('skills').insert([data]).select()),
+    update: (id, data) => handleResponse(supabase.from('skills').update(data).eq('id', id).select()),
+    delete: (id) => handleResponse(supabase.from('skills').delete().eq('id', id)),
 };
 
 export const contactAPI = {
-    send: (data) => api.post('/contact', data),
-    getAll: () => api.get('/contact'),
-    markRead: (id) => api.put(`/contact/${id}/read`),
-    delete: (id) => api.delete(`/contact/${id}`),
+    send: (data) => handleResponse(supabase.from('contact_messages').insert([data]).select()),
+    getAll: () => handleResponse(supabase.from('contact_messages').select('*').order('created_at', { ascending: false })),
+    markRead: (id) => handleResponse(supabase.from('contact_messages').update({ read: true }).eq('id', id).select()),
+    delete: (id) => handleResponse(supabase.from('contact_messages').delete().eq('id', id)),
 };
 
 export const githubAPI = {
-    getRepos: () => api.get('/github/repos'),
+    getRepos: async () => {
+        const username = import.meta.env.VITE_GITHUB_USERNAME || 'Siva-R-Git33';
+        const response = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=20&type=owner`);
+        if (!response.ok) throw new Error('Failed to fetch GitHub repos');
+        const data = await response.json();
+        return { data };
+    },
 };
 
-export default api;
+// We don't export the generic axios instance anymore.
+// We just export the individual API route collections.
+export default { authAPI, projectsAPI, blogsAPI, skillsAPI, contactAPI, githubAPI };

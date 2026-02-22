@@ -37,7 +37,7 @@ export default function ManageProjects() {
         const data = { ...form, techStack: form.techStack.split(',').map((s) => s.trim()).filter(Boolean) };
         try {
             if (editing) {
-                await projectsAPI.update(editing._id, data);
+                await projectsAPI.update(editing.id, data);
             } else {
                 await projectsAPI.create(data);
             }
@@ -65,7 +65,7 @@ export default function ManageProjects() {
 
             <div className="space-y-3">
                 {projects.map((p) => (
-                    <div key={p._id} className="cyber-card flex items-center justify-between">
+                    <div key={p.id} className="cyber-card flex items-center justify-between">
                         <div>
                             <h3 className="text-white font-semibold">{p.title}</h3>
                             <p className="text-gray-500 text-sm truncate max-w-lg">{p.description}</p>
@@ -79,7 +79,7 @@ export default function ManageProjects() {
                             <button onClick={() => openEdit(p)} className="p-2 rounded-lg bg-neon-blue/10 text-neon-blue hover:bg-neon-blue/20 transition-all">
                                 <FaEdit />
                             </button>
-                            <button onClick={() => handleDelete(p._id)} className="p-2 rounded-lg bg-neon-red/10 text-neon-red hover:bg-neon-red/20 transition-all">
+                            <button onClick={() => handleDelete(p.id)} className="p-2 rounded-lg bg-neon-red/10 text-neon-red hover:bg-neon-red/20 transition-all">
                                 <FaTrash />
                             </button>
                         </div>

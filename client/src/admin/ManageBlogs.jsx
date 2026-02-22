@@ -40,7 +40,7 @@ export default function ManageBlogs() {
         };
         try {
             if (editing) {
-                await blogsAPI.update(editing._id, data);
+                await blogsAPI.update(editing.id, data);
             } else {
                 await blogsAPI.create(data);
             }
@@ -68,7 +68,7 @@ export default function ManageBlogs() {
 
             <div className="space-y-3">
                 {posts.map((p) => (
-                    <div key={p._id} className="cyber-card flex items-center justify-between">
+                    <div key={p.id} className="cyber-card flex items-center justify-between">
                         <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2">
                                 <h3 className="text-white font-semibold truncate">{p.title}</h3>
@@ -89,7 +89,7 @@ export default function ManageBlogs() {
                             <button onClick={() => openEdit(p)} className="p-2 rounded-lg bg-neon-blue/10 text-neon-blue hover:bg-neon-blue/20 transition-all">
                                 <FaEdit />
                             </button>
-                            <button onClick={() => handleDelete(p._id)} className="p-2 rounded-lg bg-neon-red/10 text-neon-red hover:bg-neon-red/20 transition-all">
+                            <button onClick={() => handleDelete(p.id)} className="p-2 rounded-lg bg-neon-red/10 text-neon-red hover:bg-neon-red/20 transition-all">
                                 <FaTrash />
                             </button>
                         </div>

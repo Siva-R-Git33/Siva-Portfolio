@@ -74,7 +74,7 @@ export default function Projects() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {projects.map((project, i) => (
                             <motion.div
-                                key={project._id || i}
+                                key={project.id || i}
                                 variants={cardVariants}
                                 className="cyber-card group"
                             >

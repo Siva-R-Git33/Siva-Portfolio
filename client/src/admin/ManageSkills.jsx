@@ -31,7 +31,7 @@ export default function ManageSkills() {
         e.preventDefault();
         try {
             if (editing) {
-                await skillsAPI.update(editing._id, form);
+                await skillsAPI.update(editing.id, form);
             } else {
                 await skillsAPI.create(form);
             }
@@ -70,12 +70,12 @@ export default function ManageSkills() {
                         <h3 className="text-neon-green font-mono text-sm mb-2">{category}</h3>
                         <div className="flex flex-wrap gap-2">
                             {items.map((s) => (
-                                <div key={s._id} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-cyber-gray border border-cyber-border group">
+                                <div key={s.id} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-cyber-gray border border-cyber-border group">
                                     <span className="text-gray-200 text-sm">{s.name}</span>
                                     <button onClick={() => openEdit(s)} className="text-neon-blue opacity-0 group-hover:opacity-100 transition-opacity text-xs">
                                         <FaEdit />
                                     </button>
-                                    <button onClick={() => handleDelete(s._id)} className="text-neon-red opacity-0 group-hover:opacity-100 transition-opacity text-xs">
+                                    <button onClick={() => handleDelete(s.id)} className="text-neon-red opacity-0 group-hover:opacity-100 transition-opacity text-xs">
                                         <FaTrash />
                                     </button>
                                 </div>

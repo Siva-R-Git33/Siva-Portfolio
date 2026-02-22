@@ -37,7 +37,7 @@ export default function Messages() {
             <div className="space-y-3">
                 {messages.map((msg) => (
                     <motion.div
-                        key={msg._id}
+                        key={msg.id}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         className={`cyber-card ${!msg.read ? 'border-neon-green/30' : ''}`}
@@ -58,7 +58,7 @@ export default function Messages() {
                             </div>
                             <div className="flex gap-2 shrink-0">
                                 {!msg.read && (
-                                    <button onClick={() => markRead(msg._id)}
+                                    <button onClick={() => markRead(msg.id)}
                                         className="p-2 rounded-lg bg-neon-green/10 text-neon-green hover:bg-neon-green/20 transition-all"
                                         title="Mark as read">
                                         <FaCheck />
@@ -69,7 +69,7 @@ export default function Messages() {
                                     title="Reply">
                                     <FaEnvelope />
                                 </a>
-                                <button onClick={() => handleDelete(msg._id)}
+                                <button onClick={() => handleDelete(msg.id)}
                                     className="p-2 rounded-lg bg-neon-red/10 text-neon-red hover:bg-neon-red/20 transition-all"
                                     title="Delete">
                                     <FaTrash />

@@ -1,95 +1,66 @@
 # 🛡️ Siva R – Cybersecurity Portfolio
 
-A premium full-stack cybersecurity portfolio web application with dark hacker theme, interactive terminal, admin panel, and blog system.
+A premium frontend-only cybersecurity portfolio web application with a dark hacker theme, interactive terminal, admin panel, and blog system. Data is powered by **Supabase**.
 
 ## 🚀 Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
 | Frontend | React (Vite) + TailwindCSS + Framer Motion |
-| Backend | Node.js + Express |
-| Database | MongoDB (Mongoose) |
-| Auth | JWT |
+| Backend | Supabase (PostgreSQL & Auth) |
+| Hosting | Vercel |
 
 ## 📦 Setup
 
 ### Prerequisites
 - **Node.js** 18+ installed
-- **MongoDB** running locally (or a MongoDB Atlas URI)
+- A **Supabase** project
 
 ### 1. Clone & Install
 
 ```bash
-# Install backend dependencies
-cd server
-npm install
-
-# Install frontend dependencies
-cd ../client
+cd client
 npm install
 ```
 
 ### 2. Environment Variables
 
-**Backend** (`server/.env`):
+Create `.env` in the `client` folder:
+
 ```env
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/siva-portfolio
-JWT_SECRET=your_super_secret_jwt_key_change_this
-GITHUB_USERNAME=your_github_username
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_GITHUB_USERNAME=your_github_username
 ```
 
-**Frontend** (`client/.env`) — optional, only needed for production:
-```env
-VITE_API_URL=https://your-backend-url.com
-```
+### 3. Setup Database (Supabase)
 
-### 3. Seed Database
+1. Go to your Supabase Dashboard -> **SQL Editor**.
+2. Copy and run the contents of `supabase.sql` located in the root directory.
+3. This will create all `projects`, `blogs`, `skills`, and `contact_messages` tables, as well as the RLS policies and seed data.
+
+### 4. Admin Auth Setup
+
+1. Go to Supabase -> **Authentication** -> **Users**.
+2. Add a new user with your email and a secure password. 
+3. You will use these credentials to log into the Admin Dashboard (`/admin/login`).
+
+### 5. Run Development
 
 ```bash
-cd server
-npm run seed
-```
-This creates:
-- Admin user: `admin` / `admin123`
-- Initial skills (Python, SQL, Bash, etc.)
-- Featured project (Signature Verification System)
-
-### 4. Run Development
-
-```bash
-# Terminal 1 – Backend
-cd server
-npm run dev
-
-# Terminal 2 – Frontend
 cd client
 npm run dev
 ```
 
 Visit **http://localhost:5173**
 
-### 5. Admin Panel
+## 🌐 Deployment (Vercel)
 
-Navigate to **http://localhost:5173/admin/login**
-- Username: `admin`
-- Password: `admin123`
-
-## 🌐 Deployment
-
-### Frontend (Vercel)
-```bash
-cd client
-npm run build
-# Deploy the dist/ folder to Vercel
-```
-
-Set `VITE_API_URL` environment variable to your backend URL.
-
-### Backend (Render)
-- Set environment variables in Render dashboard
-- Use `npm start` as the start command
-- Set the root directory to `server`
+1. Link your GitHub repository to Vercel.
+2. Set the **Framework Preset** to `Vite`.
+3. Set the **Root Directory** to `client`.
+4. Add your `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to the Vercel Environment Variables.
+5. Deploy!
 
 ## 📂 Project Structure
 
@@ -101,14 +72,9 @@ Siva-portfolio/
 │   │   ├── sections/      # Hero, About, Skills, Projects, etc.
 │   │   ├── pages/         # Home, BlogPost, Admin
 │   │   ├── admin/         # Admin CRUD pages
-│   │   └── utils/         # API client, auth helpers
+│   │   └── utils/         # Supabase client, API abstractions
 │   └── ...config files
-├── server/                # Express backend
-│   ├── config/            # DB connection
-│   ├── middleware/         # JWT auth
-│   ├── models/            # Mongoose schemas
-│   ├── routes/            # API endpoints
-│   └── seed.js            # Database seeder
+├── supabase.sql           # Database schema & setup script
 └── README.md
 ```
 
@@ -117,14 +83,8 @@ Siva-portfolio/
 - 🖥️ **Interactive Terminal** — Simulated CLI with typing animation
 - 🎨 **Dark Hacker Theme** — Neon green/blue glassmorphism UI
 - 📝 **Blog System** — Markdown support with syntax highlighting
-- 🔐 **Admin Panel** — Full CRUD for projects, blogs, skills
-- 🐙 **GitHub Integration** — Auto-fetch repos with caching
+- 🔐 **Admin Panel** — Full CRUD for projects, blogs, skills via Supabase RLS
+- 🐙 **GitHub Integration** — Auto-fetch repos directly from the GitHub API
 - 📱 **Fully Responsive** — Mobile-first design
 - ⚡ **Framer Motion** — Smooth animations everywhere
 - 🔍 **SEO Optimized** — Meta tags and semantic HTML
-
-## ⚠️ Important Notes
-
-- Change the default admin password after first login
-- Set a strong `JWT_SECRET` in production
-- The GitHub integration defaults to fetching public repos
