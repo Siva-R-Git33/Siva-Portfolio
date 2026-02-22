@@ -147,7 +147,7 @@ export default function Terminal() {
             {/* Terminal Body */}
             <div
                 ref={termRef}
-                className="terminal-body max-h-[350px] overflow-y-auto cursor-text"
+                className="terminal-body h-[350px] overflow-y-auto cursor-text"
                 onClick={() => inputRef.current?.focus()}
             >
                 {history.map((line, i) => (
