@@ -29,6 +29,7 @@ const defaultAbout = {
 
 const defaultSocials = {
     email: 'shivar6277@gmail.com',
+    phone: '+91 9150782041',
     github: 'https://github.com/Siva-R-Git33',
     linkedin: 'https://www.linkedin.com/in/sivarr31',
     tryhackme: 'https://tryhackme.com/p/rsshiva403'

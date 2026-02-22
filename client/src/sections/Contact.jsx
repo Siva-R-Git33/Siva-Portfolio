@@ -6,6 +6,7 @@ import { contactAPI, settingsAPI } from '../utils/api';
 
 const defaultSocials = {
     email: 'shivar6277@gmail.com',
+    phone: '+91 9150782041',
     github: 'https://github.com/Siva-R-Git33',
     linkedin: 'https://linkedin.com/in/sivarr31',
     tryhackme: 'https://tryhackme.com/p/rsshiva403'
@@ -51,7 +52,7 @@ export default function Contact() {
 
     const contactInfo = [
         { icon: FaEnvelope, label: 'Email', value: socials.email, href: socials.email ? `mailto:${socials.email}` : null },
-        { icon: FaPhone, label: 'Phone', value: '+91 9150782041', href: 'tel:+919150782041' },
+        { icon: FaPhone, label: 'Phone', value: socials.phone, href: socials.phone ? `tel:${socials.phone.replace(/[\s-]/g, '')}` : null },
         { icon: FaMapMarkerAlt, label: 'Location', value: about.location },
     ].filter(c => c.value);
 
