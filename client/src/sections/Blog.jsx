@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { FaTag, FaCalendar, FaArrowRight } from 'react-icons/fa';
-import { blogsAPI } from '../utils/api';
+import { FaCalendar, FaArrowRight } from 'react-icons/fa';
+import { blogsAPI, settingsAPI } from '../utils/api';
 
 const containerVariants = {
     hidden: {},
@@ -25,6 +25,14 @@ export default function Blog() {
     const [posts, setPosts] = useState([]);
     const [activeTag, setActiveTag] = useState(null);
     const [loaded, setLoaded] = useState(false);
+    const [showSection, setShowSection] = useState(true);
+
+    useEffect(() => {
+        // Load toggle setting
+        settingsAPI.get('showBlogSection').then((r) => {
+            if (r.data !== null) setShowSection(r.data);
+        }).catch(() => { });
+    }, []);
 
     useEffect(() => {
         setLoaded(false);
@@ -35,6 +43,8 @@ export default function Blog() {
             })
             .catch(() => { setLoaded(true); });
     }, [activeTag]);
+
+    if (!showSection) return null;
 
     const tags = ['CTF', 'Blue Team', 'Pentesting', 'Writeup'];
 
@@ -81,7 +91,7 @@ export default function Blog() {
                     ))}
                 </motion.div>
 
-                {/* Blog Posts — animate based on loaded state, not viewport */}
+                {/* Blog Posts — use animate (not whileInView) so cards show after data loads */}
                 {loaded && posts.length > 0 ? (
                     <motion.div
                         variants={containerVariants}

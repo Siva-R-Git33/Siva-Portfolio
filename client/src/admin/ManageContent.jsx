@@ -39,18 +39,21 @@ export default function ManageContent() {
     const [hero, setHero] = useState(defaultHero);
     const [about, setAbout] = useState(defaultAbout);
     const [socials, setSocials] = useState(defaultSocials);
+    const [showBlog, setShowBlog] = useState(true);
     const [loading, setLoading] = useState(true);
 
     const loadData = async () => {
         try {
-            const [hRes, aRes, sRes] = await Promise.all([
+            const [hRes, aRes, sRes, bRes] = await Promise.all([
                 settingsAPI.get('hero_content'),
                 settingsAPI.get('about_content'),
-                settingsAPI.get('social_links')
+                settingsAPI.get('social_links'),
+                settingsAPI.get('showBlogSection'),
             ]);
             if (hRes.data) setHero(hRes.data);
             if (aRes.data) setAbout(aRes.data);
             if (sRes.data) setSocials(sRes.data);
+            if (bRes.data !== null) setShowBlog(bRes.data);
         } catch (error) {
             console.error(error);
         } finally {
@@ -70,11 +73,36 @@ export default function ManageContent() {
         }
     };
 
+    const toggleBlog = async () => {
+        const next = !showBlog;
+        setShowBlog(next);
+        await settingsAPI.set('showBlogSection', next);
+    };
+
     if (loading) return <div className="text-white">Loading...</div>;
 
     return (
         <div className="space-y-10 pb-20">
             <h1 className="text-2xl font-bold text-white mb-6">Site Content Manager</h1>
+
+            {/* Blog Section Toggle */}
+            <div className="cyber-card">
+                <div className="flex justify-between items-center">
+                    <div>
+                        <h2 className="text-xl font-bold text-neon-green">Blog Section</h2>
+                        <p className="text-gray-400 text-sm mt-1">Show or hide the Blog &amp; CTF Writeups section on your portfolio.</p>
+                    </div>
+                    <button
+                        onClick={toggleBlog}
+                        className={`relative inline-flex items-center w-14 h-7 rounded-full transition-colors duration-300 focus:outline-none ${showBlog ? 'bg-neon-green' : 'bg-cyber-gray border border-cyber-border'}`}
+                    >
+                        <span className={`inline-block w-5 h-5 bg-white rounded-full shadow transition-transform duration-300 ${showBlog ? 'translate-x-8' : 'translate-x-1'}`} />
+                    </button>
+                </div>
+                <p className="text-xs mt-3 font-mono text-gray-500">
+                    Status: <span className={showBlog ? 'text-neon-green' : 'text-gray-400'}>{showBlog ? '● Visible' : '○ Hidden'}</span>
+                </p>
+            </div>
 
             {/* Social Links Form */}
             <div className="cyber-card">
