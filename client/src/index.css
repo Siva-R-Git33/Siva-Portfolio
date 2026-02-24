@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme CSS Custom Properties — overridden at runtime by useTheme.js */
+:root {
+  --neon-green: #00ff41;
+  --neon-blue: #00d4ff;
+  --neon-purple: #bd00ff;
+  --neon-red: #ff0040;
+  --site-font: 'Inter', system-ui, sans-serif;
+}
+
 @layer base {
   * {
     margin: 0;

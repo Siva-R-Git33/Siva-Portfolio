@@ -7,9 +7,11 @@ import Home from './pages/Home';
 import BlogPost from './pages/BlogPost';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
+import useTheme from './hooks/useTheme';
 
 function App() {
     const [loading, setLoading] = useState(true);
+    useTheme();
 
     useEffect(() => {
         const timer = setTimeout(() => setLoading(false), 2800);
@@ -24,21 +26,21 @@ function App() {
                 <Route
                     path="/"
                     element={
-                        <>
+                        <div id="site-wrapper">
                             <Navbar />
                             <Home />
                             <Footer />
-                        </>
+                        </div>
                     }
                 />
                 <Route
                     path="/blog/:slug"
                     element={
-                        <>
+                        <div id="site-wrapper">
                             <Navbar />
                             <BlogPost />
                             <Footer />
-                        </>
+                        </div>
                     }
                 />
                 <Route path="/admin/login" element={<AdminLogin />} />
