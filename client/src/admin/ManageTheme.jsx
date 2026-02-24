@@ -40,8 +40,13 @@ export default function ManageTheme() {
 
     const update = (patch) => {
         const next = { ...settings, ...patch };
+        // If switching theme preset, also store its hue
+        if (patch.themeId) {
+            const t = THEMES.find((t) => t.id === patch.themeId);
+            if (t) next.hue = t.hue;
+        }
         setSettings(next);
-        applyTheme(next); // live preview
+        applyTheme(next); // live preview — applies filter to document.documentElement
     };
 
     const save = async () => {
@@ -99,10 +104,10 @@ export default function ManageTheme() {
                                 onClick={() => update({ themeId: theme.id })}
                                 style={{
                                     border: settings.themeId === theme.id
-                                        ? `2px solid ${theme.primary}`
+                                        ? `2px solid ${theme.preview[0]}`
                                         : '2px solid #21262d',
                                     boxShadow: settings.themeId === theme.id
-                                        ? `0 0 12px ${theme.primary}55`
+                                        ? `0 0 12px ${theme.preview[0]}55`
                                         : 'none',
                                     borderRadius: '10px',
                                     padding: '12px',
@@ -126,11 +131,11 @@ export default function ManageTheme() {
                                         />
                                     ))}
                                 </div>
-                                <div style={{ color: settings.themeId === theme.id ? theme.primary : '#9ca3af', fontSize: '13px', fontWeight: 600 }}>
+                                <div style={{ color: settings.themeId === theme.id ? theme.preview[0] : '#9ca3af', fontSize: '13px', fontWeight: 600 }}>
                                     {theme.name}
                                 </div>
                                 {settings.themeId === theme.id && (
-                                    <div style={{ color: theme.primary, fontSize: '10px', marginTop: '2px', fontFamily: 'monospace' }}>
+                                    <div style={{ color: theme.preview[0], fontSize: '10px', marginTop: '2px', fontFamily: 'monospace' }}>
                                         ● Active
                                     </div>
                                 )}
@@ -176,10 +181,10 @@ export default function ManageTheme() {
                                             padding: '8px 12px',
                                             borderRadius: '8px',
                                             border: settings.fontFamily === f
-                                                ? `1px solid ${currentTheme.primary}`
+                                                ? `1px solid ${currentTheme.preview[0]}`
                                                 : '1px solid #21262d',
-                                            background: settings.fontFamily === f ? `${currentTheme.primary}15` : '#161b22',
-                                            color: settings.fontFamily === f ? currentTheme.primary : '#9ca3af',
+                                            background: settings.fontFamily === f ? `${currentTheme.preview[0]}15` : '#161b22',
+                                            color: settings.fontFamily === f ? currentTheme.preview[0] : '#9ca3af',
                                             cursor: 'pointer',
                                             fontSize: '13px',
                                             fontFamily: f === 'System' ? 'system-ui' : `'${f}', system-ui`,
@@ -208,10 +213,10 @@ export default function ManageTheme() {
                                             padding: '8px',
                                             borderRadius: '8px',
                                             border: settings.fontSize === id
-                                                ? `1px solid ${currentTheme.primary}`
+                                                ? `1px solid ${currentTheme.preview[0]}`
                                                 : '1px solid #21262d',
-                                            background: settings.fontSize === id ? `${currentTheme.primary}15` : '#161b22',
-                                            color: settings.fontSize === id ? currentTheme.primary : '#9ca3af',
+                                            background: settings.fontSize === id ? `${currentTheme.preview[0]}15` : '#161b22',
+                                            color: settings.fontSize === id ? currentTheme.preview[0] : '#9ca3af',
                                             cursor: 'pointer',
                                             fontSize: size,
                                             transition: 'all 0.15s',
@@ -228,21 +233,27 @@ export default function ManageTheme() {
 
             {/* Preview Panel */}
             <div className="cyber-card mt-6">
-                <h2 className="text-lg font-bold text-white mb-4">Live Preview</h2>
-                <div className="rounded-lg overflow-hidden border border-cyber-border" style={{ filter: `brightness(${settings.brightness}) contrast(${settings.contrast}) saturate(${settings.saturation})` }}>
-                    <div style={{ background: '#0a0a0f', padding: '24px', fontFamily: document.body.style.fontFamily || 'Inter' }}>
+                <h2 className="text-lg font-bold text-white mb-3">Live Preview</h2>
+                <p className="text-gray-500 text-xs font-mono mb-4">This card shows how your portfolio looks with the current settings.</p>
+                <div
+                    className="rounded-lg overflow-hidden border border-cyber-border"
+                    style={{
+                        filter: `hue-rotate(${currentTheme.hue}deg) brightness(${settings.brightness}) contrast(${settings.contrast}) saturate(${settings.saturation})`,
+                    }}
+                >
+                    <div style={{ background: '#0a0a0f', padding: '24px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                            <span style={{ color: currentTheme.primary, fontFamily: 'monospace', fontSize: '20px', fontWeight: 'bold' }}>&lt;SR/&gt;</span>
+                            <span style={{ color: '#00ff41', fontFamily: 'monospace', fontSize: '20px', fontWeight: 'bold' }}>&lt;SR/&gt;</span>
                             {['Home', 'Skills', 'Projects', 'Blog'].map((n) => (
-                                <span key={n} style={{ color: '#9ca3af', fontSize: '13px', cursor: 'default' }}>{n}</span>
+                                <span key={n} style={{ color: '#6b7280', fontSize: '13px' }}>{n}</span>
                             ))}
                         </div>
-                        <div style={{ color: currentTheme.primary, fontFamily: 'monospace', fontSize: '11px', marginBottom: '8px' }}>// Portfolio Preview</div>
+                        <div style={{ color: '#00ff41', fontFamily: 'monospace', fontSize: '11px', marginBottom: '8px' }}>// Portfolio Preview</div>
                         <h2 style={{ color: 'white', fontSize: '22px', fontWeight: 'bold', marginBottom: '4px' }}>Siva R</h2>
-                        <p style={{ color: currentTheme.accent, fontSize: '14px', marginBottom: '12px' }}>Cybersecurity Enthusiast</p>
+                        <p style={{ color: '#00d4ff', fontSize: '14px', marginBottom: '12px' }}>Cybersecurity Enthusiast</p>
                         <div style={{ display: 'flex', gap: '8px' }}>
-                            <span style={{ background: `${currentTheme.primary}20`, border: `1px solid ${currentTheme.primary}50`, color: currentTheme.primary, borderRadius: '6px', padding: '4px 12px', fontSize: '12px' }}>View Work</span>
-                            <span style={{ background: `${currentTheme.highlight}20`, border: `1px solid ${currentTheme.highlight}50`, color: currentTheme.highlight, borderRadius: '6px', padding: '4px 12px', fontSize: '12px' }}>Contact</span>
+                            <span style={{ background: '#00ff4120', border: '1px solid #00ff4150', color: '#00ff41', borderRadius: '6px', padding: '4px 12px', fontSize: '12px' }}>View Work</span>
+                            <span style={{ background: '#bd00ff20', border: '1px solid #bd00ff50', color: '#bd00ff', borderRadius: '6px', padding: '4px 12px', fontSize: '12px' }}>Contact</span>
                         </div>
                     </div>
                 </div>
