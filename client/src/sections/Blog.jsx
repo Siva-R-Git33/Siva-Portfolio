@@ -15,10 +15,15 @@ export default function Blog() {
     const [activeTag, setActiveTag] = useState(null);
     const [loaded, setLoaded] = useState(false);
     const [showSection, setShowSection] = useState(true);
+    const [showFilters, setShowFilters] = useState(false);
 
     useEffect(() => {
         settingsAPI.get('showBlogSection').then((r) => {
             if (r.data !== null) setShowSection(r.data);
+        }).catch(() => { });
+
+        settingsAPI.get('feature_flags').then(res => {
+            if (res.data?.showProjectFilters) setShowFilters(true);
         }).catch(() => { });
     }, []);
 
@@ -47,29 +52,31 @@ export default function Blog() {
                 </div>
 
                 {/* Tag Filter */}
-                <div className="flex flex-wrap justify-center gap-3 mb-10">
-                    <button
-                        onClick={() => setActiveTag(null)}
-                        className={`px-4 py-2 rounded-lg text-sm font-mono transition-all duration-300 ${!activeTag
-                            ? 'bg-neon-green/20 text-neon-green border border-neon-green/30'
-                            : 'bg-cyber-gray text-gray-400 border border-cyber-border hover:text-neon-green'
-                            }`}
-                    >
-                        All
-                    </button>
-                    {tags.map((tag) => (
+                {showFilters && (
+                    <div className="flex flex-wrap justify-center gap-3 mb-10">
                         <button
-                            key={tag}
-                            onClick={() => setActiveTag(tag)}
-                            className={`px-4 py-2 rounded-lg text-sm font-mono transition-all duration-300 ${activeTag === tag
+                            onClick={() => setActiveTag(null)}
+                            className={`px-4 py-2 rounded-lg text-sm font-mono transition-all duration-300 ${!activeTag
                                 ? 'bg-neon-green/20 text-neon-green border border-neon-green/30'
                                 : 'bg-cyber-gray text-gray-400 border border-cyber-border hover:text-neon-green'
                                 }`}
                         >
-                            {tag}
+                            All
                         </button>
-                    ))}
-                </div>
+                        {tags.map((tag) => (
+                            <button
+                                key={tag}
+                                onClick={() => setActiveTag(tag)}
+                                className={`px-4 py-2 rounded-lg text-sm font-mono transition-all duration-300 ${activeTag === tag
+                                    ? 'bg-neon-green/20 text-neon-green border border-neon-green/30'
+                                    : 'bg-cyber-gray text-gray-400 border border-cyber-border hover:text-neon-green'
+                                    }`}
+                            >
+                                {tag}
+                            </button>
+                        ))}
+                    </div>
+                )}
 
                 {/* Blog Posts */}
                 {loaded && posts.length > 0 && (

@@ -8,6 +8,7 @@ import BlogPost from './pages/BlogPost';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import HackerModeToggle from './components/HackerModeToggle';
+import HireMeModal from './components/HireMeModal';
 import useTheme from './hooks/useTheme';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
     return (
         <div className="min-h-screen bg-cyber-black grid-bg">
             <HackerModeToggle />
+            <HireMeModal />
             <Routes>
                 <Route
                     path="/"
