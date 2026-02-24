@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaGraduationCap, FaBullseye, FaMapMarkerAlt, FaGamepad, FaDumbbell, FaMusic, FaPlane, FaStar } from 'react-icons/fa';
 import Terminal from '../components/Terminal';
+import LiveIntegrations from '../components/LiveIntegrations';
 import { settingsAPI } from '../utils/api';
 
 const defaultAbout = {
@@ -66,6 +67,11 @@ export default function About() {
                 {/* Terminal */}
                 <div className="mb-16">
                     <Terminal />
+                </div>
+
+                {/* Optional Live Integrations */}
+                <div className="mb-16">
+                    <LiveIntegrations />
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
