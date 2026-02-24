@@ -70,21 +70,16 @@ export default function About() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Education Timeline */}
-                    <motion.div
-                        variants={containerVariants}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
-                    >
+                    <div>
                         <h3 className="text-xl font-bold text-neon-green mb-6 flex items-center gap-2">
                             <FaGraduationCap /> Education
                         </h3>
                         <div className="space-y-4">
                             {about.education?.map((edu, i) => (
-                                <motion.div
+                                <div
                                     key={i}
-                                    variants={itemVariants}
                                     className="cyber-card relative pl-8 before:absolute before:left-3 before:top-0 before:bottom-0 before:w-px before:bg-neon-green/20"
+                                    style={{ animation: `fadeInUp 0.4s ease ${i * 0.1}s both` }}
                                 >
                                     <div className="absolute left-1.5 top-6 w-3 h-3 rounded-full bg-neon-green shadow-neon-green" />
                                     <h4 className="text-white font-semibold">{edu.degree}</h4>
@@ -97,10 +92,10 @@ export default function About() {
                                             </span>
                                         )}
                                     </div>
-                                </motion.div>
+                                </div>
                             ))}
                         </div>
-                    </motion.div>
+                    </div>
 
                     {/* Objective + Hobbies */}
                     <div className="space-y-8">
