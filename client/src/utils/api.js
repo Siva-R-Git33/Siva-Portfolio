@@ -47,7 +47,21 @@ export const authAPI = {
     },
     // --- MFA (TOTP) Methods ---
     mfaEnroll: async () => {
-        const { data, error } = await withAuth().auth.mfa.enroll({ factorType: 'totp' });
+        // Clear any orphan 'unverified' factors to prevent "already exists" collision errors
+        // This happens if the user clicks setup, closes the window, and clicks setup again later
+        const factorsRes = await withAuth().auth.mfa.listFactors();
+        if (factorsRes.data && factorsRes.data.totp) {
+            for (const f of factorsRes.data.totp) {
+                if (f.status === 'unverified') {
+                    await withAuth().auth.mfa.unenroll({ factorId: f.id });
+                }
+            }
+        }
+
+        const { data, error } = await withAuth().auth.mfa.enroll({
+            factorType: 'totp',
+            friendlyName: 'Admin Authenticator'
+        });
         if (error) throw new Error(error.message);
         return { data };
     },
