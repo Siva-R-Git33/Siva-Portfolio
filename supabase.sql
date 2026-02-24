@@ -128,3 +128,35 @@ VALUES (
   now(),
   now()
 );
+
+-- --------------------------------------------------------
+-- STORAGE BUCKET POLICIES (Required for Uploads)
+-- --------------------------------------------------------
+
+-- 1. Create the uploads bucket if it doesn't exist and make it public
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('uploads', 'uploads', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- 2. Allow public to view any file in the uploads bucket
+CREATE POLICY "Public Access"
+ON storage.objects FOR SELECT
+USING ( bucket_id = 'uploads' );
+
+-- 3. Allow authenticated Admin to upload ANY file to the uploads bucket
+CREATE POLICY "Auth Uploads"
+ON storage.objects FOR INSERT
+TO authenticated
+WITH CHECK ( bucket_id = 'uploads' );
+
+-- 4. Allow authenticated Admin to update ANY file 
+CREATE POLICY "Auth Updates"
+ON storage.objects FOR UPDATE
+TO authenticated
+USING ( bucket_id = 'uploads' );
+
+-- 5. Allow authenticated Admin to delete ANY file
+CREATE POLICY "Auth Deletes"
+ON storage.objects FOR DELETE
+TO authenticated
+USING ( bucket_id = 'uploads' );

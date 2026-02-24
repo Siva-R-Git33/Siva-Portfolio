@@ -29,6 +29,11 @@ export const authAPI = {
         if (error) throw new Error(error.message);
         return { data: { token: data.session.access_token } };
     },
+    updatePassword: async (newPassword) => {
+        const { data, error } = await withAuth().auth.updateUser({ password: newPassword });
+        if (error) throw new Error(error.message);
+        return { data };
+    }
 };
 
 export const projectsAPI = {
