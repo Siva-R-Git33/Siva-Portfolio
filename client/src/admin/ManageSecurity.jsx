@@ -148,7 +148,10 @@ export default function ManageSecurity() {
                             </p>
 
                             <div className="bg-white p-4 rounded-xl inline-block mb-6">
-                                <QRCodeSVG value={enrollData.totp.uri} size={200} />
+                                <QRCodeSVG
+                                    value={enrollData.totp.uri.replace(/issuer=[^&]+/, 'issuer=Siva%20Portfolio').replace(/totp\/[^:]+/, 'totp/Siva%20Portfolio')}
+                                    size={200}
+                                />
                             </div>
 
                             <div className="w-full max-w-sm text-left">
