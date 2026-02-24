@@ -205,3 +205,69 @@
     transform: translateY(0);
   }
 }
+
+/* ==========================================================================
+   HACKER MODE OVERRIDES (Triggered by Feature Flag)
+   ========================================================================== */
+
+body.hacker-mode {
+    background: #000 !important;
+    background-image: none !important;
+    color: #00ff00 !important;
+}
+
+body.hacker-mode * {
+    font-family: 'Fira Code', monospace !important;
+}
+
+body.hacker-mode p, 
+body.hacker-mode h1, 
+body.hacker-mode h2, 
+body.hacker-mode h3, 
+body.hacker-mode h4,
+body.hacker-mode span {
+    color: #00ff00 !important;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.4) !important;
+}
+
+body.hacker-mode .cyber-card {
+    background: #001100 !important;
+    border-color: #00ff00 !important;
+    box-shadow: none !important;
+}
+
+body.hacker-mode .cyber-btn,
+body.hacker-mode .cyber-btn-solid {
+    background: #000 !important;
+    color: #00ff00 !important;
+    border: 1px solid #00ff00 !important;
+    box-shadow: none !important;
+}
+
+body.hacker-mode .cyber-btn:hover,
+body.hacker-mode .cyber-btn-solid:hover {
+    background: #00ff00 !important;
+    color: #000 !important;
+}
+
+body.hacker-mode img:not(.ghchart) {
+    filter: sepia(100%) hue-rotate(85deg) saturate(300%) contrast(150%) opacity(0.8) !important;
+    outline: 1px solid #00ff00 !important;
+}
+
+body.hacker-mode .bg-neon-purple,
+body.hacker-mode .bg-neon-blue,
+body.hacker-mode .bg-neon-red {
+    background-color: #00ff00 !important;
+}
+
+body.hacker-mode .text-neon-purple,
+body.hacker-mode .text-neon-blue,
+body.hacker-mode .text-neon-red {
+    color: #00ff00 !important;
+}
+
+body.hacker-mode .blur-3xl, 
+body.hacker-mode .blur-2xl {
+    display: none !important;
+}
