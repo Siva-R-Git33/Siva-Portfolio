@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { HiMenu, HiX } from 'react-icons/hi';
 import { Link, useLocation } from 'react-router-dom';
+import { settingsAPI } from '../utils/api';
 
 const navLinks = [
     { name: 'Home', href: '#home' },
@@ -10,6 +11,7 @@ const navLinks = [
     { name: 'Projects', href: '#projects' },
     { name: 'Certifications', href: '#certifications' },
     { name: 'Blog', href: '#blog' },
+    { name: 'Sec-Lab', href: '/lab', isPage: true },
     { name: 'Contact', href: '#contact' },
 ];
 
@@ -17,14 +19,22 @@ export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('home');
+    const [showSecurityLab, setShowSecurityLab] = useState(true);
     const location = useLocation();
+    const navigate = import('react-router-dom').then(m => m.useNavigate); // dynamically imported below
 
     useEffect(() => {
+        settingsAPI.get('feature_flags').then(res => {
+            if (res.data && res.data.showSecurityLab === false) {
+                setShowSecurityLab(false);
+            }
+        }).catch(() => { });
+
         const handleScroll = () => {
             setScrolled(window.scrollY > 50);
 
             if (location.pathname === '/') {
-                const sections = navLinks.map((l) => l.href.replace('#', ''));
+                const sections = navLinks.filter(l => !l.isPage).map((l) => l.href.replace('#', ''));
                 for (let i = sections.length - 1; i >= 0; i--) {
                     const el = document.getElementById(sections[i]);
                     if (el && el.getBoundingClientRect().top <= 150) {
@@ -32,6 +42,8 @@ export default function Navbar() {
                         break;
                     }
                 }
+            } else if (location.pathname === '/lab') {
+                setActiveSection('/lab');
             }
         };
 
@@ -39,13 +51,19 @@ export default function Navbar() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [location]);
 
-    const handleNavClick = (href) => {
+    const handleNavClick = (linkObj) => {
         setMobileOpen(false);
-        if (location.pathname !== '/') {
-            window.location.href = '/' + href;
+
+        if (linkObj.isPage) {
+            window.location.href = linkObj.href;
             return;
         }
-        const el = document.querySelector(href);
+
+        if (location.pathname !== '/') {
+            window.location.href = '/' + linkObj.href;
+            return;
+        }
+        const el = document.querySelector(linkObj.href);
         if (el) el.scrollIntoView({ behavior: 'smooth' });
     };
 
@@ -72,10 +90,10 @@ export default function Navbar() {
 
                 {/* Desktop Nav */}
                 <div className="hidden md:flex items-center gap-1">
-                    {navLinks.map((link) => (
+                    {navLinks.filter(link => showSecurityLab || link.name !== 'Sec-Lab').map((link) => (
                         <button
                             key={link.name}
-                            onClick={() => handleNavClick(link.href)}
+                            onClick={() => handleNavClick(link)}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${activeSection === link.href.replace('#', '')
                                 ? 'text-neon-green bg-neon-green/10'
                                 : 'text-gray-400 hover:text-neon-green hover:bg-neon-green/5'
@@ -102,10 +120,10 @@ export default function Navbar() {
                     animate={{ opacity: 1, y: 0 }}
                     className="md:hidden glass mt-2 mx-4 rounded-xl p-4"
                 >
-                    {navLinks.map((link) => (
+                    {navLinks.filter(link => showSecurityLab || link.name !== 'Sec-Lab').map((link) => (
                         <button
                             key={link.name}
-                            onClick={() => handleNavClick(link.href)}
+                            onClick={() => handleNavClick(link)}
                             className="block w-full text-left px-4 py-3 text-gray-300 hover:text-neon-green hover:bg-neon-green/5 rounded-lg transition-all"
                         >
                             {link.name}

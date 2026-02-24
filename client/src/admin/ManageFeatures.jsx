@@ -10,6 +10,7 @@ const DEFAULT_FLAGS = {
     showProjectFilters: false,
     showHireMeModal: false,
     enableResumeTracking: false,
+    showSecurityLab: true,
 };
 
 const FLAG_CONFIG = [
@@ -19,6 +20,7 @@ const FLAG_CONFIG = [
     { key: 'showProjectFilters', title: 'Dynamic Content Filtering', desc: 'Enable tag/stack filtering for Projects and Blogs.', icon: FaFilter },
     { key: 'showHireMeModal', title: 'Freelance "Hire Me" Modal', desc: 'Add a specialized consulting inquiry form.', icon: FaBriefcase },
     { key: 'enableResumeTracking', title: 'Pro Analytics & Resume Tracking', desc: 'Log resume downloads and track basic site interactions.', icon: FaChartLine },
+    { key: 'showSecurityLab', title: 'Security Lab Section', desc: 'Enable the standalone interactive cybersecurity tools page.', icon: FaTerminal },
 ];
 
 export default function ManageFeatures() {

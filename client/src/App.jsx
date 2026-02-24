@@ -11,6 +11,7 @@ import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import HackerModeToggle from './components/HackerModeToggle';
 import HireMeModal from './components/HireMeModal';
+import SecurityLab from './pages/SecurityLab';
 import useTheme from './hooks/useTheme';
 
 function App() {
@@ -65,6 +66,16 @@ function App() {
                         <div id="site-wrapper">
                             <Navbar />
                             <BlogPost />
+                            <Footer />
+                        </div>
+                    }
+                />
+                <Route
+                    path="/lab"
+                    element={
+                        <div id="site-wrapper">
+                            <Navbar />
+                            <SecurityLab />
                             <Footer />
                         </div>
                     }
