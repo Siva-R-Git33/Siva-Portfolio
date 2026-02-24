@@ -149,7 +149,7 @@ export default function ManageSecurity() {
 
                             <div className="bg-white p-4 rounded-xl inline-block mb-6">
                                 <QRCodeSVG
-                                    value={enrollData.totp.uri.replace(/issuer=[^&]+/, 'issuer=Siva%20Portfolio').replace(/totp\/[^:]+/, 'totp/Siva%20Portfolio')}
+                                    value={`otpauth://totp/Siva%20Portfolio:${enrollData.totp.uri.split('?')[0].split(':').pop()}?secret=${enrollData.totp.secret}&issuer=Siva%20Portfolio&algorithm=SHA1&digits=6&period=30`}
                                     size={200}
                                 />
                             </div>
