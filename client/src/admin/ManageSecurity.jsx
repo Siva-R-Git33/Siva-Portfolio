@@ -40,6 +40,7 @@ export default function ManageSecurity() {
             setStatus('enrolling');
         } catch (err) {
             setError(err.message || 'Failed to start enrollment.');
+            setStatus('disabled'); // Prevent UI lockup
         }
     };
 

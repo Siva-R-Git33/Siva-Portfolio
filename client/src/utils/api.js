@@ -58,9 +58,10 @@ export const authAPI = {
             }
         }
 
+        const hashName = `Admin Access (${new Date().toISOString()})`;
         const { data, error } = await withAuth().auth.mfa.enroll({
             factorType: 'totp',
-            friendlyName: 'Admin Authenticator'
+            friendlyName: hashName
         });
         if (error) throw new Error(error.message);
         return { data };
