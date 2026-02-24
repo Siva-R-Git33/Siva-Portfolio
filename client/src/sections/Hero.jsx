@@ -23,6 +23,7 @@ export default function Hero() {
     const [socials, setSocials] = useState(defaultSocials);
     const [activeResumeUrl, setActiveResumeUrl] = useState('');
     const [heroProfile, setHeroProfile] = useState({ enabled: false, url: '', position: 'left' });
+    const [trackingEnabled, setTrackingEnabled] = useState(false);
 
     const [roleIndex, setRoleIndex] = useState(0);
     const [displayText, setDisplayText] = useState('');
@@ -33,8 +34,9 @@ export default function Hero() {
             settingsAPI.get('hero_content'),
             settingsAPI.get('social_links'),
             settingsAPI.get('resumeVersions'),
-            settingsAPI.get('hero_profile')
-        ]).then(([hRes, sRes, rRes, hpRes]) => {
+            settingsAPI.get('hero_profile'),
+            settingsAPI.get('feature_flags')
+        ]).then(([hRes, sRes, rRes, hpRes, fRes]) => {
             if (hRes.data) setHero(hRes.data);
             if (sRes.data) setSocials(sRes.data);
             if (rRes.data && rRes.data.length > 0) {
@@ -42,8 +44,28 @@ export default function Hero() {
                 if (active) setActiveResumeUrl(active.url);
             }
             if (hpRes.data) setHeroProfile(hpRes.data);
+            if (fRes.data?.enableResumeTracking) setTrackingEnabled(true);
         }).catch(() => { });
     }, []);
+
+    const handleResumeDownload = async () => {
+        if (!activeResumeUrl) return;
+
+        if (trackingEnabled) {
+            try {
+                // We'll import supabase directly here for the quick analytics insert 
+                // to avoid building a whole new API class just for one RPC call.
+                const { supabase } = await import('../utils/api');
+                await supabase.from('analytics_logs').insert([
+                    { event_type: 'resume_download', details: { url: activeResumeUrl } }
+                ]);
+            } catch (error) {
+                console.error('Analytics error:', error);
+            }
+        }
+
+        window.open(activeResumeUrl, '_blank');
+    };
 
     useEffect(() => {
         const roles = hero.titles && hero.titles.length > 0 ? hero.titles : ['Loading...'];
@@ -160,9 +182,9 @@ export default function Hero() {
                                 View Projects
                             </a>
                             {activeResumeUrl && (
-                                <a href={activeResumeUrl} target="_blank" rel="noopener noreferrer" className="cyber-btn text-center" download>
+                                <button onClick={handleResumeDownload} className="cyber-btn text-center">
                                     Download Resume
-                                </a>
+                                </button>
                             )}
                         </motion.div>
 

@@ -11,14 +11,16 @@ import ManageCertifications from '../admin/ManageCertifications';
 import ManageContent from '../admin/ManageContent';
 import ManageTheme from '../admin/ManageTheme';
 import ManageFeatures from '../admin/ManageFeatures';
+import ManageAnalytics from '../admin/ManageAnalytics';
 import Messages from '../admin/Messages';
-import { FaToggleOn } from 'react-icons/fa';
+import { FaToggleOn, FaChartLine } from 'react-icons/fa';
 
 const menuItems = [
     { path: '/admin/dashboard', label: 'Dashboard', icon: FaTachometerAlt },
     { path: '/admin/features', label: 'Feature Flags', icon: FaToggleOn },
     { path: '/admin/content', label: 'Site Content', icon: FaEdit },
     { path: '/admin/theme', label: 'Theme', icon: FaPalette },
+    { path: '/admin/analytics', label: 'Analytics', icon: FaChartLine },
     { path: '/admin/projects', label: 'Projects', icon: FaProjectDiagram },
     { path: '/admin/blogs', label: 'Blog Posts', icon: FaBlog },
     { path: '/admin/skills', label: 'Skills', icon: FaCogs },
@@ -31,10 +33,11 @@ function DashboardHome() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {[
                 { label: 'Feature Flags', icon: FaToggleOn, color: 'neon-purple', path: '/admin/features' },
-                { label: 'Site Content', icon: FaEdit, color: 'neon-green', path: '/admin/content' },
-                { label: 'Projects', icon: FaProjectDiagram, color: 'neon-blue', path: '/admin/projects' },
-                { label: 'Blog Posts', icon: FaBlog, color: 'neon-purple', path: '/admin/blogs' },
-                { label: 'Skills', icon: FaCogs, color: 'neon-green', path: '/admin/skills' },
+                { label: 'Analytics', icon: FaChartLine, color: 'neon-green', path: '/admin/analytics' },
+                { label: 'Site Content', icon: FaEdit, color: 'neon-blue', path: '/admin/content' },
+                { label: 'Projects', icon: FaProjectDiagram, color: 'neon-purple', path: '/admin/projects' },
+                { label: 'Blog Posts', icon: FaBlog, color: 'neon-green', path: '/admin/blogs' },
+                { label: 'Skills', icon: FaCogs, color: 'neon-blue', path: '/admin/skills' },
                 { label: 'Certifications', icon: FaCertificate, color: 'neon-blue', path: '/admin/certifications' },
                 { label: 'Messages', icon: FaEnvelope, color: 'neon-red', path: '/admin/messages' },
             ].map((item) => (
@@ -162,6 +165,7 @@ export default function AdminDashboard() {
                     <Routes>
                         <Route path="dashboard" element={<DashboardHome />} />
                         <Route path="features" element={<ManageFeatures />} />
+                        <Route path="analytics" element={<ManageAnalytics />} />
                         <Route path="content" element={<ManageContent />} />
                         <Route path="theme" element={<ManageTheme />} />
                         <Route path="projects" element={<ManageProjects />} />

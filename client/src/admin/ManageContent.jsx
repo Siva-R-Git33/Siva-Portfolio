@@ -41,6 +41,11 @@ export default function ManageContent() {
     const [socials, setSocials] = useState(defaultSocials);
     const [heroProfile, setHeroProfile] = useState({ enabled: false, url: '', position: 'left' });
     const [uploadingProfile, setUploadingProfile] = useState(false);
+    const [seo, setSeo] = useState({
+        title: 'Siva R | Cybersecurity Portfolio',
+        description: 'Aspiring Ethical Hacker and Blue Team professional focused on vulnerability assessment and threat detection.',
+        ogImage: 'https://api.dicebear.com/7.x/bottts/svg?seed=hacker'
+    });
 
     const [resumeVersions, setResumeVersions] = useState([]);
     const [uploadingResume, setUploadingResume] = useState(false);
@@ -50,13 +55,14 @@ export default function ManageContent() {
 
     const loadData = async () => {
         try {
-            const [hRes, aRes, sRes, bRes, rRes, hpRes] = await Promise.all([
+            const [hRes, aRes, sRes, bRes, rRes, hpRes, seoRes] = await Promise.all([
                 settingsAPI.get('hero_content'),
                 settingsAPI.get('about_content'),
                 settingsAPI.get('social_links'),
                 settingsAPI.get('showBlogSection'),
                 settingsAPI.get('resumeVersions'),
-                settingsAPI.get('hero_profile')
+                settingsAPI.get('hero_profile'),
+                settingsAPI.get('seo_settings')
             ]);
             if (hRes.data) setHero(hRes.data);
             if (aRes.data) setAbout(aRes.data);
@@ -64,6 +70,7 @@ export default function ManageContent() {
             if (bRes.data !== null) setShowBlog(bRes.data);
             if (rRes.data) setResumeVersions(rRes.data);
             if (hpRes.data) setHeroProfile(hpRes.data);
+            if (seoRes.data) setSeo(seoRes.data);
         } catch (error) {
             console.error(error);
         } finally {
@@ -491,6 +498,33 @@ export default function ManageContent() {
                         </div>
                     </div>
 
+                </div>
+            </div>
+
+            {/* SEO Settings Form */}
+            <div className="cyber-card">
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-xl font-bold text-[#ff8800]">Global SEO Settings</h2>
+                    <button onClick={() => saveSettings('seo_settings', seo)} className="cyber-btn-solid text-xs flex items-center gap-2">
+                        <FaSave /> Save SEO
+                    </button>
+                </div>
+                <div className="space-y-4">
+                    <div>
+                        <label className="block text-gray-400 text-sm mb-1 font-mono">Site Title Tag</label>
+                        <input type="text" value={seo.title} onChange={(e) => setSeo({ ...seo, title: e.target.value })}
+                            className="w-full bg-cyber-dark border border-cyber-border rounded-lg px-4 py-2 text-white text-sm focus:border-[#ff8800] outline-none" />
+                    </div>
+                    <div>
+                        <label className="block text-gray-400 text-sm mb-1 font-mono">Meta Description</label>
+                        <textarea rows={3} value={seo.description} onChange={(e) => setSeo({ ...seo, description: e.target.value })}
+                            className="w-full bg-cyber-dark border border-cyber-border rounded-lg px-4 py-2 text-white text-sm resize-none focus:border-[#ff8800] outline-none" />
+                    </div>
+                    <div>
+                        <label className="block text-gray-400 text-sm mb-1 font-mono">OpenGraph Image URL (For link previews)</label>
+                        <input type="text" value={seo.ogImage} onChange={(e) => setSeo({ ...seo, ogImage: e.target.value })}
+                            className="w-full bg-cyber-dark border border-cyber-border rounded-lg px-4 py-2 text-white text-sm focus:border-[#ff8800] outline-none" />
+                    </div>
                 </div>
             </div>
 

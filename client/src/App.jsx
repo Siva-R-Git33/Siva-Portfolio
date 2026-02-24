@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { settingsAPI } from './utils/api';
 import LoadingScreen from './components/LoadingScreen';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -13,9 +15,19 @@ import useTheme from './hooks/useTheme';
 
 function App() {
     const [loading, setLoading] = useState(true);
+    const [seo, setSeo] = useState({
+        title: 'Siva R | Cybersecurity Portfolio',
+        description: 'Aspiring Ethical Hacker and Blue Team professional focused on vulnerability assessment and threat detection.',
+        ogImage: 'https://api.dicebear.com/7.x/bottts/svg?seed=hacker'
+    });
     useTheme();
 
     useEffect(() => {
+        // Fetch SEO settings alongside the synthetic timer
+        settingsAPI.get('seo_settings').then(res => {
+            if (res.data) setSeo(prev => ({ ...prev, ...res.data }));
+        }).catch(() => { });
+
         const timer = setTimeout(() => setLoading(false), 2800);
         return () => clearTimeout(timer);
     }, []);
@@ -24,6 +36,14 @@ function App() {
 
     return (
         <div className="min-h-screen bg-cyber-black grid-bg">
+            <Helmet>
+                <title>{seo.title}</title>
+                <meta name="description" content={seo.description} />
+                <meta property="og:title" content={seo.title} />
+                <meta property="og:description" content={seo.description} />
+                <meta property="og:image" content={seo.ogImage} />
+                <meta name="twitter:card" content="summary_large_image" />
+            </Helmet>
             <HackerModeToggle />
             <HireMeModal />
             <Routes>
