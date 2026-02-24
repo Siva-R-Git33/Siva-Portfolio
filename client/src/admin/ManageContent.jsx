@@ -44,6 +44,7 @@ export default function ManageContent() {
     const [seo, setSeo] = useState({
         title: 'Siva R | Cybersecurity Portfolio',
         description: 'Aspiring Ethical Hacker and Blue Team professional focused on vulnerability assessment and threat detection.',
+        keywords: 'cybersecurity, ethical hacking, blue team, penetration testing, CTF, portfolio, security analyst',
         ogImage: 'https://api.dicebear.com/7.x/bottts/svg?seed=hacker'
     });
 
@@ -519,6 +520,11 @@ export default function ManageContent() {
                         <label className="block text-gray-400 text-sm mb-1 font-mono">Meta Description</label>
                         <textarea rows={3} value={seo.description} onChange={(e) => setSeo({ ...seo, description: e.target.value })}
                             className="w-full bg-cyber-dark border border-cyber-border rounded-lg px-4 py-2 text-white text-sm resize-none focus:border-[#ff8800] outline-none" />
+                    </div>
+                    <div>
+                        <label className="block text-gray-400 text-sm mb-1 font-mono">Meta Keywords (Comma-separated)</label>
+                        <input type="text" value={seo.keywords} onChange={(e) => setSeo({ ...seo, keywords: e.target.value })}
+                            className="w-full bg-cyber-dark border border-cyber-border rounded-lg px-4 py-2 text-white text-sm focus:border-[#ff8800] outline-none" />
                     </div>
                     <div>
                         <label className="block text-gray-400 text-sm mb-1 font-mono">OpenGraph Image URL (For link previews)</label>

@@ -18,6 +18,7 @@ function App() {
     const [seo, setSeo] = useState({
         title: 'Siva R | Cybersecurity Portfolio',
         description: 'Aspiring Ethical Hacker and Blue Team professional focused on vulnerability assessment and threat detection.',
+        keywords: 'cybersecurity, ethical hacking, blue team, penetration testing, CTF, portfolio, security analyst',
         ogImage: 'https://api.dicebear.com/7.x/bottts/svg?seed=hacker'
     });
     useTheme();
@@ -39,6 +40,7 @@ function App() {
             <Helmet>
                 <title>{seo.title}</title>
                 <meta name="description" content={seo.description} />
+                <meta name="keywords" content={seo.keywords} />
                 <meta property="og:title" content={seo.title} />
                 <meta property="og:description" content={seo.description} />
                 <meta property="og:image" content={seo.ogImage} />
