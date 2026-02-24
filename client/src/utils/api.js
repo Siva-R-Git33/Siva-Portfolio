@@ -27,12 +27,53 @@ export const authAPI = {
             password: credentials.password
         });
         if (error) throw new Error(error.message);
-        return { data: { token: data.session.access_token } };
+
+        // Check if MFA is required for this user
+        const { data: mfaData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+        if (mfaData && mfaData.nextLevel === 'aal2' && mfaData.currentLevel === 'aal1') {
+            const factors = await supabase.auth.mfa.listFactors();
+            const totpFactor = factors.data?.totp.find(f => f.status === 'verified');
+            if (totpFactor) {
+                return { data: { requireMfa: true, factorId: totpFactor.id } };
+            }
+        }
+
+        return { data: { token: data.session.access_token, requireMfa: false } };
     },
     updatePassword: async (newPassword) => {
         const { data, error } = await withAuth().auth.updateUser({ password: newPassword });
         if (error) throw new Error(error.message);
         return { data };
+    },
+    // --- MFA (TOTP) Methods ---
+    mfaEnroll: async () => {
+        const { data, error } = await withAuth().auth.mfa.enroll({ factorType: 'totp' });
+        if (error) throw new Error(error.message);
+        return { data };
+    },
+    mfaChallenge: async (factorId) => {
+        const { data, error } = await withAuth().auth.mfa.challenge({ factorId });
+        if (error) throw new Error(error.message);
+        return { data };
+    },
+    mfaVerify: async (factorId, challengeId, code) => {
+        const { data, error } = await withAuth().auth.mfa.verify({ factorId, challengeId, code });
+        if (error) throw new Error(error.message);
+
+        // Grab the updated session which now contains AAL2 claims
+        const session = await supabase.auth.getSession();
+        return { data: { token: session.data.session?.access_token } };
+    },
+    mfaUnenroll: async (factorId) => {
+        const { data, error } = await withAuth().auth.mfa.unenroll({ factorId });
+        if (error) throw new Error(error.message);
+        return { data };
+    },
+    getUserFactors: async () => {
+        const { data, error } = await withAuth().auth.mfa.listFactors();
+        if (error) throw new Error(error.message);
+        // Only return verified TOTP factors
+        return { data: data.totp.filter(f => f.status === 'verified') };
     }
 };
 
