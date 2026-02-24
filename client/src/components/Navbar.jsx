@@ -11,7 +11,7 @@ const navLinks = [
     { name: 'Projects', href: '#projects' },
     { name: 'Certifications', href: '#certifications' },
     { name: 'Blog', href: '#blog' },
-    { name: 'Sec-Lab', href: '/lab', isPage: true },
+    { name: 'Labs', href: '/lab', isPage: true },
     { name: 'Contact', href: '#contact' },
 ];
 
@@ -90,7 +90,7 @@ export default function Navbar() {
 
                 {/* Desktop Nav */}
                 <div className="hidden md:flex items-center gap-1">
-                    {navLinks.filter(link => showSecurityLab || link.name !== 'Sec-Lab').map((link) => (
+                    {navLinks.filter(link => showSecurityLab || link.name !== 'Labs').map((link) => (
                         <button
                             key={link.name}
                             onClick={() => handleNavClick(link)}
@@ -120,7 +120,7 @@ export default function Navbar() {
                     animate={{ opacity: 1, y: 0 }}
                     className="md:hidden glass mt-2 mx-4 rounded-xl p-4"
                 >
-                    {navLinks.filter(link => showSecurityLab || link.name !== 'Sec-Lab').map((link) => (
+                    {navLinks.filter(link => showSecurityLab || link.name !== 'Labs').map((link) => (
                         <button
                             key={link.name}
                             onClick={() => handleNavClick(link)}
