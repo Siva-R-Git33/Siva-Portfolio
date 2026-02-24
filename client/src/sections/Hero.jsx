@@ -85,10 +85,10 @@ export default function Hero() {
             <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-neon-blue/5 rounded-full blur-3xl" />
 
             <div className="relative z-10 max-w-6xl mx-auto px-4 w-full">
-                <div className={`flex flex-col items-center justify-center gap-12 ${heroProfile.enabled && heroProfile.url ? (heroProfile.position === 'right' ? 'md:flex-row-reverse md:justify-between' : 'md:flex-row md:justify-between') : ''}`}>
+                <div className={`flex flex-col items-center justify-center gap-12 ${heroProfile.enabled ? (heroProfile.position === 'right' ? 'md:flex-row-reverse md:justify-between' : 'md:flex-row md:justify-between') : ''}`}>
 
                     {/* Optional Profile Picture */}
-                    {heroProfile.enabled && heroProfile.url && (
+                    {heroProfile.enabled && (
                         <motion.div
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
@@ -97,13 +97,13 @@ export default function Hero() {
                         >
                             <div className="absolute inset-0 bg-neon-green/20 rounded-full blur-2xl animate-pulse" />
                             <div className="w-full h-full rounded-full border-4 border-cyber-border overflow-hidden relative z-10 p-2 bg-cyber-black">
-                                <img src={heroProfile.url} alt="Profile" className="w-full h-full object-cover rounded-full" />
+                                <img src={heroProfile.url || 'https://api.dicebear.com/7.x/bottts/svg?seed=hacker&backgroundColor=transparent'} alt="Profile" className="w-full h-full object-cover rounded-full" />
                             </div>
                         </motion.div>
                     )}
 
                     {/* Text Content */}
-                    <div className={`flex-1 max-w-2xl ${heroProfile.enabled && heroProfile.url ? 'text-center md:text-left' : 'text-center mx-auto'}`}>
+                    <div className={`flex-1 max-w-2xl ${heroProfile.enabled ? 'text-center md:text-left' : 'text-center mx-auto'}`}>
                         {/* Greeting */}
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
@@ -132,7 +132,7 @@ export default function Hero() {
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.6 }}
-                            className={`text-xl md:text-2xl lg:text-3xl font-mono text-gray-300 mb-6 h-10 ${heroProfile.enabled && heroProfile.url ? 'justify-center md:justify-start' : 'justify-center'} flex items-center`}
+                            className={`text-xl md:text-2xl lg:text-3xl font-mono text-gray-300 mb-6 h-10 ${heroProfile.enabled ? 'justify-center md:justify-start' : 'justify-center'} flex items-center`}
                         >
                             <span className="text-neon-green">&gt; </span>
                             <span className="ml-2">{displayText}</span>
@@ -144,7 +144,7 @@ export default function Hero() {
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.8 }}
-                            className={`text-gray-400 text-lg md:text-xl mb-10 leading-relaxed ${heroProfile.enabled && heroProfile.url ? '' : 'max-w-2xl mx-auto'}`}
+                            className={`text-gray-400 text-lg md:text-xl mb-10 leading-relaxed ${heroProfile.enabled ? '' : 'max-w-2xl mx-auto'}`}
                         >
                             {hero.description}
                         </motion.p>
@@ -154,7 +154,7 @@ export default function Hero() {
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 1 }}
-                            className={`flex flex-col sm:flex-row gap-4 mb-10 ${heroProfile.enabled && heroProfile.url ? 'justify-center md:justify-start' : 'justify-center items-center'}`}
+                            className={`flex flex-col sm:flex-row gap-4 mb-10 ${heroProfile.enabled ? 'justify-center md:justify-start' : 'justify-center items-center'}`}
                         >
                             <a href="#projects" className="cyber-btn-solid text-center">
                                 View Projects
@@ -171,7 +171,7 @@ export default function Hero() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.6, delay: 1.2 }}
-                            className={`flex gap-6 ${heroProfile.enabled && heroProfile.url ? 'justify-center md:justify-start' : 'justify-center items-center'}`}
+                            className={`flex gap-6 ${heroProfile.enabled ? 'justify-center md:justify-start' : 'justify-center items-center'}`}
                         >
                             {socialIcons.map((social) => (
                                 <motion.a
