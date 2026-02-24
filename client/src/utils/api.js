@@ -162,6 +162,26 @@ export const settingsAPI = {
     },
 };
 
+export const storageAPI = {
+    // Upload a file to a specific path in a bucket
+    uploadFile: async (bucket, path, file) => {
+        const { data, error } = await withAuth().storage.from(bucket).upload(path, file, { upsert: true });
+        if (error) throw new Error(error.message);
+        return { data };
+    },
+    // Get the public URL for a file
+    getPublicUrl: (bucket, path) => {
+        const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+        return { data: data.publicUrl };
+    },
+    // Delete a file
+    deleteFile: async (bucket, path) => {
+        const { data, error } = await withAuth().storage.from(bucket).remove([path]);
+        if (error) throw new Error(error.message);
+        return { data };
+    }
+};
+
 // We don't export the generic axios instance anymore.
 // We just export the individual API route collections.
-export default { authAPI, projectsAPI, blogsAPI, skillsAPI, certificationsAPI, contactAPI, githubAPI, settingsAPI };
+export default { authAPI, projectsAPI, blogsAPI, skillsAPI, certificationsAPI, contactAPI, githubAPI, settingsAPI, storageAPI };

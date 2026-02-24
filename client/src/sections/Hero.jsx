@@ -9,7 +9,6 @@ const defaultHero = {
     name: 'Siva R',
     titles: ['Cybersecurity Enthusiast', 'Ethical Hacker'],
     description: 'Aspiring Ethical Hacker and Blue Team professional focused on vulnerability assessment, threat detection, and responsible cybersecurity practices.',
-    resumeUrl: '/Siva R-Resume.pdf'
 };
 
 const defaultSocials = {
@@ -22,6 +21,7 @@ const defaultSocials = {
 export default function Hero() {
     const [hero, setHero] = useState(defaultHero);
     const [socials, setSocials] = useState(defaultSocials);
+    const [activeResumeUrl, setActiveResumeUrl] = useState('');
 
     const [roleIndex, setRoleIndex] = useState(0);
     const [displayText, setDisplayText] = useState('');
@@ -30,10 +30,15 @@ export default function Hero() {
     useEffect(() => {
         Promise.all([
             settingsAPI.get('hero_content'),
-            settingsAPI.get('social_links')
-        ]).then(([hRes, sRes]) => {
+            settingsAPI.get('social_links'),
+            settingsAPI.get('resumeVersions')
+        ]).then(([hRes, sRes, rRes]) => {
             if (hRes.data) setHero(hRes.data);
             if (sRes.data) setSocials(sRes.data);
+            if (rRes.data && rRes.data.length > 0) {
+                const active = rRes.data.find(v => v.active);
+                if (active) setActiveResumeUrl(active.url);
+            }
         }).catch(() => { });
     }, []);
 
@@ -132,8 +137,8 @@ export default function Hero() {
                     <a href="#projects" className="cyber-btn-solid">
                         View Projects
                     </a>
-                    {hero.resumeUrl && (
-                        <a href={hero.resumeUrl} target="_blank" rel="noopener noreferrer" className="cyber-btn">
+                    {activeResumeUrl && (
+                        <a href={activeResumeUrl} target="_blank" rel="noopener noreferrer" className="cyber-btn" download>
                             Download Resume
                         </a>
                     )}

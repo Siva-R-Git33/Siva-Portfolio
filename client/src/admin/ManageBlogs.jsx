@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaPlus, FaEdit, FaTrash, FaTimes, FaSave, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { blogsAPI, settingsAPI } from '../utils/api';
+import { FaPlus, FaEdit, FaTrash, FaTimes, FaSave, FaEye, FaEyeSlash, FaImage, FaSpinner } from 'react-icons/fa';
+import { blogsAPI, settingsAPI, storageAPI } from '../utils/api';
+import BlogEditor from './BlogEditor';
 
 export default function ManageBlogs() {
     const [posts, setPosts] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [editing, setEditing] = useState(null);
     const [showBlogSection, setShowBlogSection] = useState(true);
+    const [uploadingCover, setUploadingCover] = useState(false);
     const [form, setForm] = useState({
-        title: '', slug: '', content: '', excerpt: '', tags: '', published: false,
+        title: '', slug: '', content: '', excerpt: '', tags: '', published: false, coverImage: ''
     });
 
     const load = () => blogsAPI.getAllAdmin().then((res) => setPosts(res.data)).catch(() => { });
@@ -33,7 +35,7 @@ export default function ManageBlogs() {
 
     const openNew = () => {
         setEditing(null);
-        setForm({ title: '', slug: '', content: '', excerpt: '', tags: '', published: false });
+        setForm({ title: '', slug: '', content: '', excerpt: '', tags: '', published: false, coverImage: '' });
         setShowModal(true);
     };
 
@@ -42,9 +44,35 @@ export default function ManageBlogs() {
         setForm({
             title: p.title, slug: p.slug, content: p.content,
             excerpt: p.excerpt || '', tags: p.tags?.join(', ') || '',
-            published: p.published,
+            published: p.published, coverImage: p.coverImage || ''
         });
         setShowModal(true);
+    };
+
+    const handleCoverUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (file.size > 2 * 1024 * 1024) {
+            alert('Cover image must be under 2MB.');
+            return;
+        }
+
+        setUploadingCover(true);
+        try {
+            const filename = `cover_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`;
+            const path = `blog-covers/${filename}`;
+
+            await storageAPI.uploadFile('uploads', path, file);
+            const { data: url } = storageAPI.getPublicUrl('uploads', path);
+
+            setForm({ ...form, coverImage: url });
+        } catch (err) {
+            console.error('Upload failed:', err);
+            alert('Failed to upload cover image.');
+        } finally {
+            setUploadingCover(false);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -169,7 +197,7 @@ export default function ManageBlogs() {
                     >
                         <motion.div
                             initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-                            className="glass rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+                            className="glass rounded-xl p-6 w-full max-w-5xl max-h-[95vh] overflow-y-auto"
                         >
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-lg font-bold text-white">{editing ? 'Edit Post' : 'New Post'}</h2>
@@ -187,16 +215,29 @@ export default function ManageBlogs() {
                                         className="w-full bg-cyber-gray border border-cyber-border rounded-lg px-4 py-2 text-white focus:border-neon-green focus:outline-none text-sm"
                                         placeholder="my-blog-post" />
                                 </div>
-                                <div>
-                                    <label className="block text-gray-400 text-sm mb-1 font-mono">Excerpt</label>
-                                    <input type="text" value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
-                                        className="w-full bg-cyber-gray border border-cyber-border rounded-lg px-4 py-2 text-white focus:border-neon-green focus:outline-none text-sm"
-                                        placeholder="Short description..." />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-gray-400 text-sm mb-1 font-mono">Excerpt</label>
+                                        <input type="text" value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
+                                            className="w-full bg-cyber-gray border border-cyber-border rounded-lg px-4 py-2 text-white focus:border-neon-green focus:outline-none text-sm"
+                                            placeholder="Short description..." />
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-400 text-sm mb-1 font-mono">Cover Image (URL or Upload)</label>
+                                        <div className="flex gap-2">
+                                            <input type="text" value={form.coverImage} onChange={(e) => setForm({ ...form, coverImage: e.target.value })}
+                                                className="flex-1 bg-cyber-gray border border-cyber-border rounded-lg px-4 py-2 text-white focus:border-neon-green focus:outline-none text-sm"
+                                                placeholder="https://..." />
+                                            <label className="flex items-center justify-center bg-cyber-dark border border-cyber-border rounded-lg px-4 cursor-pointer hover:border-neon-green transition-colors disabled:opacity-50">
+                                                {uploadingCover ? <FaSpinner className="animate-spin text-neon-green" /> : <FaImage className="text-gray-400" />}
+                                                <input type="file" accept="image/*" className="hidden" onChange={handleCoverUpload} disabled={uploadingCover} />
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div>
-                                    <label className="block text-gray-400 text-sm mb-1 font-mono">Content (Markdown)</label>
-                                    <textarea required rows={12} value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })}
-                                        className="w-full bg-cyber-gray border border-cyber-border rounded-lg px-4 py-2 text-white focus:border-neon-green focus:outline-none text-sm font-mono resize-none" />
+                                    <label className="block text-gray-400 text-sm mb-1 font-mono">Content</label>
+                                    <BlogEditor content={form.content} setContent={(c) => setForm({ ...form, content: c })} />
                                 </div>
                                 <div>
                                     <label className="block text-gray-400 text-sm mb-1 font-mono">Tags (comma-separated: CTF, Blue Team, Pentesting)</label>
