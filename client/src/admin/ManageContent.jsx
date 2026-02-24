@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaSave, FaPlus, FaTrash, FaUpload, FaFilePdf, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
+import { FaSave, FaPlus, FaTrash, FaUpload, FaFilePdf, FaCheckCircle, FaExclamationTriangle, FaImage, FaSpinner } from 'react-icons/fa';
 import { settingsAPI, storageAPI } from '../utils/api';
 
 const defaultHero = {
@@ -39,6 +39,9 @@ export default function ManageContent() {
     const [hero, setHero] = useState(defaultHero);
     const [about, setAbout] = useState(defaultAbout);
     const [socials, setSocials] = useState(defaultSocials);
+    const [heroProfile, setHeroProfile] = useState({ enabled: false, url: '', position: 'left' });
+    const [uploadingProfile, setUploadingProfile] = useState(false);
+
     const [resumeVersions, setResumeVersions] = useState([]);
     const [uploadingResume, setUploadingResume] = useState(false);
     const [uploadError, setUploadError] = useState('');
@@ -47,18 +50,20 @@ export default function ManageContent() {
 
     const loadData = async () => {
         try {
-            const [hRes, aRes, sRes, bRes, rRes] = await Promise.all([
+            const [hRes, aRes, sRes, bRes, rRes, hpRes] = await Promise.all([
                 settingsAPI.get('hero_content'),
                 settingsAPI.get('about_content'),
                 settingsAPI.get('social_links'),
                 settingsAPI.get('showBlogSection'),
-                settingsAPI.get('resumeVersions')
+                settingsAPI.get('resumeVersions'),
+                settingsAPI.get('hero_profile')
             ]);
             if (hRes.data) setHero(hRes.data);
             if (aRes.data) setAbout(aRes.data);
             if (sRes.data) setSocials(sRes.data);
             if (bRes.data !== null) setShowBlog(bRes.data);
             if (rRes.data) setResumeVersions(rRes.data);
+            if (hpRes.data) setHeroProfile(hpRes.data);
         } catch (error) {
             console.error(error);
         } finally {
@@ -82,6 +87,41 @@ export default function ManageContent() {
         const next = !showBlog;
         setShowBlog(next);
         await settingsAPI.set('showBlogSection', next);
+    };
+
+    const toggleHeroProfile = async () => {
+        const next = { ...heroProfile, enabled: !heroProfile.enabled };
+        setHeroProfile(next);
+        await settingsAPI.set('hero_profile', next);
+    };
+
+    const handleProfileImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (file.size > 2 * 1024 * 1024) {
+            alert('Image must be under 2MB.');
+            return;
+        }
+
+        setUploadingProfile(true);
+        try {
+            const filename = `profile_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`;
+            const path = `profile/${filename}`;
+
+            await storageAPI.uploadFile('uploads', path, file);
+            const { data: url } = storageAPI.getPublicUrl('uploads', path);
+
+            const next = { ...heroProfile, url };
+            setHeroProfile(next);
+            await settingsAPI.set('hero_profile', next);
+        } catch (err) {
+            console.error('Upload failed:', err);
+            alert('Failed to upload profile picture.');
+        } finally {
+            setUploadingProfile(false);
+            e.target.value = '';
+        }
     };
 
     const handleResumeUpload = async (e) => {
@@ -304,6 +344,77 @@ export default function ManageContent() {
                         <textarea rows={3} value={hero.description} onChange={(e) => setHero({ ...hero, description: e.target.value })}
                             className="w-full bg-cyber-dark border border-cyber-border rounded-lg px-4 py-2 text-white text-sm resize-none" />
                     </div>
+                </div>
+            </div>
+
+            {/* Hero Profile Picture Toggle & Settings */}
+            <div className="cyber-card">
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-xl font-bold text-neon-blue">Hero Profile Picture</h2>
+                    <button onClick={() => saveSettings('hero_profile', heroProfile)} className="cyber-btn-solid text-xs flex items-center gap-2">
+                        <FaSave /> Save Profile Settings
+                    </button>
+                </div>
+
+                <div className="space-y-6">
+                    {/* Enable Toggle */}
+                    <div className="flex justify-between items-center bg-cyber-dark p-4 rounded-lg border border-cyber-border">
+                        <div>
+                            <p className="text-white font-semibold">Show Profile Picture</p>
+                            <p className="text-gray-400 text-sm mt-1">If enabled, the Hero section will split into two columns with your image on one side.</p>
+                        </div>
+                        <button
+                            onClick={toggleHeroProfile}
+                            className={`relative inline-flex items-center w-14 h-7 rounded-full transition-colors duration-300 focus:outline-none ${heroProfile.enabled ? 'bg-neon-green' : 'bg-cyber-gray border border-cyber-border'}`}
+                        >
+                            <span className={`inline-block w-5 h-5 bg-white rounded-full shadow transition-transform duration-300 ${heroProfile.enabled ? 'translate-x-8' : 'translate-x-1'}`} />
+                        </button>
+                    </div>
+
+                    {heroProfile.enabled && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-cyber-black p-4 rounded-lg border border-cyber-border">
+                            {/* Position Selector */}
+                            <div>
+                                <label className="block text-gray-400 text-sm mb-2 font-mono">Image Position</label>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => setHeroProfile({ ...heroProfile, position: 'left' })}
+                                        className={`flex-1 py-2 px-4 rounded-lg transition-colors border font-mono text-sm ${heroProfile.position === 'left' ? 'bg-neon-green/20 border-neon-green text-neon-green' : 'bg-cyber-dark border-cyber-gray text-gray-400 hover:text-white'}`}
+                                    >
+                                        [ Image | Text ] (Left)
+                                    </button>
+                                    <button
+                                        onClick={() => setHeroProfile({ ...heroProfile, position: 'right' })}
+                                        className={`flex-1 py-2 px-4 rounded-lg transition-colors border font-mono text-sm ${heroProfile.position === 'right' ? 'bg-neon-green/20 border-neon-green text-neon-green' : 'bg-cyber-dark border-cyber-gray text-gray-400 hover:text-white'}`}
+                                    >
+                                        [ Text | Image ] (Right)
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Image Upload */}
+                            <div>
+                                <label className="block text-gray-400 text-sm mb-2 font-mono">Image URL or Upload</label>
+                                <div className="flex gap-2 mb-2">
+                                    <input type="text" value={heroProfile.url} onChange={(e) => setHeroProfile({ ...heroProfile, url: e.target.value })}
+                                        className="flex-1 bg-cyber-dark border border-cyber-border rounded-lg px-4 py-2 text-white focus:border-neon-green focus:outline-none text-sm"
+                                        placeholder="https://..." />
+                                    <label className="flex items-center justify-center bg-cyber-dark border border-cyber-border rounded-lg px-4 cursor-pointer hover:border-neon-green transition-colors disabled:opacity-50 h-[38px]">
+                                        {uploadingProfile ? <FaSpinner className="animate-spin text-neon-green" /> : <FaUpload className="text-gray-400" />}
+                                        <input type="file" accept="image/*" className="hidden" onChange={handleProfileImageUpload} disabled={uploadingProfile} />
+                                    </label>
+                                </div>
+                                {heroProfile.url && (
+                                    <div className="mt-2 text-center">
+                                        <div className="w-24 h-24 rounded-full border-2 border-neon-green mx-auto overflow-hidden bg-cyber-dark">
+                                            <img src={heroProfile.url} alt="Profile Preview" className="w-full h-full object-cover" />
+                                        </div>
+                                        <p className="text-xs text-gray-500 mt-2 font-mono">Current Preview</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
