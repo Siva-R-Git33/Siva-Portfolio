@@ -10,10 +10,13 @@ import ManageSkills from '../admin/ManageSkills';
 import ManageCertifications from '../admin/ManageCertifications';
 import ManageContent from '../admin/ManageContent';
 import ManageTheme from '../admin/ManageTheme';
+import ManageFeatures from '../admin/ManageFeatures';
 import Messages from '../admin/Messages';
+import { FaToggleOn } from 'react-icons/fa';
 
 const menuItems = [
     { path: '/admin/dashboard', label: 'Dashboard', icon: FaTachometerAlt },
+    { path: '/admin/features', label: 'Feature Flags', icon: FaToggleOn },
     { path: '/admin/content', label: 'Site Content', icon: FaEdit },
     { path: '/admin/theme', label: 'Theme', icon: FaPalette },
     { path: '/admin/projects', label: 'Projects', icon: FaProjectDiagram },
@@ -27,6 +30,7 @@ function DashboardHome() {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {[
+                { label: 'Feature Flags', icon: FaToggleOn, color: 'neon-purple', path: '/admin/features' },
                 { label: 'Site Content', icon: FaEdit, color: 'neon-green', path: '/admin/content' },
                 { label: 'Projects', icon: FaProjectDiagram, color: 'neon-blue', path: '/admin/projects' },
                 { label: 'Blog Posts', icon: FaBlog, color: 'neon-purple', path: '/admin/blogs' },
@@ -157,6 +161,7 @@ export default function AdminDashboard() {
                 <div className="max-w-6xl mx-auto">
                     <Routes>
                         <Route path="dashboard" element={<DashboardHome />} />
+                        <Route path="features" element={<ManageFeatures />} />
                         <Route path="content" element={<ManageContent />} />
                         <Route path="theme" element={<ManageTheme />} />
                         <Route path="projects" element={<ManageProjects />} />
