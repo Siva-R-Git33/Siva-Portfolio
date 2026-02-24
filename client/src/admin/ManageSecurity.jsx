@@ -33,6 +33,7 @@ export default function ManageSecurity() {
 
     const handleEnroll = async () => {
         setError('');
+        setStatus('loading');
         try {
             const res = await authAPI.mfaEnroll();
             setEnrollData(res.data);
@@ -146,7 +147,7 @@ export default function ManageSecurity() {
                             </p>
 
                             <div className="bg-white p-4 rounded-xl inline-block mb-6">
-                                <QRCodeSVG value={enrollData.totp.qr_code} size={200} />
+                                <QRCodeSVG value={enrollData.totp.uri} size={200} />
                             </div>
 
                             <div className="w-full max-w-sm text-left">
