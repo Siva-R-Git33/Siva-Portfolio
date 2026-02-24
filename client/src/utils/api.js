@@ -189,4 +189,5 @@ export const storageAPI = {
 
 // We don't export the generic axios instance anymore.
 // We just export the individual API route collections.
+export { supabase };
 export default { authAPI, projectsAPI, blogsAPI, skillsAPI, certificationsAPI, contactAPI, githubAPI, settingsAPI, storageAPI };
