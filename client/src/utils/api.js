@@ -191,7 +191,7 @@ export const certificationsAPI = {
 };
 
 export const contactAPI = {
-    send: (data) => handleResponse(supabase.from('contact_messages').insert([data]).select()),
+    send: (data) => handleResponse(supabase.from('contact_messages').insert([data])),
     getAll: () => handleResponse(withAuth().from('contact_messages').select('*').order('created_at', { ascending: false })),
     markRead: (id) => handleResponse(withAuth().from('contact_messages').update({ read: true }).eq('id', id).select()),
     delete: (id) => handleResponse(withAuth().from('contact_messages').delete().eq('id', id)),
