@@ -77,6 +77,11 @@ export default function AdminDashboard() {
         }
     }, [navigate]);
 
+    // Prevent Flash of Unauthenticated Content (FOUC)
+    if (!isAuthenticated()) {
+        return null;
+    }
+
     const handleChangePassword = async (e) => {
         e.preventDefault();
         setPasswordError('');
