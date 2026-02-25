@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaProjectDiagram, FaBlog, FaCogs, FaEnvelope, FaSignOutAlt, FaHome, FaTachometerAlt, FaCertificate, FaEdit, FaPalette, FaKey, FaTimes } from 'react-icons/fa';
+import { FaProjectDiagram, FaBlog, FaCogs, FaEnvelope, FaSignOutAlt, FaHome, FaTachometerAlt, FaCertificate, FaEdit, FaPalette, FaKey, FaTimes, FaBars } from 'react-icons/fa';
 import { isAuthenticated, logout } from '../utils/auth';
 import { authAPI } from '../utils/api';
 import ManageProjects from '../admin/ManageProjects';
@@ -63,6 +63,12 @@ export default function AdminDashboard() {
     const navigate = useNavigate();
     const location = useLocation();
     const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    // Close mobile menu on route change
+    useEffect(() => {
+        setMobileMenuOpen(false);
+    }, [location]);
 
     // Password Change State
     const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -114,14 +120,46 @@ export default function AdminDashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-cyber-black flex">
+        <div className="min-h-screen bg-cyber-black flex overflow-hidden">
+            {/* Mobile Sidebar Overlay Backdrop */}
+            <AnimatePresence>
+                {mobileMenuOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+                    />
+                )}
+            </AnimatePresence>
+
             {/* Sidebar */}
-            <aside className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-cyber-dark border-r border-cyber-border transition-all duration-300 flex flex-col shrink-0`}>
-                <div className="p-4 border-b border-cyber-border">
+            <aside className={`
+                fixed md:static inset-y-0 left-0 z-50
+                ${sidebarOpen ? 'w-64' : 'w-16'} 
+                ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+                bg-cyber-dark border-r border-cyber-border transition-all duration-300 flex flex-col shrink-0
+            `}>
+                <div className="p-4 border-b border-cyber-border flex items-center justify-between">
                     <Link to="/" className="flex items-center gap-2">
                         <span className="text-xl font-bold font-mono neon-text">{'<SR/>'}</span>
                         {sidebarOpen && <span className="text-gray-400 text-sm">Admin</span>}
                     </Link>
+                    {/* Native Desktop Sidebar Toggle */}
+                    <button
+                        onClick={() => setSidebarOpen(!sidebarOpen)}
+                        className="hidden md:block text-gray-500 hover:text-white transition-colors"
+                    >
+                        <FaBars />
+                    </button>
+                    {/* Mobile Close Button */}
+                    <button
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="md:hidden text-gray-500 hover:text-white transition-colors"
+                    >
+                        <FaTimes />
+                    </button>
                 </div>
 
                 <nav className="flex-1 p-3 space-y-1">
@@ -168,8 +206,22 @@ export default function AdminDashboard() {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 p-6 overflow-y-auto">
-                <div className="max-w-6xl mx-auto">
+            <main className="flex-1 overflow-y-auto flex flex-col h-screen">
+                {/* Mobile Header Bar */}
+                <div className="md:hidden flex items-center justify-between p-4 border-b border-cyber-border bg-cyber-dark shrink-0">
+                    <Link to="/" className="flex items-center gap-2">
+                        <span className="text-xl font-bold font-mono neon-text">{'<SR/>'}</span>
+                        <span className="text-gray-400 text-sm">Admin</span>
+                    </Link>
+                    <button
+                        onClick={() => setMobileMenuOpen(true)}
+                        className="text-gray-400 hover:text-white p-2"
+                    >
+                        <FaBars className="text-xl" />
+                    </button>
+                </div>
+
+                <div className="p-4 md:p-6 max-w-6xl mx-auto w-full flex-1">
                     <Routes>
                         <Route path="dashboard" element={<DashboardHome />} />
                         <Route path="features" element={<ManageFeatures />} />
