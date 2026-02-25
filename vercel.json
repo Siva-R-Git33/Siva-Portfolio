@@ -4,6 +4,10 @@
     "outputDirectory": "dist",
     "rewrites": [
         {
+            "source": "/api/supabase/(.*)",
+            "destination": "/api/supabase"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }
