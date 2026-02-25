@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { settingsAPI } from './utils/api';
@@ -8,10 +8,12 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import BlogPost from './pages/BlogPost';
 import AdminLogin from './pages/AdminLogin';
-import AdminDashboard from './pages/AdminDashboard';
 import HackerModeToggle from './components/HackerModeToggle';
 import HireMeModal from './components/HireMeModal';
-import SecurityLab from './pages/SecurityLab';
+
+// Lazy-loaded routes for performance optimization
+const SecurityLab = React.lazy(() => import('./pages/SecurityLab'));
+const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 import useTheme from './hooks/useTheme';
 
 function App() {
@@ -49,40 +51,44 @@ function App() {
             </Helmet>
             <HackerModeToggle />
             <HireMeModal />
-            <Routes>
-                <Route
-                    path="/"
-                    element={
-                        <div id="site-wrapper">
-                            <Navbar />
-                            <Home />
-                            <Footer />
-                        </div>
-                    }
-                />
-                <Route
-                    path="/blog/:slug"
-                    element={
-                        <div id="site-wrapper">
-                            <Navbar />
-                            <BlogPost />
-                            <Footer />
-                        </div>
-                    }
-                />
-                <Route
-                    path="/lab"
-                    element={
-                        <div id="site-wrapper">
-                            <Navbar />
-                            <SecurityLab />
-                            <Footer />
-                        </div>
-                    }
-                />
-                <Route path="/admin/login" element={<AdminLogin />} />
-                <Route path="/admin/*" element={<AdminDashboard />} />
-            </Routes>
+            <Suspense fallback={<LoadingScreen />}>
+                <Routes>
+                    <Route
+                        path="/"
+                        element={
+                            <div id="site-wrapper">
+                                <Navbar />
+                                <Home />
+                                <Footer />
+                            </div>
+                        }
+                    />
+                    <Route
+                        path="/blog/:slug"
+                        element={
+                            <div id="site-wrapper">
+                                <Navbar />
+                                <BlogPost />
+                                <Footer />
+                            </div>
+                        }
+                    />
+                    <Route
+                        path="/lab"
+                        element={
+                            <div id="site-wrapper">
+                                <Navbar />
+                                <SecurityLab />
+                                <Footer />
+                            </div>
+                        }
+                    />
+                    <Route path="/admin/login" element={<AdminLogin />} />
+                    <Route path="/admin/*" element={<AdminDashboard />} />
+                    {/* Catch-all 404 Route redirecting to home */}
+                    <Route path="*" element={<Home />} />
+                </Routes>
+            </Suspense>
         </div>
     );
 }
