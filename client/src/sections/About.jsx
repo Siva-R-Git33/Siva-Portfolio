@@ -7,7 +7,6 @@ import { settingsAPI } from '../utils/api';
 
 const defaultAbout = {
     objective: 'Aspiring Ethical Hacker and Blue Team professional focused on vulnerability assessment, threat detection, and responsible cybersecurity practices. Seeking an entry-level opportunity to grow in offensive and defensive security domains.',
-    location: 'Tenkasi, Tamil Nadu, India',
     education: [
         { degree: 'MSc Cyber Security', school: 'Bharathiar University', year: '2025 – Present', score: '' },
         { degree: 'BSc Computer Science (Cognitive Systems)', school: 'Karpagam Academy of Higher Education', year: '2021 – 2024', score: '88.30%' },

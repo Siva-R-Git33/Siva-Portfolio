@@ -12,9 +12,7 @@ const defaultSocials = {
     tryhackme: 'https://tryhackme.com/p/rsshiva403'
 };
 
-const defaultAbout = {
-    location: 'Tenkasi, Tamil Nadu, India'
-};
+const defaultAbout = {};
 
 export default function Contact() {
     const [socials, setSocials] = useState(defaultSocials);
@@ -50,11 +48,19 @@ export default function Contact() {
         }
     };
 
-    const contactInfo = [
-        { icon: FaEnvelope, label: 'Email', value: socials.email, href: socials.email ? `mailto:${socials.email}` : null },
-        { icon: FaPhone, label: 'Phone', value: socials.phone, href: socials.phone ? `tel:${socials.phone.replace(/[\s-]/g, '')}` : null },
-        { icon: FaMapMarkerAlt, label: 'Location', value: about.location },
-    ].filter(c => c.value);
+    const contactInfo = [];
+    if (socials.showEmail !== false) {
+        contactInfo.push({ icon: FaEnvelope, label: 'Email', value: socials.email, href: socials.email ? `mailto:${socials.email}` : null });
+    }
+    if (socials.showPhone !== false) {
+        contactInfo.push({ icon: FaPhone, label: 'Phone', value: socials.phone, href: socials.phone ? `tel:${socials.phone.replace(/[\s-]/g, '')}` : null });
+    }
+    if (socials.showLocation !== false && socials.location) {
+        contactInfo.push({ icon: FaMapMarkerAlt, label: 'Location', value: socials.location });
+    }
+
+    // Filter out any purely empty values just in case
+    const validContactInfo = contactInfo.filter(c => c.value);
 
     const socialIcons = [
         { icon: FaLinkedin, href: socials.linkedin, label: 'LinkedIn', color: 'hover:bg-blue-600/20 hover:text-blue-400' },
@@ -87,7 +93,7 @@ export default function Contact() {
                         <div className="cyber-card">
                             <h3 className="text-xl font-bold text-neon-green mb-6">Contact Information</h3>
                             <div className="space-y-4">
-                                {contactInfo.map((item) => (
+                                {validContactInfo.map((item) => (
                                     <div key={item.label} className="flex items-center gap-4">
                                         <div className="w-10 h-10 rounded-lg bg-neon-green/10 flex items-center justify-center shrink-0">
                                             <item.icon className="text-neon-green" />
@@ -104,6 +110,9 @@ export default function Contact() {
                                         </div>
                                     </div>
                                 ))}
+                                {validContactInfo.length === 0 && (
+                                    <p className="text-gray-500 text-sm font-mono mt-4">Contact information is currently hidden.</p>
+                                )}
                             </div>
                         </div>
 

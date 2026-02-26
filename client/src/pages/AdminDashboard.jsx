@@ -14,14 +14,12 @@ import ManageFeatures from '../admin/ManageFeatures';
 import ManageAnalytics from '../admin/ManageAnalytics';
 import ManageSecurity from '../admin/ManageSecurity';
 import ManageEvents from '../admin/ManageEvents';
-import ManageLayout from '../admin/ManageLayout';
 import Messages from '../admin/Messages';
 import { FaToggleOn, FaChartLine, FaShieldAlt, FaCalendarAlt, FaGripLines } from 'react-icons/fa';
 
 const menuItems = [
     { path: '/admin/dashboard', label: 'Dashboard', icon: FaTachometerAlt },
-    { path: '/admin/features', label: 'Feature Flags', icon: FaToggleOn },
-    { path: '/admin/layout', label: 'Layout Manager', icon: FaGripLines },
+    { path: '/admin/features', label: 'Features & Layout', icon: FaToggleOn },
     { path: '/admin/content', label: 'Site Content', icon: FaEdit },
     { path: '/admin/theme', label: 'Theme', icon: FaPalette },
     { path: '/admin/security', label: 'Security (2FA)', icon: FaShieldAlt },
@@ -38,8 +36,7 @@ function DashboardHome() {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {[
-                { label: 'Feature Flags', icon: FaToggleOn, color: 'neon-purple', path: '/admin/features' },
-                { label: 'Layout Manager', icon: FaGripLines, color: 'neon-blue', path: '/admin/layout' },
+                { label: 'Features & Layout', icon: FaToggleOn, color: 'neon-purple', path: '/admin/features' },
                 { label: 'Security (2FA)', icon: FaShieldAlt, color: 'neon-red', path: '/admin/security' },
                 { label: 'Analytics', icon: FaChartLine, color: 'neon-green', path: '/admin/analytics' },
                 { label: 'Site Content', icon: FaEdit, color: 'neon-blue', path: '/admin/content' },
@@ -231,7 +228,6 @@ export default function AdminDashboard() {
                     <Routes>
                         <Route path="dashboard" element={<DashboardHome />} />
                         <Route path="features" element={<ManageFeatures />} />
-                        <Route path="layout" element={<ManageLayout />} />
                         <Route path="analytics" element={<ManageAnalytics />} />
                         <Route path="security" element={<ManageSecurity />} />
                         <Route path="content" element={<ManageContent />} />

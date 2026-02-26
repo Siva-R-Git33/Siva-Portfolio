@@ -1,21 +1,26 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaCalendarAlt, FaMapMarkerAlt, FaLink } from 'react-icons/fa';
-import { eventsAPI } from '../utils/api';
+import { eventsAPI, settingsAPI } from '../utils/api';
 
 export default function Events() {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showUpcoming, setShowUpcoming] = useState(true);
+    const [showPast, setShowPast] = useState(true);
 
     useEffect(() => {
-        if (Object.keys(eventsAPI).length > 0) {
-            eventsAPI.getAll()
-                .then(res => setEvents(res.data || []))
-                .catch(err => console.error("Failed to load events", err))
-                .finally(() => setLoading(false));
-        } else {
-            setLoading(false);
-        }
+        Promise.all([
+            Object.keys(eventsAPI).length > 0 ? eventsAPI.getAll() : Promise.resolve({ data: [] }),
+            settingsAPI.get('feature_flags')
+        ]).then(([eventsRes, flagsRes]) => {
+            setEvents(eventsRes.data || []);
+            if (flagsRes.data) {
+                if (flagsRes.data.showUpcomingEvents === false) setShowUpcoming(false);
+                if (flagsRes.data.showPastEvents === false) setShowPast(false);
+            }
+        }).catch(err => console.error("Failed to load events/flags", err))
+            .finally(() => setLoading(false));
     }, []);
 
     if (loading) {
@@ -126,24 +131,28 @@ export default function Events() {
                 <div className="relative border-l-2 border-dashed border-cyber-border/50 pl-4 md:pl-8 ml-4 md:ml-8 space-y-12">
 
                     {/* Upcoming Events */}
-                    {upcomingEvents.length > 0 ? (
-                        upcomingEvents.map(event => <EventCard key={event.id} event={event} isPast={false} />)
-                    ) : (
-                        <div className="cyber-card py-8 text-center text-gray-500 font-mono text-sm border-dashed">
-                            No upcoming events currently scheduled.
-                        </div>
-                    )}
-
-                    {/* Past Events Divider */}
-                    {pastEvents.length > 0 && (
-                        <div className="relative">
-                            <div className="absolute -left-[21px] md:-left-[37px] top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-cyber-border"></div>
-                            <h3 className="text-gray-500 font-mono font-semibold uppercase tracking-widest pl-2">Past Archives</h3>
+                    {showUpcoming && (
+                        <div className="space-y-12">
+                            {upcomingEvents.length > 0 ? (
+                                upcomingEvents.map(event => <EventCard key={event.id} event={event} isPast={false} />)
+                            ) : (
+                                <div className="cyber-card py-8 text-center text-gray-500 font-mono text-sm border-dashed">
+                                    No upcoming events currently scheduled.
+                                </div>
+                            )}
                         </div>
                     )}
 
                     {/* Past Events */}
-                    {pastEvents.map(event => <EventCard key={event.id} event={event} isPast={true} />)}
+                    {showPast && pastEvents.length > 0 && (
+                        <div className="space-y-12">
+                            <div className="relative">
+                                <div className="absolute -left-[21px] md:-left-[37px] top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-cyber-border"></div>
+                                <h3 className="text-gray-500 font-mono font-semibold uppercase tracking-widest pl-2">Past Archives</h3>
+                            </div>
+                            {pastEvents.map(event => <EventCard key={event.id} event={event} isPast={true} />)}
+                        </div>
+                    )}
 
                 </div>
             </div>

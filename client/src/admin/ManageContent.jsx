@@ -29,7 +29,11 @@ const defaultAbout = {
 
 const defaultSocials = {
     email: 'shivar6277@gmail.com',
+    showEmail: true,
     phone: '+91 9150782041',
+    showPhone: true,
+    location: 'Tenkasi, Tamil Nadu, India',
+    showLocation: true,
     github: 'https://github.com/Siva-R-Git33',
     linkedin: 'https://www.linkedin.com/in/sivarr31',
     tryhackme: 'https://tryhackme.com/p/rsshiva403'
@@ -307,22 +311,63 @@ export default function ManageContent() {
                 )}
             </div>
 
-            {/* Social Links Form */}
+            {/* Contact & Social Links Form */}
             <div className="cyber-card">
                 <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-bold text-neon-blue">Social Links</h2>
+                    <h2 className="text-xl font-bold text-neon-blue">Contact & Social Links</h2>
                     <button onClick={() => saveSettings('social_links', socials)} className="cyber-btn-solid text-xs flex items-center gap-2">
-                        <FaSave /> Save Socials
+                        <FaSave /> Save Info
                     </button>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {Object.keys(socials).map((k) => (
-                        <div key={k}>
-                            <label className="block text-gray-400 text-sm mb-1 font-mono uppercase">{k}</label>
-                            <input type="text" value={socials[k]} onChange={(e) => setSocials({ ...socials, [k]: e.target.value })}
+
+                <div className="space-y-6">
+                    {/* Primary Contact Info with Toggles */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-cyber-black p-4 rounded-lg border border-cyber-border">
+                        {/* Email */}
+                        <div>
+                            <div className="flex justify-between items-center mb-1">
+                                <label className="block text-gray-400 text-sm font-mono uppercase">Email</label>
+                                <button onClick={() => setSocials({ ...socials, showEmail: !socials.showEmail })} className={`text-xs px-2 py-0.5 rounded border ${socials.showEmail !== false ? 'bg-neon-green/10 border-neon-green text-neon-green' : 'bg-cyber-gray border-cyber-gray text-gray-500'}`}>
+                                    {socials.showEmail !== false ? 'Visible' : 'Hidden'}
+                                </button>
+                            </div>
+                            <input type="text" value={socials.email || ''} onChange={(e) => setSocials({ ...socials, email: e.target.value })}
                                 className="w-full bg-cyber-dark border border-cyber-border rounded-lg px-4 py-2 text-white text-sm" />
                         </div>
-                    ))}
+                        {/* Phone */}
+                        <div>
+                            <div className="flex justify-between items-center mb-1">
+                                <label className="block text-gray-400 text-sm font-mono uppercase">Phone</label>
+                                <button onClick={() => setSocials({ ...socials, showPhone: !socials.showPhone })} className={`text-xs px-2 py-0.5 rounded border ${socials.showPhone !== false ? 'bg-neon-green/10 border-neon-green text-neon-green' : 'bg-cyber-gray border-cyber-gray text-gray-500'}`}>
+                                    {socials.showPhone !== false ? 'Visible' : 'Hidden'}
+                                </button>
+                            </div>
+                            <input type="text" value={socials.phone || ''} onChange={(e) => setSocials({ ...socials, phone: e.target.value })}
+                                className="w-full bg-cyber-dark border border-cyber-border rounded-lg px-4 py-2 text-white text-sm" />
+                        </div>
+                        {/* Location */}
+                        <div className="md:col-span-2">
+                            <div className="flex justify-between items-center mb-1">
+                                <label className="block text-gray-400 text-sm font-mono uppercase">Location</label>
+                                <button onClick={() => setSocials({ ...socials, showLocation: !socials.showLocation })} className={`text-xs px-2 py-0.5 rounded border ${socials.showLocation !== false ? 'bg-neon-green/10 border-neon-green text-neon-green' : 'bg-cyber-gray border-cyber-gray text-gray-500'}`}>
+                                    {socials.showLocation !== false ? 'Visible' : 'Hidden'}
+                                </button>
+                            </div>
+                            <input type="text" value={socials.location || ''} onChange={(e) => setSocials({ ...socials, location: e.target.value })}
+                                className="w-full bg-cyber-dark border border-cyber-border rounded-lg px-4 py-2 text-white text-sm" />
+                        </div>
+                    </div>
+
+                    {/* Social URLs */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {['github', 'linkedin', 'tryhackme'].map((k) => (
+                            <div key={k}>
+                                <label className="block text-gray-400 text-sm mb-1 font-mono uppercase">{k}</label>
+                                <input type="text" value={socials[k] || ''} onChange={(e) => setSocials({ ...socials, [k]: e.target.value })}
+                                    className="w-full bg-cyber-dark border border-cyber-border rounded-lg px-4 py-2 text-white text-sm" />
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
 
@@ -439,11 +484,6 @@ export default function ManageContent() {
                         <label className="block text-gray-400 text-sm mb-1 font-mono">Career Objective</label>
                         <textarea rows={4} value={about.objective} onChange={(e) => setAbout({ ...about, objective: e.target.value })}
                             className="w-full bg-cyber-dark border border-cyber-border rounded-lg px-4 py-2 text-white text-sm resize-none" />
-                    </div>
-                    <div>
-                        <label className="block text-gray-400 text-sm mb-1 font-mono">Location</label>
-                        <input type="text" value={about.location} onChange={(e) => setAbout({ ...about, location: e.target.value })}
-                            className="w-full bg-cyber-dark border border-cyber-border rounded-lg px-4 py-2 text-white text-sm" />
                     </div>
 
                     <div>
