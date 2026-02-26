@@ -5,11 +5,15 @@ import { FaShieldAlt, FaKey, FaGlobe, FaCogs, FaExclamationTriangle } from 'reac
 import PasswordChecker from '../components/tools/PasswordChecker';
 import HeaderAnalyzer from '../components/tools/HeaderAnalyzer';
 import JwtDecoder from '../components/tools/JwtDecoder';
+import DnsLookup from '../components/tools/DnsLookup';
+import HashGenerator from '../components/tools/HashGenerator';
 
 const tools = [
     { id: 'password', name: 'Password Strength', icon: FaKey },
     { id: 'headers', name: 'Header Analyzer', icon: FaGlobe },
     { id: 'jwt', name: 'JWT Decoder', icon: FaCogs },
+    { id: 'dns', name: 'DNS Lookup', icon: FaGlobe },
+    { id: 'hash', name: 'Hash Generator', icon: FaShieldAlt },
 ];
 
 export default function SecurityLab() {
@@ -66,8 +70,8 @@ export default function SecurityLab() {
                         key={tool.id}
                         onClick={() => setActiveTool(tool.id)}
                         className={`flex items-center gap-2 px-6 py-3 rounded-lg font-mono text-sm font-bold transition-all duration-300 ${activeTool === tool.id
-                                ? 'bg-neon-green text-cyber-black shadow-[0_0_15px_rgba(0,255,65,0.3)]'
-                                : 'text-gray-400 hover:text-white hover:bg-cyber-gray'
+                            ? 'bg-neon-green text-cyber-black shadow-[0_0_15px_rgba(0,255,65,0.3)]'
+                            : 'text-gray-400 hover:text-white hover:bg-cyber-gray'
                             }`}
                     >
                         <tool.icon className={activeTool === tool.id ? 'text-cyber-black' : 'text-neon-green'} />
@@ -94,6 +98,8 @@ export default function SecurityLab() {
                         {activeTool === 'password' && <PasswordChecker />}
                         {activeTool === 'headers' && <HeaderAnalyzer />}
                         {activeTool === 'jwt' && <JwtDecoder />}
+                        {activeTool === 'dns' && <DnsLookup />}
+                        {activeTool === 'hash' && <HashGenerator />}
                     </motion.div>
                 </AnimatePresence>
             </motion.div>

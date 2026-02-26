@@ -122,7 +122,8 @@ export const projectsAPI = {
             tech_stack: data.techStack,
             github_link: data.githubLink,
             live_link: data.liveLink,
-            featured: data.featured
+            featured: data.featured,
+            published: data.published
         };
         return handleResponse(withAuth().from('projects').insert([payload]).select());
     },
@@ -133,7 +134,8 @@ export const projectsAPI = {
             tech_stack: data.techStack,
             github_link: data.githubLink,
             live_link: data.liveLink,
-            featured: data.featured
+            featured: data.featured,
+            published: data.published
         };
         return handleResponse(withAuth().from('projects').update(payload).eq('id', id).select());
     },

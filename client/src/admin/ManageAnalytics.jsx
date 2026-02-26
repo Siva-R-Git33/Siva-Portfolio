@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { FaChartLine, FaDownload, FaHistory, FaCalendar } from 'react-icons/fa';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { supabase, settingsAPI } from '../utils/api';
 
 export default function ManageAnalytics() {
@@ -11,7 +12,6 @@ export default function ManageAnalytics() {
     useEffect(() => {
         const init = async () => {
             try {
-                // Check if feature is enabled
                 const { data: featureData } = await settingsAPI.get('feature_flags');
                 if (featureData?.enableResumeTracking) {
                     setAnalyticsEnabled(true);
@@ -28,7 +28,6 @@ export default function ManageAnalytics() {
 
     const fetchLogs = async () => {
         try {
-            // Fetch the last 50 resume downloads
             const { data, error } = await supabase
                 .from('analytics_logs')
                 .select('*')
@@ -43,6 +42,25 @@ export default function ManageAnalytics() {
         }
     };
 
+    // Aggregate logs into daily counts for the chart
+    const chartData = useMemo(() => {
+        const dailyMap = {};
+        for (let i = 13; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const key = d.toISOString().split('T')[0];
+            dailyMap[key] = 0;
+        }
+        logs.forEach(log => {
+            const day = new Date(log.created_at).toISOString().split('T')[0];
+            if (dailyMap[day] !== undefined) dailyMap[day]++;
+        });
+        return Object.entries(dailyMap).map(([date, count]) => ({
+            date: new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+            downloads: count,
+        }));
+    }, [logs]);
+
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
@@ -56,12 +74,11 @@ export default function ManageAnalytics() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center h-64 text-center">
                 <FaChartLine className="text-6xl text-gray-600 mb-4" />
                 <h2 className="text-2xl font-bold text-gray-400 mb-2">Analytics Disabled</h2>
-                <p className="text-gray-500">Enable "Pro Analytics & Resume Tracking" in the Feature Flags section to start collecting data.</p>
+                <p className="text-gray-500">Enable "Pro Analytics &amp; Resume Tracking" in the Feature Flags section to start collecting data.</p>
             </motion.div>
         );
     }
 
-    // Derived stats
     const totalDownloads = logs.length;
     const downloadsThisWeek = logs.filter(log => {
         const logDate = new Date(log.created_at);
@@ -69,6 +86,18 @@ export default function ManageAnalytics() {
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
         return logDate >= oneWeekAgo;
     }).length;
+
+    const ChartTooltip = ({ active, payload, label }) => {
+        if (active && payload && payload.length) {
+            return (
+                <div className="bg-cyber-dark border border-neon-green/30 rounded-lg px-4 py-2 shadow-xl">
+                    <p className="text-gray-400 text-xs font-mono">{label}</p>
+                    <p className="text-neon-green font-bold text-lg">{payload[0].value} downloads</p>
+                </div>
+            );
+        }
+        return null;
+    };
 
     return (
         <motion.div
@@ -99,6 +128,37 @@ export default function ManageAnalytics() {
                         <p className="text-gray-400 font-mono text-sm">DOWNLOADS THIS WEEK</p>
                         <h3 className="text-4xl font-black text-white">{downloadsThisWeek}</h3>
                     </div>
+                </div>
+            </div>
+
+            {/* Downloads Over Time Chart */}
+            <div className="cyber-card">
+                <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <FaChartLine className="text-neon-green" /> Downloads (Last 14 Days)
+                </h3>
+                <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={chartData}>
+                            <defs>
+                                <linearGradient id="greenGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#00ff41" stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor="#00ff41" stopOpacity={0} />
+                                </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#21262d" />
+                            <XAxis dataKey="date" tick={{ fill: '#6b7280', fontSize: 12, fontFamily: 'monospace' }} />
+                            <YAxis allowDecimals={false} tick={{ fill: '#6b7280', fontSize: 12, fontFamily: 'monospace' }} />
+                            <Tooltip content={<ChartTooltip />} />
+                            <Area
+                                type="monotone"
+                                dataKey="downloads"
+                                stroke="#00ff41"
+                                strokeWidth={2}
+                                fillOpacity={1}
+                                fill="url(#greenGradient)"
+                            />
+                        </AreaChart>
+                    </ResponsiveContainer>
                 </div>
             </div>
 
