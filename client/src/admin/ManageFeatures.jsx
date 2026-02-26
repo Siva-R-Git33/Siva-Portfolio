@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, Reorder } from 'framer-motion';
-import { FaToggleOn, FaSave, FaChartLine, FaTerminal, FaFilter, FaBriefcase, FaEye, FaGripLines, FaEyeSlash } from 'react-icons/fa';
+import { FaToggleOn, FaSave, FaChartLine, FaTerminal, FaFilter, FaBriefcase, FaEye, FaGripLines, FaEyeSlash, FaCalendarAlt } from 'react-icons/fa';
 import { settingsAPI } from '../utils/api';
 
 const DEFAULT_FLAGS = {
