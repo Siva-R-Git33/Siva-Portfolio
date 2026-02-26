@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { FaChevronDown, FaLinkedin, FaGithub } from 'react-icons/fa';
 import { SiTryhackme } from 'react-icons/si';
@@ -105,11 +105,8 @@ export default function Hero() {
     return (
         <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-10">
 
-            {/* 3D Background Canvas */}
+            {/* 3D Background Canvas temporarily removed to fix crashing issue */}
             <div className="absolute inset-0 z-0">
-                <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
-                    <CyberGlobe />
-                </Canvas>
             </div>
 
             {/* Gradient orbs (placed behind content but over the 3D globe for lighting effects) */}

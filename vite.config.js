@@ -8,19 +8,9 @@ export default defineConfig(({ mode }) => {
         root: '.',
         envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
         build: {
+            minify: false,
             rollupOptions: {
                 output: {
-                    manualChunks(id) {
-                        if (id.includes('node_modules')) {
-                            if (id.includes('react-dom') || id.includes('react-router')) return 'vendor-react';
-                            if (id.includes('framer-motion')) return 'vendor-motion';
-                            if (id.includes('three') || id.includes('@react-three')) return 'vendor-three';
-                            if (id.includes('@supabase')) return 'vendor-supabase';
-                            if (id.includes('react-quill') || id.includes('quill')) return 'vendor-quill';
-                            if (id.includes('react-markdown') || id.includes('remark') || id.includes('rehype') || id.includes('react-syntax-highlighter')) return 'vendor-markdown';
-                            if (id.includes('recharts') || id.includes('d3-') || id.includes('react-is')) return 'vendor-charts';
-                        }
-                    }
                 }
             }
         },
