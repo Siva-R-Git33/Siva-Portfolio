@@ -136,6 +136,45 @@ export default function ManageEvents() {
         }
     };
 
+    const now = new Date();
+    const upcomingEvents = events.filter(e => new Date(e.date) >= now).sort((a, b) => new Date(a.date) - new Date(b.date));
+    const pastEvents = events.filter(e => new Date(e.date) < now).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    // Reusable Event row component for the admin list
+    const EventRow = ({ e }) => (
+        <div key={e.id} className="cyber-card flex items-center justify-between group">
+            <div className="flex items-center gap-4 w-full max-w-[80%]">
+                {e.images && e.images.length > 0 ? (
+                    <img src={e.images[0]} alt={e.title} className="w-16 h-16 rounded-lg object-cover shrink-0 border border-cyber-border" />
+                ) : (
+                    <div className="w-16 h-16 rounded-lg flex items-center justify-center shrink-0 bg-neon-purple/10 text-neon-purple border border-neon-purple/20">
+                        <FaCalendarAlt className="text-2xl" />
+                    </div>
+                )}
+                <div className="min-w-0 flex-1">
+                    <h3 className="text-white font-semibold truncate">{e.title}</h3>
+                    <p className="text-gray-500 text-sm font-mono mt-1">
+                        {new Date(e.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                    {(e.location || e.link) && (
+                        <div className="flex gap-4 mt-2 text-xs text-gray-400 font-mono flex-wrap">
+                            {e.location && <span className="flex items-center gap-1"><FaMapMarkerAlt /> <span className="truncate">{e.location}</span></span>}
+                            {e.link && <span className="flex items-center gap-1 text-neon-blue truncate max-w-[200px]"><FaLink /> {e.link}</span>}
+                        </div>
+                    )}
+                </div>
+            </div>
+            <div className="flex gap-2 shrink-0 ml-4 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                <button onClick={() => openEdit(e)} className="p-2 rounded-lg bg-neon-blue/10 text-neon-blue hover:bg-neon-blue/20 transition-all">
+                    <FaEdit />
+                </button>
+                <button onClick={() => handleDelete(e)} className="p-2 rounded-lg bg-neon-red/10 text-neon-red hover:bg-neon-red/20 transition-all">
+                    <FaTrash />
+                </button>
+            </div>
+        </div>
+    );
+
     return (
         <div>
             <div className="flex items-center justify-between mb-6">
@@ -145,43 +184,36 @@ export default function ManageEvents() {
                 </button>
             </div>
 
-            <div className="space-y-3">
-                {events.map((e) => (
-                    <div key={e.id} className="cyber-card flex items-center justify-between group">
-                        <div className="flex items-center gap-4 w-full max-w-[80%]">
-                            {e.images && e.images.length > 0 ? (
-                                <img src={e.images[0]} alt={e.title} className="w-16 h-16 rounded-lg object-cover shrink-0 border border-cyber-border" />
-                            ) : (
-                                <div className="w-16 h-16 rounded-lg flex items-center justify-center shrink-0 bg-neon-purple/10 text-neon-purple border border-neon-purple/20">
-                                    <FaCalendarAlt className="text-2xl" />
-                                </div>
-                            )}
-                            <div className="min-w-0 flex-1">
-                                <h3 className="text-white font-semibold truncate">{e.title}</h3>
-                                <p className="text-gray-500 text-sm font-mono mt-1">
-                                    {new Date(e.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                                </p>
-                                {(e.location || e.link) && (
-                                    <div className="flex gap-4 mt-2 text-xs text-gray-400 font-mono flex-wrap">
-                                        {e.location && <span className="flex items-center gap-1"><FaMapMarkerAlt /> <span className="truncate">{e.location}</span></span>}
-                                        {e.link && <span className="flex items-center gap-1 text-neon-blue truncate max-w-[200px]"><FaLink /> {e.link}</span>}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                        <div className="flex gap-2 shrink-0 ml-4 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
-                            <button onClick={() => openEdit(e)} className="p-2 rounded-lg bg-neon-blue/10 text-neon-blue hover:bg-neon-blue/20 transition-all">
-                                <FaEdit />
-                            </button>
-                            <button onClick={() => handleDelete(e)} className="p-2 rounded-lg bg-neon-red/10 text-neon-red hover:bg-neon-red/20 transition-all">
-                                <FaTrash />
-                            </button>
-                        </div>
+            <div className="space-y-6">
+                {/* Upcoming Events Section */}
+                <div>
+                    <h2 className="text-lg font-bold text-neon-purple mb-3 font-mono border-b border-cyber-border pb-2 flex items-center gap-2">
+                        <FaCalendarAlt /> Upcoming Events ({upcomingEvents.length})
+                    </h2>
+                    <div className="space-y-3">
+                        {upcomingEvents.map(e => <EventRow key={e.id} e={e} />)}
+                        {upcomingEvents.length === 0 && (
+                            <p className="text-gray-500 py-4 font-mono text-sm border border-dashed border-cyber-border rounded-lg text-center bg-cyber-black/50">
+                                No upcoming events scheduled. Add an event you will attend.
+                            </p>
+                        )}
                     </div>
-                ))}
-                {events.length === 0 && (
-                    <p className="text-gray-500 text-center py-8 font-mono text-sm border border-dashed border-cyber-border rounded-lg">No events found. Add an event you attended or will attend.</p>
-                )}
+                </div>
+
+                {/* Past Events Section */}
+                <div>
+                    <h2 className="text-lg font-bold text-gray-400 mb-3 font-mono border-b border-cyber-border pb-2 flex items-center gap-2">
+                        <FaCalendarAlt /> Past Events ({pastEvents.length})
+                    </h2>
+                    <div className="space-y-3">
+                        {pastEvents.map(e => <EventRow key={e.id} e={e} />)}
+                        {pastEvents.length === 0 && (
+                            <p className="text-gray-500 py-4 font-mono text-sm border border-dashed border-cyber-border rounded-lg text-center bg-cyber-black/50">
+                                No past events recorded.
+                            </p>
+                        )}
+                    </div>
+                </div>
             </div>
 
             <AnimatePresence>
