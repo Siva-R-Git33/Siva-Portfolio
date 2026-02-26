@@ -122,7 +122,15 @@ export default function Events() {
                     className="text-center mb-16"
                 >
                     <h2 className="section-title mb-2">
-                        <span className="text-neon-purple">Upcoming</span> Events
+                        {showUpcoming && showPast ? (
+                            <><span className="text-neon-purple">Upcoming</span> & Past Events</>
+                        ) : showUpcoming ? (
+                            <><span className="text-neon-purple">Upcoming</span> Events</>
+                        ) : showPast ? (
+                            <><span className="text-neon-purple">Events</span> Attended</>
+                        ) : (
+                            <span className="text-neon-purple">Events</span>
+                        )}
                     </h2>
                     <p className="section-subtitle">Conferences, CTFs, and meetups</p>
                 </motion.div>
