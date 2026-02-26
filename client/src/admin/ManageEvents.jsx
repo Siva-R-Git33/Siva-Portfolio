@@ -180,7 +180,7 @@ export default function ManageEvents() {
                     </div>
                 ))}
                 {events.length === 0 && (
-                    <p className="text-gray-500 text-center py-8 font-mono text-sm border border-dashed border-cyber-border rounded-lg">No events found. Schedule something awesome.</p>
+                    <p className="text-gray-500 text-center py-8 font-mono text-sm border border-dashed border-cyber-border rounded-lg">No events found. Add an event you attended or will attend.</p>
                 )}
             </div>
 

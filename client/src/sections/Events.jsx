@@ -137,7 +137,7 @@ export default function Events() {
                                 upcomingEvents.map(event => <EventCard key={event.id} event={event} isPast={false} />)
                             ) : (
                                 <div className="cyber-card py-8 text-center text-gray-500 font-mono text-sm border-dashed">
-                                    No upcoming events currently scheduled.
+                                    No upcoming events I am scheduled to attend.
                                 </div>
                             )}
                         </div>
@@ -148,7 +148,7 @@ export default function Events() {
                         <div className="space-y-12">
                             <div className="relative">
                                 <div className="absolute -left-[21px] md:-left-[37px] top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-cyber-border"></div>
-                                <h3 className="text-gray-500 font-mono font-semibold uppercase tracking-widest pl-2">Past Archives</h3>
+                                <h3 className="text-gray-500 font-mono font-semibold uppercase tracking-widest pl-2">Events Attended</h3>
                             </div>
                             {pastEvents.map(event => <EventCard key={event.id} event={event} isPast={true} />)}
                         </div>
