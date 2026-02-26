@@ -53,31 +53,52 @@ export default function Certifications() {
                     viewport={{ once: true }}
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
                 >
-                    {displayCerts.map((cert, i) => (
-                        <motion.div
-                            key={cert.id || i}
-                            variants={cardVariants}
-                            whileHover={{ scale: 1.03, y: -4 }}
-                            className="cyber-card group cursor-default"
-                        >
+                    {displayCerts.map((cert, i) => {
+                        const isImage = cert.file_url && !cert.file_url.toLowerCase().endsWith('.pdf');
+
+                        const CardContent = (
                             <div className="flex items-start gap-4">
-                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0
-                  ${cert.color === 'neon-green' ? 'bg-neon-green/10 text-neon-green' : ''}
-                  ${cert.color === 'neon-blue' ? 'bg-neon-blue/10 text-neon-blue' : ''}
-                  ${cert.color === 'neon-purple' ? 'bg-neon-purple/10 text-neon-purple' : ''}
-                  ${cert.color === 'neon-red' ? 'bg-neon-red/10 text-neon-red' : ''}
+                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 overflow-hidden
+                  ${!isImage && cert.color === 'neon-green' ? 'bg-neon-green/10 text-neon-green' : ''}
+                  ${!isImage && cert.color === 'neon-blue' ? 'bg-neon-blue/10 text-neon-blue' : ''}
+                  ${!isImage && cert.color === 'neon-purple' ? 'bg-neon-purple/10 text-neon-purple' : ''}
+                  ${!isImage && cert.color === 'neon-red' ? 'bg-neon-red/10 text-neon-red' : ''}
+                  ${isImage ? 'bg-cyber-gray border border-cyber-border/50' : ''}
                 `}>
-                                    <FaCertificate className="text-xl" />
+                                    {isImage ? (
+                                        <img src={cert.file_url} alt={cert.name} className="w-full h-full object-cover" loading="lazy" />
+                                    ) : (
+                                        <FaCertificate className="text-xl" />
+                                    )}
                                 </div>
-                                <div>
-                                    <h3 className="text-white font-semibold mb-1 group-hover:text-neon-green transition-colors">
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="text-white font-semibold mb-1 group-hover:text-neon-green transition-colors truncate">
                                         {cert.name}
                                     </h3>
-                                    <p className="text-gray-500 text-sm font-mono">{cert.issuer}</p>
+                                    <p className="text-gray-500 text-sm font-mono truncate">{cert.issuer}</p>
                                 </div>
                             </div>
-                        </motion.div>
-                    ))}
+                        );
+
+                        return (
+                            <motion.div
+                                key={cert.id || i}
+                                variants={cardVariants}
+                                whileHover={{ scale: 1.03, y: -4 }}
+                                className="cyber-card group"
+                            >
+                                {cert.file_url ? (
+                                    <a href={cert.file_url} target="_blank" rel="noopener noreferrer" className="block focus:outline-none">
+                                        {CardContent}
+                                    </a>
+                                ) : (
+                                    <div className="cursor-default">
+                                        {CardContent}
+                                    </div>
+                                )}
+                            </motion.div>
+                        );
+                    })}
                 </motion.div>
             </div>
         </section>

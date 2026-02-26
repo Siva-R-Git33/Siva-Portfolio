@@ -10,6 +10,7 @@ const navLinks = [
     { name: 'Skills', href: '#skills' },
     { name: 'Projects', href: '#projects' },
     { name: 'Certifications', href: '#certifications' },
+    { name: 'Events', href: '#events' },
     { name: 'Blog', href: '#blog' },
     { name: 'Labs', href: '/lab', isPage: true },
     { name: 'Contact', href: '#contact' },
@@ -20,13 +21,31 @@ export default function Navbar() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('home');
     const [showSecurityLab, setShowSecurityLab] = useState(true);
+    const [showEvents, setShowEvents] = useState(true);
+    const [layout, setLayout] = useState([]);
     const location = useLocation();
     const navigate = import('react-router-dom').then(m => m.useNavigate); // dynamically imported below
 
     useEffect(() => {
+        settingsAPI.get('site_layout').then(res => {
+            if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+                const normalizedSaved = res.data.map(item =>
+                    typeof item === 'string' ? { id: item, active: true } : item
+                );
+                setLayout(normalizedSaved);
+            } else {
+                setLayout([
+                    { id: 'Hero', active: true }, { id: 'About', active: true }, { id: 'Skills', active: true },
+                    { id: 'Projects', active: true }, { id: 'Certifications', active: true }, { id: 'Events', active: true },
+                    { id: 'Blog', active: true }, { id: 'Contact', active: true }
+                ]);
+            }
+        }).catch(() => { });
+
         settingsAPI.get('feature_flags').then(res => {
-            if (res.data && res.data.showSecurityLab === false) {
-                setShowSecurityLab(false);
+            if (res.data) {
+                if (res.data.showSecurityLab === false) setShowSecurityLab(false);
+                if (res.data.showEventsSection === false) setShowEvents(false);
             }
         }).catch(() => { });
 
@@ -34,11 +53,22 @@ export default function Navbar() {
             setScrolled(window.scrollY > 50);
 
             if (location.pathname === '/') {
-                const sections = navLinks.filter(l => !l.isPage).map((l) => l.href.replace('#', ''));
-                for (let i = sections.length - 1; i >= 0; i--) {
-                    const el = document.getElementById(sections[i]);
+                const sectionIds = [];
+                if (layout.length > 0) {
+                    layout.filter(s => s.active).forEach(s => {
+                        const name = s.id === 'Hero' ? 'home' : s.id.toLowerCase();
+                        sectionIds.push(name);
+                    });
+                } else {
+                    navLinks.filter(l => !l.isPage).forEach(l => {
+                        sectionIds.push(l.href.replace('#', ''));
+                    });
+                }
+
+                for (let i = sectionIds.length - 1; i >= 0; i--) {
+                    const el = document.getElementById(sectionIds[i]);
                     if (el && el.getBoundingClientRect().top <= 150) {
-                        setActiveSection(sections[i]);
+                        setActiveSection(sectionIds[i]);
                         break;
                     }
                 }
@@ -67,6 +97,28 @@ export default function Navbar() {
         if (el) el.scrollIntoView({ behavior: 'smooth' });
     };
 
+    // Compute Dynamic Rendered Links
+    const renderedLinks = [];
+    if (layout.length > 0) {
+        layout.forEach(section => {
+            if (!section.active) return;
+            if (section.id === 'Events' && !showEvents) return;
+
+            const sectionName = section.id === 'Hero' ? 'Home' : section.id;
+            const matchingLink = navLinks.find(l => l.name === sectionName);
+            if (matchingLink) renderedLinks.push(matchingLink);
+        });
+    } else {
+        navLinks.filter(l => !l.isPage).forEach(l => {
+            if (l.name === 'Events' && !showEvents) return;
+            renderedLinks.push(l);
+        });
+    }
+    navLinks.filter(l => l.isPage).forEach(l => {
+        if (l.name === 'Labs' && !showSecurityLab) return;
+        renderedLinks.push(l);
+    });
+
     return (
         <motion.nav
             initial={{ y: -100 }}
@@ -90,7 +142,7 @@ export default function Navbar() {
 
                 {/* Desktop Nav */}
                 <div className="hidden md:flex items-center gap-1">
-                    {navLinks.filter(link => showSecurityLab || link.name !== 'Labs').map((link) => (
+                    {renderedLinks.map((link) => (
                         <button
                             key={link.name}
                             onClick={() => handleNavClick(link)}
@@ -120,7 +172,7 @@ export default function Navbar() {
                     animate={{ opacity: 1, y: 0 }}
                     className="md:hidden glass mt-2 mx-4 rounded-xl p-4"
                 >
-                    {navLinks.filter(link => showSecurityLab || link.name !== 'Labs').map((link) => (
+                    {renderedLinks.map((link) => (
                         <button
                             key={link.name}
                             onClick={() => handleNavClick(link)}

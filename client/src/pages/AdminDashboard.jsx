@@ -13,12 +13,15 @@ import ManageTheme from '../admin/ManageTheme';
 import ManageFeatures from '../admin/ManageFeatures';
 import ManageAnalytics from '../admin/ManageAnalytics';
 import ManageSecurity from '../admin/ManageSecurity';
+import ManageEvents from '../admin/ManageEvents';
+import ManageLayout from '../admin/ManageLayout';
 import Messages from '../admin/Messages';
-import { FaToggleOn, FaChartLine, FaShieldAlt } from 'react-icons/fa';
+import { FaToggleOn, FaChartLine, FaShieldAlt, FaCalendarAlt, FaGripLines } from 'react-icons/fa';
 
 const menuItems = [
     { path: '/admin/dashboard', label: 'Dashboard', icon: FaTachometerAlt },
     { path: '/admin/features', label: 'Feature Flags', icon: FaToggleOn },
+    { path: '/admin/layout', label: 'Layout Manager', icon: FaGripLines },
     { path: '/admin/content', label: 'Site Content', icon: FaEdit },
     { path: '/admin/theme', label: 'Theme', icon: FaPalette },
     { path: '/admin/security', label: 'Security (2FA)', icon: FaShieldAlt },
@@ -27,6 +30,7 @@ const menuItems = [
     { path: '/admin/blogs', label: 'Blog Posts', icon: FaBlog },
     { path: '/admin/skills', label: 'Skills', icon: FaCogs },
     { path: '/admin/certifications', label: 'Certifications', icon: FaCertificate },
+    { path: '/admin/events', label: 'Events', icon: FaCalendarAlt },
     { path: '/admin/messages', label: 'Messages', icon: FaEnvelope },
 ];
 
@@ -35,6 +39,7 @@ function DashboardHome() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {[
                 { label: 'Feature Flags', icon: FaToggleOn, color: 'neon-purple', path: '/admin/features' },
+                { label: 'Layout Manager', icon: FaGripLines, color: 'neon-blue', path: '/admin/layout' },
                 { label: 'Security (2FA)', icon: FaShieldAlt, color: 'neon-red', path: '/admin/security' },
                 { label: 'Analytics', icon: FaChartLine, color: 'neon-green', path: '/admin/analytics' },
                 { label: 'Site Content', icon: FaEdit, color: 'neon-blue', path: '/admin/content' },
@@ -42,6 +47,7 @@ function DashboardHome() {
                 { label: 'Blog Posts', icon: FaBlog, color: 'neon-green', path: '/admin/blogs' },
                 { label: 'Skills', icon: FaCogs, color: 'neon-blue', path: '/admin/skills' },
                 { label: 'Certifications', icon: FaCertificate, color: 'neon-blue', path: '/admin/certifications' },
+                { label: 'Events', icon: FaCalendarAlt, color: 'neon-purple', path: '/admin/events' },
                 { label: 'Messages', icon: FaEnvelope, color: 'neon-red', path: '/admin/messages' },
             ].map((item) => (
                 <Link
@@ -225,6 +231,7 @@ export default function AdminDashboard() {
                     <Routes>
                         <Route path="dashboard" element={<DashboardHome />} />
                         <Route path="features" element={<ManageFeatures />} />
+                        <Route path="layout" element={<ManageLayout />} />
                         <Route path="analytics" element={<ManageAnalytics />} />
                         <Route path="security" element={<ManageSecurity />} />
                         <Route path="content" element={<ManageContent />} />
@@ -233,6 +240,7 @@ export default function AdminDashboard() {
                         <Route path="blogs" element={<ManageBlogs />} />
                         <Route path="skills" element={<ManageSkills />} />
                         <Route path="certifications" element={<ManageCertifications />} />
+                        <Route path="events" element={<ManageEvents />} />
                         <Route path="messages" element={<Messages />} />
                     </Routes>
                 </div>

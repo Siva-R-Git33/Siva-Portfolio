@@ -190,6 +190,13 @@ export const certificationsAPI = {
     delete: (id) => handleResponse(withAuth().from('certifications').delete().eq('id', id)),
 };
 
+export const eventsAPI = {
+    getAll: () => handleResponse(supabase.from('events').select('*').order('date', { ascending: false })),
+    create: (data) => handleResponse(withAuth().from('events').insert([data]).select()),
+    update: (id, data) => handleResponse(withAuth().from('events').update(data).eq('id', id).select()),
+    delete: (id) => handleResponse(withAuth().from('events').delete().eq('id', id)),
+};
+
 export const contactAPI = {
     send: (data) => handleResponse(supabase.from('contact_messages').insert([data])),
     getAll: () => handleResponse(withAuth().from('contact_messages').select('*').order('created_at', { ascending: false })),
@@ -246,4 +253,4 @@ export const storageAPI = {
 // We don't export the generic axios instance anymore.
 // We just export the individual API route collections.
 export { supabase };
-export default { authAPI, projectsAPI, blogsAPI, skillsAPI, certificationsAPI, contactAPI, githubAPI, settingsAPI, storageAPI };
+export default { authAPI, projectsAPI, blogsAPI, skillsAPI, certificationsAPI, eventsAPI, contactAPI, githubAPI, settingsAPI, storageAPI };

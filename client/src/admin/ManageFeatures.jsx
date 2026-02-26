@@ -11,6 +11,7 @@ const DEFAULT_FLAGS = {
     showHireMeModal: false,
     enableResumeTracking: false,
     showSecurityLab: true,
+    showEventsSection: true,
 };
 
 const FLAG_CONFIG = [
@@ -21,6 +22,7 @@ const FLAG_CONFIG = [
     { key: 'showHireMeModal', title: 'Freelance "Hire Me" Modal', desc: 'Add a specialized consulting inquiry form.', icon: FaBriefcase },
     { key: 'enableResumeTracking', title: 'Pro Analytics & Resume Tracking', desc: 'Log resume downloads and track basic site interactions.', icon: FaChartLine },
     { key: 'showSecurityLab', title: 'Security Lab Section', desc: 'Enable the standalone interactive cybersecurity tools page.', icon: FaTerminal },
+    { key: 'showEventsSection', title: 'Events Section', desc: 'Enable the interactive timeline of upcoming and past events.', icon: FaEye },
 ];
 
 export default function ManageFeatures() {
