@@ -4,6 +4,8 @@ import { FaChevronDown, FaLinkedin, FaGithub } from 'react-icons/fa';
 import { SiTryhackme } from 'react-icons/si';
 import { HiMail } from 'react-icons/hi';
 import { settingsAPI } from '../utils/api';
+import { Canvas } from '@react-three/fiber';
+import CyberGlobe from '../components/CyberGlobe';
 
 const defaultHero = {
     name: 'Siva R',
@@ -102,9 +104,18 @@ export default function Hero() {
 
     return (
         <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-10">
-            {/* Gradient orbs */}
-            <div className="absolute top-1/4 -left-32 w-96 h-96 bg-neon-green/5 rounded-full blur-3xl" />
-            <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-neon-blue/5 rounded-full blur-3xl" />
+
+            {/* 3D Background Canvas */}
+            <div className="absolute inset-0 z-0">
+                <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
+                    <CyberGlobe />
+                </Canvas>
+            </div>
+
+            {/* Gradient orbs (placed behind content but over the 3D globe for lighting effects) */}
+            <div className="absolute top-1/4 -left-32 w-96 h-96 bg-neon-green/5 rounded-full blur-3xl z-0" />
+            <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-neon-blue/5 rounded-full blur-3xl z-0" />
+
 
             <div className="relative z-10 max-w-6xl mx-auto px-4 w-full">
                 <div className={`flex flex-col items-center justify-center gap-12 ${heroProfile.enabled ? (heroProfile.position === 'right' ? 'md:flex-row-reverse md:justify-between' : 'md:flex-row md:justify-between') : ''}`}>
