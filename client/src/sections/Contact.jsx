@@ -37,11 +37,31 @@ export default function Contact() {
         setStatus('loading');
         try {
             const currentDateTime = new Date().toLocaleString();
+            const formattedMessage = `${form.message}\n\n--- Sent locally at: ${currentDateTime} ---`;
+
             const payload = {
                 ...form,
-                message: `${form.message}\n\n--- Sent locally at: ${currentDateTime} ---`
+                message: formattedMessage
             };
+
+            // 1. Send to Web3Forms for Email Notification
+            await fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    access_key: '858d4dd1-d07f-4cee-9b41-8cac8e6dfa47',
+                    name: form.name,
+                    email: form.email,
+                    message: formattedMessage
+                })
+            });
+
+            // 2. Save to Supabase Database
             await contactAPI.send(payload);
+
             setStatus('success');
             setStatusMsg('Message sent! I\'ll get back to you soon.');
             setForm({ name: '', email: '', message: '' });
