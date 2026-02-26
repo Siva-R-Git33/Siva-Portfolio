@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPlus, FaEdit, FaTrash, FaTimes, FaSave, FaGithub } from 'react-icons/fa';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import { projectsAPI, settingsAPI } from '../utils/api';
 
 export default function ManageProjects() {
@@ -9,13 +11,13 @@ export default function ManageProjects() {
     const [editing, setEditing] = useState(null);
     const [showGithubRepos, setShowGithubRepos] = useState(true);
     const [form, setForm] = useState({
-        title: '', description: '', techStack: '', githubLink: '', liveLink: '', featured: false,
+        title: '', description: '', techStack: '', githubLink: '', liveLink: '', featured: false, published: true
     });
 
     const load = async () => {
         try {
             const [projRes, settingsRes] = await Promise.all([
-                projectsAPI.getAll(),
+                projectsAPI.getAllAdmin(),
                 settingsAPI.get('showGitHubRepos')
             ]);
             setProjects(projRes.data || []);
@@ -40,7 +42,7 @@ export default function ManageProjects() {
 
     const openNew = () => {
         setEditing(null);
-        setForm({ title: '', description: '', techStack: '', githubLink: '', liveLink: '', featured: false });
+        setForm({ title: '', description: '', techStack: '', githubLink: '', liveLink: '', featured: false, published: true });
         setShowModal(true);
     };
 
@@ -51,6 +53,7 @@ export default function ManageProjects() {
             techStack: p.techStack?.join(', ') || '',
             githubLink: p.githubLink || '', liveLink: p.liveLink || '',
             featured: p.featured || false,
+            published: p.published !== false, // Default to true if undefined
         });
         setShowModal(true);
     };
@@ -141,18 +144,31 @@ export default function ManageProjects() {
                             <form onSubmit={handleSubmit} className="space-y-3">
                                 <Input label="Title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} required />
                                 <div>
-                                    <label className="block text-gray-400 text-sm mb-1 font-mono">Description</label>
-                                    <textarea required rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}
-                                        className="w-full bg-cyber-gray border border-cyber-border rounded-lg px-4 py-2 text-white focus:border-neon-green focus:outline-none text-sm resize-none" />
+                                    <label className="block text-gray-400 text-sm mb-1 font-mono">Description (Rich Text)</label>
+                                    <div className="bg-white text-black rounded-lg overflow-hidden">
+                                        <ReactQuill
+                                            theme="snow"
+                                            value={form.description}
+                                            onChange={(val) => setForm({ ...form, description: val })}
+                                            className="h-48 pb-10"
+                                        />
+                                    </div>
                                 </div>
                                 <Input label="Tech Stack (comma-separated)" value={form.techStack} onChange={(v) => setForm({ ...form, techStack: v })} />
                                 <Input label="GitHub Link" value={form.githubLink} onChange={(v) => setForm({ ...form, githubLink: v })} />
                                 <Input label="Live Link" value={form.liveLink} onChange={(v) => setForm({ ...form, liveLink: v })} />
-                                <label className="flex items-center gap-2 text-gray-300 text-sm cursor-pointer">
-                                    <input type="checkbox" checked={form.featured} onChange={(e) => setForm({ ...form, featured: e.target.checked })}
-                                        className="accent-neon-green" />
-                                    Featured project
-                                </label>
+                                <div className="flex items-center gap-6">
+                                    <label className="flex items-center gap-2 text-gray-300 text-sm cursor-pointer">
+                                        <input type="checkbox" checked={form.featured} onChange={(e) => setForm({ ...form, featured: e.target.checked })}
+                                            className="accent-neon-green" />
+                                        Featured project
+                                    </label>
+                                    <label className="flex items-center gap-2 text-gray-300 text-sm cursor-pointer">
+                                        <input type="checkbox" checked={form.published} onChange={(e) => setForm({ ...form, published: e.target.checked })}
+                                            className="accent-neon-blue" />
+                                        Published (Public)
+                                    </label>
+                                </div>
                                 <button type="submit" className="w-full cyber-btn-solid flex items-center justify-center gap-2">
                                     <FaSave /> {editing ? 'Update' : 'Create'}
                                 </button>

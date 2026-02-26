@@ -94,7 +94,15 @@ export const authAPI = {
 
 export const projectsAPI = {
     getAll: async () => {
-        const res = await handleResponse(supabase.from('projects').select('*').order('created_at', { ascending: false }));
+        const res = await handleResponse(supabase.from('projects').select('*').eq('published', true).order('created_at', { ascending: false }));
+        return {
+            data: res.data.map(p => ({
+                ...p, techStack: p.tech_stack, githubLink: p.github_link, liveLink: p.live_link
+            }))
+        };
+    },
+    getAllAdmin: async () => {
+        const res = await handleResponse(withAuth().from('projects').select('*').order('created_at', { ascending: false }));
         return {
             data: res.data.map(p => ({
                 ...p, techStack: p.tech_stack, githubLink: p.github_link, liveLink: p.live_link

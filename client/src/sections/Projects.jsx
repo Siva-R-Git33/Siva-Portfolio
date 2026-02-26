@@ -107,8 +107,8 @@ export default function Projects() {
                                         key={tag}
                                         onClick={() => setActiveFilter(tag)}
                                         className={`px-3 py-1 text-xs font-mono rounded-full transition-colors ${activeFilter === tag
-                                                ? 'bg-neon-green text-black'
-                                                : 'bg-cyber-gray/50 text-gray-400 hover:text-neon-green hover:border-neon-green border border-transparent'
+                                            ? 'bg-neon-green text-black'
+                                            : 'bg-cyber-gray/50 text-gray-400 hover:text-neon-green hover:border-neon-green border border-transparent'
                                             }`}
                                     >
                                         {tag}
@@ -146,7 +146,10 @@ export default function Projects() {
                                             )}
                                         </div>
                                     </div>
-                                    <p className="text-gray-400 text-sm mb-4 leading-relaxed">{project.description}</p>
+                                    <div
+                                        className="text-gray-400 text-sm mb-4 leading-relaxed prose prose-invert prose-sm max-w-none"
+                                        dangerouslySetInnerHTML={{ __html: project.description }}
+                                    />
                                     <div className="flex flex-wrap gap-2">
                                         {project.techStack?.map((tech) => (
                                             <span key={tech} className="text-xs font-mono px-2 py-1 rounded bg-neon-green/10 text-neon-green">
