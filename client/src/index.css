@@ -34,17 +34,17 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #00ff41;
+    background: var(--neon-green);
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #00cc33;
+    background: var(--neon-green-dim);
   }
 
   ::selection {
     background: rgba(0, 255, 65, 0.3);
-    color: #00ff41;
+    color: var(--neon-green);
   }
 }
 
@@ -64,22 +64,22 @@
   }
 
   .neon-text {
-    color: #00ff41;
-    text-shadow: 0 0 7px #00ff41, 0 0 10px #00ff41, 0 0 21px #00ff41;
+    color: var(--neon-green);
+    text-shadow: 0 0 7px var(--neon-green), 0 0 10px var(--neon-green), 0 0 21px var(--neon-green);
   }
 
   .neon-text-blue {
-    color: #00d4ff;
-    text-shadow: 0 0 7px #00d4ff, 0 0 10px #00d4ff, 0 0 21px #00d4ff;
+    color: var(--neon-blue);
+    text-shadow: 0 0 7px var(--neon-blue), 0 0 10px var(--neon-blue), 0 0 21px var(--neon-blue);
   }
 
   .neon-border {
-    border: 1px solid #00ff41;
+    border: 1px solid var(--neon-green);
     box-shadow: 0 0 5px rgba(0, 255, 65, 0.3), inset 0 0 5px rgba(0, 255, 65, 0.1);
   }
 
   .neon-border-blue {
-    border: 1px solid #00d4ff;
+    border: 1px solid var(--neon-blue);
     box-shadow: 0 0 5px rgba(0, 212, 255, 0.3), inset 0 0 5px rgba(0, 212, 255, 0.1);
   }
 
@@ -97,7 +97,7 @@
     @apply px-6 py-3 rounded-lg font-semibold text-sm uppercase tracking-wider transition-all duration-300;
     background: linear-gradient(135deg, rgba(0, 255, 65, 0.15), rgba(0, 212, 255, 0.15));
     border: 1px solid rgba(0, 255, 65, 0.3);
-    color: #00ff41;
+    color: var(--neon-green);
   }
 
   .cyber-btn:hover {
@@ -108,7 +108,7 @@
 
   .cyber-btn-solid {
     @apply px-6 py-3 rounded-lg font-semibold text-sm uppercase tracking-wider transition-all duration-300;
-    background: linear-gradient(135deg, #00ff41, #00d4ff);
+    background: linear-gradient(135deg, var(--neon-green), var(--neon-blue));
     color: #0a0a0f;
   }
 
@@ -119,7 +119,7 @@
 
   .section-title {
     @apply text-3xl md:text-4xl font-bold mb-2;
-    background: linear-gradient(135deg, #00ff41, #00d4ff);
+    background: linear-gradient(135deg, var(--neon-green), var(--neon-blue));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -146,7 +146,7 @@
 
   .terminal-body {
     @apply p-4 min-h-[200px] text-sm leading-relaxed;
-    color: #00ff41;
+    color: var(--neon-green);
   }
 
   .grid-bg {
@@ -169,26 +169,70 @@
   }
 
   /* Blog markdown styling */
-  .markdown-content h1 { @apply text-3xl font-bold text-neon-green mb-4 mt-8; }
-  .markdown-content h2 { @apply text-2xl font-bold text-neon-blue mb-3 mt-6; }
-  .markdown-content h3 { @apply text-xl font-semibold text-gray-200 mb-2 mt-4; }
-  .markdown-content p { @apply text-gray-300 leading-relaxed mb-4; }
-  .markdown-content ul { @apply list-disc list-inside text-gray-300 mb-4 space-y-1; }
-  .markdown-content ol { @apply list-decimal list-inside text-gray-300 mb-4 space-y-1; }
-  .markdown-content code { @apply bg-cyber-gray px-2 py-0.5 rounded text-neon-green font-mono text-sm; }
-  .markdown-content pre { @apply bg-cyber-gray rounded-lg p-4 mb-4 overflow-x-auto; }
-  .markdown-content pre code { @apply bg-transparent p-0; }
-  .markdown-content blockquote { @apply border-l-4 border-neon-green pl-4 italic text-gray-400 my-4; }
-  .markdown-content a { @apply text-neon-blue hover:text-neon-green underline transition-colors; }
-  .markdown-content img { @apply rounded-lg my-4 max-w-full; }
-  .markdown-content table { @apply w-full border-collapse my-4; }
-  .markdown-content th { @apply bg-cyber-gray px-4 py-2 text-left text-neon-green border border-cyber-border; }
-  .markdown-content td { @apply px-4 py-2 border border-cyber-border text-gray-300; }
+  .markdown-content h1 {
+    @apply text-3xl font-bold text-neon-green mb-4 mt-8;
+  }
+
+  .markdown-content h2 {
+    @apply text-2xl font-bold text-neon-blue mb-3 mt-6;
+  }
+
+  .markdown-content h3 {
+    @apply text-xl font-semibold text-gray-200 mb-2 mt-4;
+  }
+
+  .markdown-content p {
+    @apply text-gray-300 leading-relaxed mb-4;
+  }
+
+  .markdown-content ul {
+    @apply list-disc list-inside text-gray-300 mb-4 space-y-1;
+  }
+
+  .markdown-content ol {
+    @apply list-decimal list-inside text-gray-300 mb-4 space-y-1;
+  }
+
+  .markdown-content code {
+    @apply bg-cyber-gray px-2 py-0.5 rounded text-neon-green font-mono text-sm;
+  }
+
+  .markdown-content pre {
+    @apply bg-cyber-gray rounded-lg p-4 mb-4 overflow-x-auto;
+  }
+
+  .markdown-content pre code {
+    @apply bg-transparent p-0;
+  }
+
+  .markdown-content blockquote {
+    @apply border-l-4 border-neon-green pl-4 italic text-gray-400 my-4;
+  }
+
+  .markdown-content a {
+    @apply text-neon-blue hover:text-neon-green underline transition-colors;
+  }
+
+  .markdown-content img {
+    @apply rounded-lg my-4 max-w-full;
+  }
+
+  .markdown-content table {
+    @apply w-full border-collapse my-4;
+  }
+
+  .markdown-content th {
+    @apply bg-cyber-gray px-4 py-2 text-left text-neon-green border border-cyber-border;
+  }
+
+  .markdown-content td {
+    @apply px-4 py-2 border border-cyber-border text-gray-300;
+  }
 }
 
 @layer utilities {
   .text-gradient {
-    background: linear-gradient(135deg, #00ff41, #00d4ff);
+    background: linear-gradient(135deg, var(--neon-green), var(--neon-blue));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -200,6 +244,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -211,65 +256,65 @@
    ========================================================================== */
 
 body.hacker-mode {
-    background: #000 !important;
-    background-image: none !important;
-    color: #00ff00 !important;
+  background: #000 !important;
+  background-image: none !important;
+  color: #00ff00 !important;
 }
 
 body.hacker-mode * {
-    font-family: 'Fira Code', monospace !important;
+  font-family: 'Fira Code', monospace !important;
 }
 
-body.hacker-mode p, 
-body.hacker-mode h1, 
-body.hacker-mode h2, 
-body.hacker-mode h3, 
+body.hacker-mode p,
+body.hacker-mode h1,
+body.hacker-mode h2,
+body.hacker-mode h3,
 body.hacker-mode h4,
 body.hacker-mode span {
-    color: #00ff00 !important;
-    text-shadow: 0 0 5px rgba(0, 255, 0, 0.4) !important;
+  color: #00ff00 !important;
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.4) !important;
 }
 
 body.hacker-mode .cyber-card {
-    background: #001100 !important;
-    border-color: #00ff00 !important;
-    box-shadow: none !important;
+  background: #001100 !important;
+  border-color: #00ff00 !important;
+  box-shadow: none !important;
 }
 
 body.hacker-mode .cyber-btn,
 body.hacker-mode .cyber-btn-solid {
-    background: #000 !important;
-    color: #00ff00 !important;
-    border: 1px solid #00ff00 !important;
-    box-shadow: none !important;
+  background: #000 !important;
+  color: #00ff00 !important;
+  border: 1px solid #00ff00 !important;
+  box-shadow: none !important;
 }
 
 body.hacker-mode .cyber-btn:hover,
 body.hacker-mode .cyber-btn-solid:hover {
-    background: #00ff00 !important;
-    color: #000 !important;
+  background: #00ff00 !important;
+  color: #000 !important;
 }
 
 body.hacker-mode img:not(.ghchart) {
-    filter: sepia(100%) hue-rotate(85deg) saturate(300%) contrast(150%) opacity(0.8) !important;
-    outline: 1px solid #00ff00 !important;
+  filter: sepia(100%) hue-rotate(85deg) saturate(300%) contrast(150%) opacity(0.8) !important;
+  outline: 1px solid #00ff00 !important;
 }
 
 body.hacker-mode .bg-neon-purple,
 body.hacker-mode .bg-neon-blue,
 body.hacker-mode .bg-neon-red {
-    background-color: #00ff00 !important;
+  background-color: #00ff00 !important;
 }
 
 body.hacker-mode .text-neon-purple,
 body.hacker-mode .text-neon-blue,
 body.hacker-mode .text-neon-red {
-    color: #00ff00 !important;
+  color: #00ff00 !important;
 }
 
-body.hacker-mode .blur-3xl, 
+body.hacker-mode .blur-3xl,
 body.hacker-mode .blur-2xl {
-    display: none !important;
+  display: none !important;
 }
 
 /* ==========================================================================
@@ -277,110 +322,110 @@ body.hacker-mode .blur-2xl {
    ========================================================================== */
 
 [cmdk-overlay] {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    z-index: 100;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 100;
 }
 
 [cmdk-dialog] {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    max-width: 640px;
-    z-index: 101;
-    padding: 16px;
-    outline: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 640px;
+  z-index: 101;
+  padding: 16px;
+  outline: none;
 }
 
 [cmdk-root] {
-    background: rgba(10, 10, 15, 0.85);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(0, 255, 65, 0.2);
-    border-radius: 12px;
-    box-shadow: 0 0 40px rgba(0, 255, 65, 0.1), 0 16px 32px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
-    font-family: inherit;
+  background: rgba(10, 10, 15, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 0 40px rgba(0, 255, 65, 0.1), 0 16px 32px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  font-family: inherit;
 }
 
 [cmdk-input] {
-    width: 100%;
-    font-size: 1.125rem;
-    padding: 18px 20px;
-    border: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    background: transparent;
-    color: #fff;
-    outline: none;
+  width: 100%;
+  font-size: 1.125rem;
+  padding: 18px 20px;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: transparent;
+  color: #fff;
+  outline: none;
 }
 
 [cmdk-input]::placeholder {
-    color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.3);
 }
 
 [cmdk-list] {
-    height: var(--cmdk-list-height);
-    max-height: 400px;
-    overflow-y: auto;
-    padding: 8px;
-    transition: height 0.1s ease;
+  height: var(--cmdk-list-height);
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 8px;
+  transition: height 0.1s ease;
 }
 
 [cmdk-list]::-webkit-scrollbar {
-    width: 6px;
+  width: 6px;
 }
 
 [cmdk-list]::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 [cmdk-list]::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
 }
 
 [cmdk-group-heading] {
-    padding: 8px 12px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: rgba(0, 255, 65, 0.6);
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(0, 255, 65, 0.6);
 }
 
 [cmdk-item] {
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.8);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 [cmdk-item][data-selected="true"] {
-    background: rgba(0, 255, 65, 0.1);
-    color: #00ff41;
+  background: rgba(0, 255, 65, 0.1);
+  color: var(--neon-green);
 }
 
 [cmdk-item] svg {
-    width: 16px;
-    height: 16px;
-    opacity: 0.7;
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
 }
 
 [cmdk-item][data-selected="true"] svg {
-    opacity: 1;
+  opacity: 1;
 }
 
 [cmdk-empty] {
-    padding: 32px;
-    text-align: center;
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.4);
+  padding: 32px;
+  text-align: center;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.4);
 }
