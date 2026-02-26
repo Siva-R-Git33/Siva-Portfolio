@@ -39,11 +39,6 @@ export default function Contact() {
             const currentDateTime = new Date().toLocaleString();
             const formattedMessage = `${form.message}\n\n--- Sent locally at: ${currentDateTime} ---`;
 
-            const payload = {
-                ...form,
-                message: formattedMessage
-            };
-
             // 1. Send to Web3Forms for Email Notification
             await fetch('https://api.web3forms.com/submit', {
                 method: 'POST',
@@ -60,7 +55,7 @@ export default function Contact() {
             });
 
             // 2. Save to Supabase Database
-            await contactAPI.send(payload);
+            await contactAPI.send(form);
 
             setStatus('success');
             setStatusMsg('Message sent! I\'ll get back to you soon.');
