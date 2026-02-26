@@ -53,7 +53,7 @@ export default function Messages() {
                                 <p className="text-neon-blue text-sm font-mono mb-2">{msg.email}</p>
                                 <p className="text-gray-300 text-sm leading-relaxed">{msg.message}</p>
                                 <p className="text-gray-600 text-xs mt-2 font-mono">
-                                    {new Date(msg.createdAt).toLocaleString()}
+                                    {new Date(msg.created_at || msg.createdAt).toLocaleString()}
                                 </p>
                             </div>
                             <div className="flex gap-2 shrink-0">

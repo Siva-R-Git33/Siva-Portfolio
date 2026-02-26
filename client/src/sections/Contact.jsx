@@ -36,7 +36,12 @@ export default function Contact() {
         e.preventDefault();
         setStatus('loading');
         try {
-            await contactAPI.send(form);
+            const currentDateTime = new Date().toLocaleString();
+            const payload = {
+                ...form,
+                message: `${form.message}\n\n--- Sent locally at: ${currentDateTime} ---`
+            };
+            await contactAPI.send(payload);
             setStatus('success');
             setStatusMsg('Message sent! I\'ll get back to you soon.');
             setForm({ name: '', email: '', message: '' });
