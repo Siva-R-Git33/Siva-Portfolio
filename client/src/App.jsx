@@ -11,6 +11,7 @@ import AdminLogin from './pages/AdminLogin';
 import HackerModeToggle from './components/HackerModeToggle';
 import HireMeModal from './components/HireMeModal';
 import CommandPalette from './components/CommandPalette';
+import ThemePicker from './components/ThemePicker';
 
 // Lazy-loaded routes for performance optimization
 const SecurityLab = React.lazy(() => import('./pages/SecurityLab'));
@@ -53,6 +54,7 @@ function App() {
             <HackerModeToggle />
             <HireMeModal />
             <CommandPalette />
+            <ThemePicker />
             <Suspense fallback={<LoadingScreen />}>
                 <Routes>
                     <Route

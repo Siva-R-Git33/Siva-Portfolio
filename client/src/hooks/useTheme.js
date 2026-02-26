@@ -37,8 +37,7 @@ export function applyTheme(settings) {
     const theme = THEMES.find((t) => t.id === s.themeId) || THEMES[0];
     const hue = theme.hue;
 
-    // Apply CSS filter to the html element — affects ALL colors on the page
-    // including every Tailwind class, regardless of hardcoded hex values.
+    // Apply CSS filter to the html element
     document.documentElement.style.filter =
         `hue-rotate(${hue}deg) brightness(${s.brightness}) contrast(${s.contrast}) saturate(${s.saturation})`;
 
@@ -49,12 +48,32 @@ export function applyTheme(settings) {
     document.documentElement.style.fontSize = SIZE_MAP[s.fontSize] || '16px';
 }
 
+// Allow the ThemePicker to set a local override
+export function setLocalTheme(themeId) {
+    localStorage.setItem('userTheme', themeId);
+
+    // We still want the font size/brightness from DB if possible,
+    // so we re-fetch or just apply the hue immediately for instant feedback
+    applyTheme({ themeId });
+}
+
 export default function useTheme() {
     useEffect(() => {
+        const localThemeId = localStorage.getItem('userTheme');
+
         settingsAPI.get('siteTheme')
             .then((r) => {
-                applyTheme(r.data ? { ...DEFAULT_THEME, ...r.data } : DEFAULT_THEME);
+                const dbSettings = r.data ? { ...DEFAULT_THEME, ...r.data } : DEFAULT_THEME;
+
+                // If user selected a local theme, override the DB's hue choice
+                if (localThemeId) {
+                    dbSettings.themeId = localThemeId;
+                }
+
+                applyTheme(dbSettings);
             })
-            .catch(() => applyTheme(DEFAULT_THEME));
+            .catch(() => {
+                applyTheme(localThemeId ? { ...DEFAULT_THEME, themeId: localThemeId } : DEFAULT_THEME);
+            });
     }, []);
 }
