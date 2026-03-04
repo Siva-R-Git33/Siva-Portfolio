@@ -12,6 +12,7 @@ import HackerModeToggle from './components/HackerModeToggle';
 import HireMeModal from './components/HireMeModal';
 import CommandPalette from './components/CommandPalette';
 import ThemePicker from './components/ThemePicker';
+import GlobalBackground from './components/GlobalBackground';
 
 // Lazy-loaded routes for performance optimization
 const SecurityLab = React.lazy(() => import('./pages/SecurityLab'));
@@ -41,7 +42,8 @@ function App() {
     if (loading) return <LoadingScreen />;
 
     return (
-        <div className="min-h-screen bg-cyber-black grid-bg">
+        <div className="min-h-screen grid-bg relative z-0">
+            <GlobalBackground />
             <Helmet>
                 <title>{seo.title}</title>
                 <meta name="description" content={seo.description} />
