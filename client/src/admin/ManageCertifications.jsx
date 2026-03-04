@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FaPlus, FaEdit, FaTrash, FaTimes, FaSave, FaCertificate, FaUpload, FaFilePdf, FaImage } from 'react-icons/fa';
+import { motion, AnimatePresence, Reorder } from 'framer-motion';
+import { FaPlus, FaEdit, FaTrash, FaTimes, FaSave, FaCertificate, FaUpload, FaFilePdf, FaImage, FaGripLines } from 'react-icons/fa';
 import { certificationsAPI, storageAPI } from '../utils/api';
 
 export default function ManageCertifications() {
@@ -14,13 +14,18 @@ export default function ManageCertifications() {
     const [uploadError, setUploadError] = useState('');
     const fileInputRef = useRef(null);
 
+    // Reorder State
+    const [isReordering, setIsReordering] = useState(false);
+
     const load = () => certificationsAPI.getAll().then((res) => setCertifications(res.data)).catch(() => { });
 
     useEffect(() => { load(); }, []);
 
     const openNew = () => {
         setEditing(null);
-        setForm({ name: '', issuer: '', color: 'neon-blue', file_url: '' });
+        // Ensure new certs go to the bottom of the list
+        const nextOrderIndex = certifications.length > 0 ? Math.max(...certifications.map(c => c.order_index || 0)) + 1 : 0;
+        setForm({ name: '', issuer: '', color: 'neon-blue', file_url: '', order_index: nextOrderIndex });
         setUploadError('');
         setShowModal(true);
     };
@@ -81,6 +86,21 @@ export default function ManageCertifications() {
         }
     };
 
+    const handleReorder = async (newOrder) => {
+        setCertifications(newOrder); // Optimistic UI update
+        setIsReordering(true);
+        try {
+            const ids = newOrder.map(c => c.id);
+            await certificationsAPI.updateOrder(ids);
+        } catch (err) {
+            console.error('Failed to save arrangement', err);
+            // Reload original order if failed
+            load();
+        } finally {
+            setIsReordering(false);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -126,28 +146,40 @@ export default function ManageCertifications() {
                 </button>
             </div>
 
-            <div className="space-y-3">
-                {certifications.map((c) => (
-                    <div key={c.id} className="cyber-card flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-${c.color}/10 text-${c.color}`}>
-                                <FaCertificate className="text-lg" />
-                            </div>
-                            <div>
-                                <h3 className="text-white font-semibold">{c.name}</h3>
-                                <p className="text-gray-500 text-sm font-mono">{c.issuer}</p>
-                            </div>
-                        </div>
-                        <div className="flex gap-2 shrink-0 ml-4">
-                            <button onClick={() => openEdit(c)} className="p-2 rounded-lg bg-neon-blue/10 text-neon-blue hover:bg-neon-blue/20 transition-all">
-                                <FaEdit />
-                            </button>
-                            <button onClick={() => handleDelete(c)} className="p-2 rounded-lg bg-neon-red/10 text-neon-red hover:bg-neon-red/20 transition-all">
-                                <FaTrash />
-                            </button>
-                        </div>
+            <div className="space-y-3 relative">
+                {isReordering && (
+                    <div className="absolute -top-6 right-0 text-xs font-mono text-neon-blue animate-pulse">
+                        Saving arrangement...
                     </div>
-                ))}
+                )}
+
+                <Reorder.Group axis="y" values={certifications} onReorder={handleReorder} className="space-y-3">
+                    {certifications.map((c) => (
+                        <Reorder.Item key={c.id} value={c} className="cyber-card flex items-center justify-between cursor-grab active:cursor-grabbing">
+                            <div className="flex items-center gap-4">
+                                <div className="text-cyber-border hover:text-white transition-colors cursor-grab active:cursor-grabbing shrink-0 pr-2">
+                                    <FaGripLines className="text-xl" />
+                                </div>
+                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-${c.color}/10 text-${c.color}`}>
+                                    <FaCertificate className="text-lg" />
+                                </div>
+                                <div>
+                                    <h3 className="text-white font-semibold">{c.name}</h3>
+                                    <p className="text-gray-500 text-sm font-mono">{c.issuer}</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-2 shrink-0 ml-4 pointer-events-auto">
+                                <button onClick={() => openEdit(c)} className="p-2 rounded-lg bg-neon-blue/10 text-neon-blue hover:bg-neon-blue/20 transition-all">
+                                    <FaEdit />
+                                </button>
+                                <button onClick={() => handleDelete(c)} className="p-2 rounded-lg bg-neon-red/10 text-neon-red hover:bg-neon-red/20 transition-all">
+                                    <FaTrash />
+                                </button>
+                            </div>
+                        </Reorder.Item>
+                    ))}
+                </Reorder.Group>
+
                 {certifications.length === 0 && (
                     <p className="text-gray-500 text-center py-8 font-mono text-sm">No certifications yet. Add your first one.</p>
                 )}

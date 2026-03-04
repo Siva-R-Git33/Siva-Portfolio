@@ -194,10 +194,19 @@ export const skillsAPI = {
 };
 
 export const certificationsAPI = {
-    getAll: () => handleResponse(supabase.from('certifications').select('*').order('created_at', { ascending: false })),
+    getAll: () => handleResponse(supabase.from('certifications').select('*').order('order_index', { ascending: true })),
     create: (data) => handleResponse(withAuth().from('certifications').insert([data]).select()),
     update: (id, data) => handleResponse(withAuth().from('certifications').update(data).eq('id', id).select()),
     delete: (id) => handleResponse(withAuth().from('certifications').delete().eq('id', id)),
+    updateOrder: async (orderedIds) => {
+        // Supabase bulk updates can be tricky from the client. 
+        // We'll map over each ID and send an update request.
+        const promises = orderedIds.map((id, index) =>
+            withAuth().from('certifications').update({ order_index: index }).eq('id', id)
+        );
+        await Promise.all(promises);
+        return { data: 'success' };
+    }
 };
 
 export const eventsAPI = {

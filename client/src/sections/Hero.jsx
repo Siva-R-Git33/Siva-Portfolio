@@ -4,7 +4,6 @@ import { FaChevronDown, FaLinkedin, FaGithub } from 'react-icons/fa';
 import { SiTryhackme } from 'react-icons/si';
 import { HiMail } from 'react-icons/hi';
 import { settingsAPI } from '../utils/api';
-import { Canvas } from '@react-three/fiber';
 import CyberGlobe from '../components/CyberGlobe';
 
 const defaultHero = {
@@ -105,8 +104,9 @@ export default function Hero() {
     return (
         <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-10">
 
-            {/* 3D Background Canvas temporarily removed to fix crashing issue */}
+            {/* 3D Background Canvas */}
             <div className="absolute inset-0 z-0">
+                <CyberGlobe />
             </div>
 
             {/* Gradient orbs (placed behind content but over the 3D globe for lighting effects) */}
