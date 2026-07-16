@@ -4,6 +4,10 @@
     "outputDirectory": "dist",
     "rewrites": [
         {
+            "source": "/api/analyze-headers",
+            "destination": "/api/analyze-headers"
+        },
+        {
             "source": "/api/supabase/(.*)",
             "destination": "/api/supabase"
         },

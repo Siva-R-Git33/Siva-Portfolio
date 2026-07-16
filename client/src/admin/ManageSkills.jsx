@@ -13,6 +13,7 @@ export default function ManageSkills() {
     const [form, setForm] = useState({ name: '', category: defaultCategories[0] });
     const [renamingCategory, setRenamingCategory] = useState(null);
     const [newCategoryName, setNewCategoryName] = useState('');
+    const [noChangeFeedback, setNoChangeFeedback] = useState(false);
 
     const load = () => skillsAPI.getAll().then((res) => setSkills(res.data)).catch(() => { });
 
@@ -68,7 +69,8 @@ export default function ManageSkills() {
         const newName = newCategoryName.trim();
         if (!newName) return alert('Please enter a category name.');
         if (newName === oldName) {
-            setRenamingCategory(null);
+            setNoChangeFeedback(true);
+            setTimeout(() => { setNoChangeFeedback(false); setRenamingCategory(null); }, 1500);
             return;
         }
         try {
@@ -219,6 +221,9 @@ export default function ManageSkills() {
                                 <button type="submit" className="w-full cyber-btn-solid flex items-center justify-center gap-2">
                                     <FaSave /> Save
                                 </button>
+                                {noChangeFeedback && (
+                                    <p className="text-neon-green text-xs text-center font-mono mt-1">✓ No changes made</p>
+                                )}
                             </form>
                         </motion.div>
                     </motion.div>

@@ -1363,9 +1363,6 @@ body.hacker-mode .markdown-content a {
 .max-w-md {
   max-width: 28rem;
 }
-.max-w-none {
-  max-width: none;
-}
 .max-w-sm {
   max-width: 24rem;
 }
@@ -2032,6 +2029,10 @@ body.hacker-mode .markdown-content a {
 }
 .text-6xl {
   font-size: 3.75rem;
+  line-height: 1;
+}
+.text-8xl {
+  font-size: 6rem;
   line-height: 1;
 }
 .text-\[10px\] {

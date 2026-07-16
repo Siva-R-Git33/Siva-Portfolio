@@ -146,10 +146,9 @@ export default function Projects() {
                                             )}
                                         </div>
                                     </div>
-                                    <div
-                                        className="text-gray-400 text-sm mb-4 leading-relaxed prose prose-invert prose-sm max-w-none"
-                                        dangerouslySetInnerHTML={{ __html: project.description }}
-                                    />
+                                    <p className="text-gray-400 text-sm mb-4 leading-relaxed">
+                                        {project.description}
+                                    </p>
                                     <div className="flex flex-wrap gap-2">
                                         {project.techStack?.map((tech) => (
                                             <span key={tech} className="text-xs font-mono px-2 py-1 rounded bg-neon-green/10 text-neon-green">
@@ -178,7 +177,7 @@ export default function Projects() {
                                 <motion.a
                                     key={repo.id}
                                     variants={cardVariants}
-                                    href={repo.url}
+                                    href={repo.html_url}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="cyber-card group block"
@@ -203,10 +202,10 @@ export default function Projects() {
                                             </span>
                                         )}
                                         <span className="flex items-center gap-1">
-                                            <FaStar className="text-yellow-500" /> {repo.stars}
+                                            <FaStar className="text-yellow-500" /> {repo.stargazers_count}
                                         </span>
                                         <span className="flex items-center gap-1">
-                                            <FaCodeBranch /> {repo.forks}
+                                            <FaCodeBranch /> {repo.forks_count}
                                         </span>
                                     </div>
                                 </motion.a>

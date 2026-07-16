@@ -2,6 +2,10 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaSearch, FaSpinner, FaCopy, FaCheck } from 'react-icons/fa';
 
+// Uses Google DNS-over-HTTPS API — fully client-side, no server function needed
+const DOH_API = 'https://dns.google/resolve';
+const RECORD_TYPES = ['A', 'AAAA', 'MX', 'TXT', 'NS'];
+
 const RECORD_COLORS = {
     A: 'text-neon-green',
     AAAA: 'text-neon-blue',
@@ -9,6 +13,30 @@ const RECORD_COLORS = {
     TXT: 'text-yellow-400',
     NS: 'text-orange-400',
 };
+
+// DNS type numbers for Google DoH
+const TYPE_MAP = { A: 1, AAAA: 28, MX: 15, TXT: 16, NS: 2 };
+
+async function resolveType(domain, type) {
+    const res = await fetch(`${DOH_API}?name=${encodeURIComponent(domain)}&type=${type}`, {
+        headers: { Accept: 'application/dns-json' },
+    });
+    if (!res.ok) throw new Error(`DoH request failed for type ${type}`);
+    const data = await res.json();
+    // data.Answer may be undefined if no records
+    const answers = data.Answer || [];
+    return answers
+        .filter((a) => a.type === TYPE_MAP[type])
+        .map((a) => {
+            if (type === 'MX') {
+                // MX data format: "10 mail.example.com."
+                const parts = String(a.data).trim().split(/\s+/);
+                return { priority: parseInt(parts[0]) || 0, exchange: parts[1]?.replace(/\.$/, '') || '' };
+            }
+            // Remove trailing dot from NS/CNAME records, strip quotes from TXT
+            return String(a.data).replace(/\.$/, '').replace(/^"|"$/g, '');
+        });
+}
 
 export default function DnsLookup() {
     const [domain, setDomain] = useState('');
@@ -19,23 +47,22 @@ export default function DnsLookup() {
 
     const handleLookup = async (e) => {
         e.preventDefault();
-        if (!domain.trim()) return;
+        const trimmed = domain.trim().toLowerCase().replace(/^https?:\/\//i, '');
+        if (!trimmed) return;
 
         setLoading(true);
         setError('');
         setResults(null);
 
         try {
-            const res = await fetch('/api/dns-lookup', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ domain: domain.trim() }),
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'Lookup failed');
-            setResults(data);
+            const recordPromises = RECORD_TYPES.map((type) =>
+                resolveType(trimmed, type).then((values) => [type, values]).catch(() => [type, []])
+            );
+            const resolved = await Promise.all(recordPromises);
+            const records = Object.fromEntries(resolved);
+            setResults({ domain: trimmed, records });
         } catch (err) {
-            setError(err.message);
+            setError(err.message || 'DNS lookup failed. Check the domain and try again.');
         } finally {
             setLoading(false);
         }
@@ -51,7 +78,7 @@ export default function DnsLookup() {
         <div>
             <h2 className="text-2xl font-bold text-white mb-2">DNS Lookup</h2>
             <p className="text-gray-400 text-sm font-mono mb-6">
-                Resolve A, AAAA, MX, TXT, and NS records for any domain.
+                Resolve A, AAAA, MX, TXT, and NS records via Google DNS-over-HTTPS — runs entirely in your browser.
             </p>
 
             <form onSubmit={handleLookup} className="flex gap-2 mb-6">
@@ -103,7 +130,7 @@ export default function DnsLookup() {
                                         const key = `${type}-${i}`;
                                         return (
                                             <div
-                                                key={i}
+                                                key={key}
                                                 className="flex items-center justify-between bg-cyber-black/50 px-3 py-2 rounded text-xs font-mono group"
                                             >
                                                 <span className="text-gray-300 break-all">{display}</span>

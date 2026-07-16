@@ -1,4 +1,4 @@
-import { r as reactExports, j as jsxRuntimeExports, F as FaEyeSlash, a as FaEye, m as motion, b as FaClock, c as FaCheckCircle, d as FaTimesCircle, e as FaGlobe, f as FaSearch, g as FaExclamationTriangle, h as FaFingerprint, i as FaSpinner, k as FaCheck, l as FaCopy, n as FaLock, H as Helmet, o as FaShieldAlt, p as FaKey, q as FaCogs, A as AnimatePresence } from "./index-C1YA_Q0t.js";
+import { r as reactExports, j as jsxRuntimeExports, F as FaEyeSlash, a as FaEye, m as motion, b as FaClock, c as FaCheckCircle, d as FaTimesCircle, e as FaGlobe, f as FaSearch, g as FaExclamationTriangle, h as FaFingerprint, i as FaSpinner, k as FaCheck, l as FaCopy, n as FaLock, H as Helmet, o as FaShieldAlt, p as FaKey, q as FaCogs, A as AnimatePresence } from "./index-DDj4q0qE.js";
 function PasswordChecker() {
   const [password, setPassword] = reactExports.useState("");
   const [showPassword, setShowPassword] = reactExports.useState(false);
@@ -457,6 +457,8 @@ function JwtDecoder() {
     )
   ] });
 }
+const DOH_API = "https://dns.google/resolve";
+const RECORD_TYPES = ["A", "AAAA", "MX", "TXT", "NS"];
 const RECORD_COLORS = {
   A: "text-neon-green",
   AAAA: "text-neon-blue",
@@ -464,6 +466,23 @@ const RECORD_COLORS = {
   TXT: "text-yellow-400",
   NS: "text-orange-400"
 };
+const TYPE_MAP = { A: 1, AAAA: 28, MX: 15, TXT: 16, NS: 2 };
+async function resolveType(domain, type) {
+  const res = await fetch(`${DOH_API}?name=${encodeURIComponent(domain)}&type=${type}`, {
+    headers: { Accept: "application/dns-json" }
+  });
+  if (!res.ok) throw new Error(`DoH request failed for type ${type}`);
+  const data = await res.json();
+  const answers = data.Answer || [];
+  return answers.filter((a) => a.type === TYPE_MAP[type]).map((a) => {
+    var _a;
+    if (type === "MX") {
+      const parts = String(a.data).trim().split(/\s+/);
+      return { priority: parseInt(parts[0]) || 0, exchange: ((_a = parts[1]) == null ? void 0 : _a.replace(/\.$/, "")) || "" };
+    }
+    return String(a.data).replace(/\.$/, "").replace(/^"|"$/g, "");
+  });
+}
 function DnsLookup() {
   const [domain, setDomain] = reactExports.useState("");
   const [results, setResults] = reactExports.useState(null);
@@ -472,21 +491,20 @@ function DnsLookup() {
   const [copied, setCopied] = reactExports.useState("");
   const handleLookup = async (e) => {
     e.preventDefault();
-    if (!domain.trim()) return;
+    const trimmed = domain.trim().toLowerCase().replace(/^https?:\/\//i, "");
+    if (!trimmed) return;
     setLoading(true);
     setError("");
     setResults(null);
     try {
-      const res = await fetch("/api/dns-lookup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ domain: domain.trim() })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Lookup failed");
-      setResults(data);
+      const recordPromises = RECORD_TYPES.map(
+        (type) => resolveType(trimmed, type).then((values) => [type, values]).catch(() => [type, []])
+      );
+      const resolved = await Promise.all(recordPromises);
+      const records = Object.fromEntries(resolved);
+      setResults({ domain: trimmed, records });
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "DNS lookup failed. Check the domain and try again.");
     } finally {
       setLoading(false);
     }
@@ -498,7 +516,7 @@ function DnsLookup() {
   };
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-2xl font-bold text-white mb-2", children: "DNS Lookup" }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-gray-400 text-sm font-mono mb-6", children: "Resolve A, AAAA, MX, TXT, and NS records for any domain." }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-gray-400 text-sm font-mono mb-6", children: "Resolve A, AAAA, MX, TXT, and NS records via Google DNS-over-HTTPS — runs entirely in your browser." }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("form", { onSubmit: handleLookup, className: "flex gap-2 mb-6", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(
         "input",
@@ -569,7 +587,7 @@ function DnsLookup() {
                     )
                   ]
                 },
-                i
+                key
               );
             }) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-gray-600 text-xs font-mono", children: "No records found" })
           ] }, type))
@@ -579,34 +597,149 @@ function DnsLookup() {
   ] });
 }
 const HASH_LABELS = {
-  md5: { name: "MD5", color: "text-neon-red", note: "(insecure, legacy)" },
-  sha1: { name: "SHA-1", color: "text-yellow-400", note: "(deprecated)" },
-  sha256: { name: "SHA-256", color: "text-neon-green", note: "(recommended)" },
-  sha512: { name: "SHA-512", color: "text-neon-blue", note: "(strongest)" }
+  "MD5": { color: "text-neon-red", note: "(insecure, legacy)" },
+  "SHA-1": { color: "text-yellow-400", note: "(deprecated)" },
+  "SHA-256": { color: "text-neon-green", note: "(recommended)" },
+  "SHA-512": { color: "text-neon-blue", note: "(strongest)" }
 };
+async function subtleHash(algorithm, text) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(text);
+  const hashBuffer = await crypto.subtle.digest(algorithm, data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+function md5(input) {
+  function safeAdd(x, y) {
+    const lsw = (x & 65535) + (y & 65535);
+    return (x >> 16) + (y >> 16) + (lsw >> 16) << 16 | lsw & 65535;
+  }
+  function bitRotateLeft(num, cnt) {
+    return num << cnt | num >>> 32 - cnt;
+  }
+  function md5cmn(q, a2, b2, x, s, t) {
+    return safeAdd(bitRotateLeft(safeAdd(safeAdd(a2, q), safeAdd(x, t)), s), b2);
+  }
+  function md5ff(a2, b2, c2, d2, x, s, t) {
+    return md5cmn(b2 & c2 | ~b2 & d2, a2, b2, x, s, t);
+  }
+  function md5gg(a2, b2, c2, d2, x, s, t) {
+    return md5cmn(b2 & d2 | c2 & ~d2, a2, b2, x, s, t);
+  }
+  function md5hh(a2, b2, c2, d2, x, s, t) {
+    return md5cmn(b2 ^ c2 ^ d2, a2, b2, x, s, t);
+  }
+  function md5ii(a2, b2, c2, d2, x, s, t) {
+    return md5cmn(c2 ^ (b2 | ~d2), a2, b2, x, s, t);
+  }
+  const str8 = new TextEncoder().encode(input);
+  const len8 = str8.length;
+  const nblks = (len8 + 8 >> 6) + 1;
+  const blks = new Array(nblks * 16).fill(0);
+  for (let i = 0; i < len8; i++) blks[i >> 2] |= str8[i] << i % 4 * 8;
+  blks[len8 >> 2] |= 128 << len8 % 4 * 8;
+  blks[nblks * 16 - 2] = len8 * 8;
+  let a = 1732584193, b = -271733879, c = -1732584194, d = 271733878;
+  for (let i = 0; i < blks.length; i += 16) {
+    const [oa, ob, oc, od] = [a, b, c, d];
+    a = md5ff(a, b, c, d, blks[i], 7, -680876936);
+    d = md5ff(d, a, b, c, blks[i + 1], 12, -389564586);
+    c = md5ff(c, d, a, b, blks[i + 2], 17, 606105819);
+    b = md5ff(b, c, d, a, blks[i + 3], 22, -1044525330);
+    a = md5ff(a, b, c, d, blks[i + 4], 7, -176418897);
+    d = md5ff(d, a, b, c, blks[i + 5], 12, 1200080426);
+    c = md5ff(c, d, a, b, blks[i + 6], 17, -1473231341);
+    b = md5ff(b, c, d, a, blks[i + 7], 22, -45705983);
+    a = md5ff(a, b, c, d, blks[i + 8], 7, 1770035416);
+    d = md5ff(d, a, b, c, blks[i + 9], 12, -1958414417);
+    c = md5ff(c, d, a, b, blks[i + 10], 17, -42063);
+    b = md5ff(b, c, d, a, blks[i + 11], 22, -1990404162);
+    a = md5ff(a, b, c, d, blks[i + 12], 7, 1804603682);
+    d = md5ff(d, a, b, c, blks[i + 13], 12, -40341101);
+    c = md5ff(c, d, a, b, blks[i + 14], 17, -1502002290);
+    b = md5ff(b, c, d, a, blks[i + 15], 22, 1236535329);
+    a = md5gg(a, b, c, d, blks[i + 1], 5, -165796510);
+    d = md5gg(d, a, b, c, blks[i + 6], 9, -1069501632);
+    c = md5gg(c, d, a, b, blks[i + 11], 14, 643717713);
+    b = md5gg(b, c, d, a, blks[i], 20, -373897302);
+    a = md5gg(a, b, c, d, blks[i + 5], 5, -701558691);
+    d = md5gg(d, a, b, c, blks[i + 10], 9, 38016083);
+    c = md5gg(c, d, a, b, blks[i + 15], 14, -660478335);
+    b = md5gg(b, c, d, a, blks[i + 4], 20, -405537848);
+    a = md5gg(a, b, c, d, blks[i + 9], 5, 568446438);
+    d = md5gg(d, a, b, c, blks[i + 14], 9, -1019803690);
+    c = md5gg(c, d, a, b, blks[i + 3], 14, -187363961);
+    b = md5gg(b, c, d, a, blks[i + 8], 20, 1163531501);
+    a = md5gg(a, b, c, d, blks[i + 13], 5, -1444681467);
+    d = md5gg(d, a, b, c, blks[i + 2], 9, -51403784);
+    c = md5gg(c, d, a, b, blks[i + 7], 14, 1735328473);
+    b = md5gg(b, c, d, a, blks[i + 12], 20, -1926607734);
+    a = md5hh(a, b, c, d, blks[i + 5], 4, -378558);
+    d = md5hh(d, a, b, c, blks[i + 8], 11, -2022574463);
+    c = md5hh(c, d, a, b, blks[i + 11], 16, 1839030562);
+    b = md5hh(b, c, d, a, blks[i + 14], 23, -35309556);
+    a = md5hh(a, b, c, d, blks[i + 1], 4, -1530992060);
+    d = md5hh(d, a, b, c, blks[i + 4], 11, 1272893353);
+    c = md5hh(c, d, a, b, blks[i + 7], 16, -155497632);
+    b = md5hh(b, c, d, a, blks[i + 10], 23, -1094730640);
+    a = md5hh(a, b, c, d, blks[i + 13], 4, 681279174);
+    d = md5hh(d, a, b, c, blks[i], 11, -358537222);
+    c = md5hh(c, d, a, b, blks[i + 3], 16, -722521979);
+    b = md5hh(b, c, d, a, blks[i + 6], 23, 76029189);
+    a = md5hh(a, b, c, d, blks[i + 9], 4, -640364487);
+    d = md5hh(d, a, b, c, blks[i + 12], 11, -421815835);
+    c = md5hh(c, d, a, b, blks[i + 15], 16, 530742520);
+    b = md5hh(b, c, d, a, blks[i + 2], 23, -995338651);
+    a = md5ii(a, b, c, d, blks[i], 6, -198630844);
+    d = md5ii(d, a, b, c, blks[i + 7], 10, 1126891415);
+    c = md5ii(c, d, a, b, blks[i + 14], 15, -1416354905);
+    b = md5ii(b, c, d, a, blks[i + 5], 21, -57434055);
+    a = md5ii(a, b, c, d, blks[i + 12], 6, 1700485571);
+    d = md5ii(d, a, b, c, blks[i + 3], 10, -1894986606);
+    c = md5ii(c, d, a, b, blks[i + 10], 15, -1051523);
+    b = md5ii(b, c, d, a, blks[i + 1], 21, -2054922799);
+    a = md5ii(a, b, c, d, blks[i + 8], 6, 1873313359);
+    d = md5ii(d, a, b, c, blks[i + 15], 10, -30611744);
+    c = md5ii(c, d, a, b, blks[i + 6], 15, -1560198380);
+    b = md5ii(b, c, d, a, blks[i + 13], 21, 1309151649);
+    a = md5ii(a, b, c, d, blks[i + 4], 6, -145523070);
+    d = md5ii(d, a, b, c, blks[i + 11], 10, -1120210379);
+    c = md5ii(c, d, a, b, blks[i + 2], 15, 718787259);
+    b = md5ii(b, c, d, a, blks[i + 9], 21, -343485551);
+    a = safeAdd(a, oa);
+    b = safeAdd(b, ob);
+    c = safeAdd(c, oc);
+    d = safeAdd(d, od);
+  }
+  const toHex = (n) => Array.from({ length: 4 }, (_, i) => (n >> i * 8 & 255).toString(16).padStart(2, "0")).join("");
+  return [a, b, c, d].map(toHex).join("");
+}
+async function computeAllHashes(text) {
+  const [sha1, sha256, sha512] = await Promise.all([
+    subtleHash("SHA-1", text),
+    subtleHash("SHA-256", text),
+    subtleHash("SHA-512", text)
+  ]);
+  return {
+    "MD5": md5(text),
+    "SHA-1": sha1,
+    "SHA-256": sha256,
+    "SHA-512": sha512
+  };
+}
 function HashGenerator() {
   const [text, setText] = reactExports.useState("");
   const [results, setResults] = reactExports.useState(null);
   const [loading, setLoading] = reactExports.useState(false);
-  const [error, setError] = reactExports.useState("");
   const [copied, setCopied] = reactExports.useState("");
   const handleHash = async (e) => {
     e.preventDefault();
     if (!text.trim()) return;
     setLoading(true);
-    setError("");
     setResults(null);
     try {
-      const res = await fetch("/api/hash-analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Hashing failed");
-      setResults(data);
-    } catch (err) {
-      setError(err.message);
+      const hashes = await computeAllHashes(text);
+      setResults({ input: text, hashes });
     } finally {
       setLoading(false);
     }
@@ -618,7 +751,7 @@ function HashGenerator() {
   };
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-2xl font-bold text-white mb-2", children: "Hash Generator" }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-gray-400 text-sm font-mono mb-6", children: "Generate MD5, SHA-1, SHA-256, and SHA-512 hashes for any text input." }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-gray-400 text-sm font-mono mb-6", children: "Generate MD5, SHA-1, SHA-256, and SHA-512 hashes entirely in your browser — no data leaves your device." }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("form", { onSubmit: handleHash, className: "mb-6", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(
         "textarea",
@@ -634,18 +767,14 @@ function HashGenerator() {
         "button",
         {
           type: "submit",
-          disabled: loading,
-          className: "cyber-btn-solid px-6 flex items-center gap-2",
+          disabled: loading || !text.trim(),
+          className: "cyber-btn-solid px-6 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed",
           children: [
-            loading ? /* @__PURE__ */ jsxRuntimeExports.jsx(FaSpinner, { className: "animate-spin" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(FaLock, {}),
+            loading ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-4 h-4 border-2 border-cyber-black border-t-transparent rounded-full animate-spin" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(FaLock, {}),
             "Compute Hashes"
           ]
         }
       )
-    ] }),
-    error && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "bg-neon-red/10 border border-neon-red/30 text-neon-red p-4 rounded-lg font-mono text-sm mb-4", children: [
-      "✗ ",
-      error
     ] }),
     results && /* @__PURE__ */ jsxRuntimeExports.jsxs(
       motion.div,
@@ -658,15 +787,15 @@ function HashGenerator() {
             "Input: ",
             /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-white", children: [
               '"',
-              results.input,
+              results.input.length > 40 ? results.input.slice(0, 40) + "..." : results.input,
               '"'
             ] })
           ] }),
           Object.entries(results.hashes).map(([algo, hash]) => {
-            const meta = HASH_LABELS[algo] || { name: algo, color: "text-white", note: "" };
+            const meta = HASH_LABELS[algo] || { color: "text-white", note: "" };
             return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "cyber-card !p-4", children: [
               /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 mb-2", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `font-bold font-mono text-sm ${meta.color}`, children: meta.name }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `font-bold font-mono text-sm ${meta.color}`, children: algo }),
                 /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs text-gray-600", children: meta.note })
               ] }),
               /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between bg-cyber-black/50 px-3 py-2 rounded group", children: [

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { HiMenu, HiX } from 'react-icons/hi';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { settingsAPI } from '../utils/api';
 
 const navLinks = [
@@ -24,7 +24,7 @@ export default function Navbar() {
     const [showEvents, setShowEvents] = useState(true);
     const [layout, setLayout] = useState([]);
     const location = useLocation();
-    const navigate = import('react-router-dom').then(m => m.useNavigate); // dynamically imported below
+    const navigate = useNavigate();
 
     useEffect(() => {
         settingsAPI.get('site_layout').then(res => {
@@ -79,18 +79,20 @@ export default function Navbar() {
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [location]);
+    }, [location, layout]);
 
     const handleNavClick = (linkObj) => {
         setMobileOpen(false);
 
         if (linkObj.isPage) {
-            window.location.href = linkObj.href;
+            // Use React Router navigate for SPA transitions (no page reload)
+            navigate(linkObj.href);
             return;
         }
 
         if (location.pathname !== '/') {
-            window.location.href = '/' + linkObj.href;
+            // Navigate to home first, then let the hash handle scroll
+            navigate('/' + linkObj.href);
             return;
         }
         const el = document.querySelector(linkObj.href);

@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-import { u as useConstant, s as motionValue, r as reactExports, M as MotionConfigContext, t as useIsomorphicLayoutEffect$1, v as cancelFrame, w as frame, x as interpolate$2, y as collectMotionValues, z as mixNumber, B as moveItem, m as motion, j as jsxRuntimeExports, C as isMotionValue, D as commonjsGlobal, E as requireReact, G as requireReactDom, I as getDefaultExportFromCjs, J as FaGithub, K as FaPlus, L as FaEdit, N as FaTrash, A as AnimatePresence, O as FaTimes, P as FaSave, Q as projectsAPI, R as settingsAPI, i as FaSpinner, S as storageAPI, T as FaImage, U as blogsAPI, V as skillsAPI, W as FaGripLines, X as FaCertificate, Y as FaFilePdf, Z as FaUpload, _ as certificationsAPI, g as FaExclamationTriangle, c as FaCheckCircle, $ as DEFAULT_THEME, a0 as THEMES, a1 as applyTheme, a2 as FaChartLine, a3 as FaTerminal, a as FaEye, a4 as FaFilter, a5 as FaBriefcase, a6 as FaCalendarAlt, F as FaEyeSlash, a7 as reactDomExports, a8 as React, a9 as FaDownload, aa as FaHistory, ab as FaCalendar, ac as supabase, ad as React$1, ae as authAPI, o as FaShieldAlt, af as FaQrcode, ag as eventsAPI, ah as FaMapMarkerAlt, ai as FaLink, k as FaCheck, aj as FaEnvelope, ak as contactAPI, al as useNavigate, am as useLocation, an as isAuthenticated, ao as Link, ap as FaBars, aq as FaTachometerAlt, ar as FaToggleOn, as as FaPalette, at as FaProjectDiagram, au as FaBlog, q as FaCogs, av as FaHome, p as FaKey, aw as logout, ax as FaSignOutAlt, ay as Routes, az as Route } from "./index-C1YA_Q0t.js";
+import { u as useConstant, s as motionValue, r as reactExports, M as MotionConfigContext, t as useIsomorphicLayoutEffect$1, v as cancelFrame, w as frame, x as interpolate$2, y as collectMotionValues, z as mixNumber, B as moveItem, m as motion, j as jsxRuntimeExports, C as isMotionValue, D as commonjsGlobal, E as requireReact, G as requireReactDom, I as getDefaultExportFromCjs, J as FaGithub, K as FaPlus, L as FaEdit, N as FaTrash, A as AnimatePresence, O as FaTimes, P as FaSave, Q as projectsAPI, R as settingsAPI, i as FaSpinner, S as storageAPI, T as FaImage, U as blogsAPI, V as skillsAPI, W as FaGripLines, X as FaCertificate, Y as FaFilePdf, Z as FaUpload, _ as certificationsAPI, g as FaExclamationTriangle, c as FaCheckCircle, $ as DEFAULT_THEME, a0 as THEMES, a1 as applyTheme, a2 as FaChartLine, a3 as FaTerminal, a as FaEye, a4 as FaFilter, a5 as FaBriefcase, a6 as FaCalendarAlt, F as FaEyeSlash, a7 as reactDomExports, a8 as React, a9 as FaDownload, aa as FaHistory, ab as FaCalendar, ac as supabase, ad as React$1, ae as authAPI, o as FaShieldAlt, af as FaQrcode, ag as eventsAPI, ah as FaMapMarkerAlt, ai as FaLink, k as FaCheck, aj as FaEnvelope, ak as contactAPI, al as useNavigate, am as useLocation, an as isAuthenticated, ao as Link, ap as FaBars, aq as FaTachometerAlt, ar as FaToggleOn, as as FaPalette, at as FaProjectDiagram, au as FaBlog, q as FaCogs, av as FaHome, p as FaKey, aw as logout, ax as FaSignOutAlt, ay as Routes, az as Route } from "./index-DDj4q0qE.js";
 function useMotionValue(initial) {
   const value = useConstant(() => motionValue(initial));
   const { isStatic } = reactExports.useContext(MotionConfigContext);
@@ -13817,6 +13817,7 @@ function ManageSkills() {
   const [form, setForm] = reactExports.useState({ name: "", category: defaultCategories[0] });
   const [renamingCategory, setRenamingCategory] = reactExports.useState(null);
   const [newCategoryName, setNewCategoryName] = reactExports.useState("");
+  const [noChangeFeedback, setNoChangeFeedback] = reactExports.useState(false);
   const load = () => skillsAPI.getAll().then((res) => setSkills(res.data)).catch(() => {
   });
   reactExports.useEffect(() => {
@@ -13869,7 +13870,11 @@ function ManageSkills() {
     const newName = newCategoryName.trim();
     if (!newName) return alert("Please enter a category name.");
     if (newName === oldName) {
-      setRenamingCategory(null);
+      setNoChangeFeedback(true);
+      setTimeout(() => {
+        setNoChangeFeedback(false);
+        setRenamingCategory(null);
+      }, 1500);
       return;
     }
     try {
@@ -14031,7 +14036,8 @@ function ManageSkills() {
                 /* @__PURE__ */ jsxRuntimeExports.jsxs("button", { type: "submit", className: "w-full cyber-btn-solid flex items-center justify-center gap-2", children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(FaSave, {}),
                   " Save"
-                ] })
+                ] }),
+                noChangeFeedback && /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-neon-green text-xs text-center font-mono mt-1", children: "✓ No changes made" })
               ] })
             ]
           }

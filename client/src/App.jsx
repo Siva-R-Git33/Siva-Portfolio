@@ -13,6 +13,7 @@ import HireMeModal from './components/HireMeModal';
 import CommandPalette from './components/CommandPalette';
 import ThemePicker from './components/ThemePicker';
 import GlobalBackground from './components/GlobalBackground';
+import NotFound from './pages/NotFound';
 
 // Lazy-loaded routes for performance optimization
 const SecurityLab = React.lazy(() => import('./pages/SecurityLab'));
@@ -35,7 +36,7 @@ function App() {
             if (res.data) setSeo(prev => ({ ...prev, ...res.data }));
         }).catch(() => { });
 
-        const timer = setTimeout(() => setLoading(false), 2800);
+        const timer = setTimeout(() => setLoading(false), 1200);
         return () => clearTimeout(timer);
     }, []);
 
@@ -91,8 +92,17 @@ function App() {
                     />
                     <Route path="/admin/login" element={<AdminLogin />} />
                     <Route path="/admin/*" element={<AdminDashboard />} />
-                    {/* Catch-all 404 Route redirecting to home */}
-                    <Route path="*" element={<Home />} />
+                    {/* Catch-all 404 Route */}
+                    <Route
+                        path="*"
+                        element={
+                            <div id="site-wrapper">
+                                <Navbar />
+                                <NotFound />
+                                <Footer />
+                            </div>
+                        }
+                    />
                 </Routes>
             </Suspense>
         </div>
