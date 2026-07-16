@@ -191,6 +191,7 @@ export const skillsAPI = {
     create: (data) => handleResponse(withAuth().from('skills').insert([data]).select()),
     update: (id, data) => handleResponse(withAuth().from('skills').update(data).eq('id', id).select()),
     delete: (id) => handleResponse(withAuth().from('skills').delete().eq('id', id)),
+    renameCategory: (oldName, newName) => handleResponse(withAuth().from('skills').update({ category: newName }).eq('category', oldName).select()),
 };
 
 export const certificationsAPI = {

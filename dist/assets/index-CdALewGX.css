@@ -507,7 +507,14 @@ video {
 
   body {
     font-family: 'Inter', system-ui, sans-serif;
-    background-color: #0a0a0f;
+    background-color: #06060a;
+    background-image: 
+      radial-gradient(circle at 15% 50%, rgba(0, 212, 255, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 85% 30%, rgba(189, 0, 255, 0.03) 0%, transparent 50%),
+      linear-gradient(rgba(0, 255, 65, 0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 65, 0.015) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 50px 50px, 50px 50px;
+    background-attachment: fixed;
     color: #e6edf3;
     overflow-x: hidden;
   }
@@ -876,6 +883,9 @@ body.hacker-mode .markdown-content a {
 .visible {
   visibility: visible;
 }
+.static {
+  position: static;
+}
 .fixed {
   position: fixed;
 }
@@ -907,6 +917,9 @@ body.hacker-mode .markdown-content a {
 .-top-4 {
   top: -1rem;
 }
+.-top-6 {
+  top: -1.5rem;
+}
 .bottom-1\/4 {
   bottom: 25%;
 }
@@ -921,6 +934,9 @@ body.hacker-mode .markdown-content a {
 }
 .bottom-8 {
   bottom: 2rem;
+}
+.bottom-\[20\%\] {
+  bottom: 20%;
 }
 .left-0 {
   left: 0px;
@@ -940,6 +956,9 @@ body.hacker-mode .markdown-content a {
 .left-6 {
   left: 1.5rem;
 }
+.left-\[20\%\] {
+  left: 20%;
+}
 .right-0 {
   right: 0px;
 }
@@ -954,6 +973,9 @@ body.hacker-mode .markdown-content a {
 }
 .right-6 {
   right: 1.5rem;
+}
+.right-\[10\%\] {
+  right: 10%;
 }
 .top-0 {
   top: 0px;
@@ -975,6 +997,12 @@ body.hacker-mode .markdown-content a {
 }
 .top-6 {
   top: 1.5rem;
+}
+.top-\[10\%\] {
+  top: 10%;
+}
+.top-\[2000px\] {
+  top: 2000px;
 }
 .z-0 {
   z-index: 0;
@@ -1187,6 +1215,12 @@ body.hacker-mode .markdown-content a {
 .h-\[400px\] {
   height: 400px;
 }
+.h-\[500px\] {
+  height: 500px;
+}
+.h-\[600px\] {
+  height: 600px;
+}
 .h-full {
   height: 100%;
 }
@@ -1267,6 +1301,12 @@ body.hacker-mode .markdown-content a {
 }
 .w-96 {
   width: 24rem;
+}
+.w-\[500px\] {
+  width: 500px;
+}
+.w-\[600px\] {
+  width: 600px;
 }
 .w-fit {
   width: -moz-fit-content;
@@ -1433,6 +1473,9 @@ body.hacker-mode .markdown-content a {
 }
 .resize-none {
   resize: none;
+}
+.resize {
+  resize: both;
 }
 .appearance-none {
   -webkit-appearance: none;
@@ -1935,6 +1978,9 @@ body.hacker-mode .markdown-content a {
 .pr-12 {
   padding-right: 3rem;
 }
+.pr-2 {
+  padding-right: 0.5rem;
+}
 .pr-32 {
   padding-right: 8rem;
 }
@@ -2069,6 +2115,10 @@ body.hacker-mode .markdown-content a {
   --tw-text-opacity: 1;
   color: rgb(10 10 15 / var(--tw-text-opacity, 1));
 }
+.text-cyber-border {
+  --tw-text-opacity: 1;
+  color: rgb(33 38 45 / var(--tw-text-opacity, 1));
+}
 .text-gray-100 {
   --tw-text-opacity: 1;
   color: rgb(243 244 246 / var(--tw-text-opacity, 1));
@@ -2159,6 +2209,9 @@ body.hacker-mode .markdown-content a {
 }
 .opacity-70 {
   opacity: 0.7;
+}
+.mix-blend-screen {
+  mix-blend-mode: screen;
 }
 .shadow {
   --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
@@ -2267,6 +2320,10 @@ body.hacker-mode .markdown-content a {
 }
 .blur-3xl {
   --tw-blur: blur(64px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+.blur-\[150px\] {
+  --tw-blur: blur(150px);
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 .blur-lg {

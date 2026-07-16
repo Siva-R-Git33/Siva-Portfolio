@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-import { u as useConstant, s as motionValue, r as reactExports, M as MotionConfigContext, t as useIsomorphicLayoutEffect$1, v as cancelFrame, w as frame, x as interpolate$2, y as collectMotionValues, z as mixNumber, B as moveItem, m as motion, j as jsxRuntimeExports, C as isMotionValue, D as requireReact, E as commonjsGlobal, G as requireReactDom, I as getDefaultExportFromCjs, J as FaGithub, K as FaPlus, L as FaEdit, N as FaTrash, A as AnimatePresence, O as FaTimes, P as FaSave, Q as projectsAPI, R as settingsAPI, i as FaSpinner, S as storageAPI, T as FaImage, U as blogsAPI, V as skillsAPI, W as FaCertificate, X as FaFilePdf, Y as FaUpload, Z as certificationsAPI, g as FaExclamationTriangle, c as FaCheckCircle, _ as DEFAULT_THEME, $ as THEMES, a0 as applyTheme, a1 as FaChartLine, a2 as FaTerminal, a as FaEye, a3 as FaFilter, a4 as FaBriefcase, a5 as FaCalendarAlt, a6 as FaGripLines, F as FaEyeSlash, a7 as reactDomExports, a8 as React, a9 as FaDownload, aa as FaHistory, ab as FaCalendar, ac as supabase, ad as React$1, ae as authAPI, o as FaShieldAlt, af as FaQrcode, ag as eventsAPI, ah as FaMapMarkerAlt, ai as FaLink, k as FaCheck, aj as FaEnvelope, ak as contactAPI, al as useNavigate, am as useLocation, an as isAuthenticated, ao as Link, ap as FaBars, aq as FaTachometerAlt, ar as FaToggleOn, as as FaPalette, at as FaProjectDiagram, au as FaBlog, q as FaCogs, av as FaHome, p as FaKey, aw as logout, ax as FaSignOutAlt, ay as Routes, az as Route } from "./index-BhdiHiGB.js";
+import { u as useConstant, s as motionValue, r as reactExports, M as MotionConfigContext, t as useIsomorphicLayoutEffect$1, v as cancelFrame, w as frame, x as interpolate$2, y as collectMotionValues, z as mixNumber, B as moveItem, m as motion, j as jsxRuntimeExports, C as isMotionValue, D as commonjsGlobal, E as requireReact, G as requireReactDom, I as getDefaultExportFromCjs, J as FaGithub, K as FaPlus, L as FaEdit, N as FaTrash, A as AnimatePresence, O as FaTimes, P as FaSave, Q as projectsAPI, R as settingsAPI, i as FaSpinner, S as storageAPI, T as FaImage, U as blogsAPI, V as skillsAPI, W as FaGripLines, X as FaCertificate, Y as FaFilePdf, Z as FaUpload, _ as certificationsAPI, g as FaExclamationTriangle, c as FaCheckCircle, $ as DEFAULT_THEME, a0 as THEMES, a1 as applyTheme, a2 as FaChartLine, a3 as FaTerminal, a as FaEye, a4 as FaFilter, a5 as FaBriefcase, a6 as FaCalendarAlt, F as FaEyeSlash, a7 as reactDomExports, a8 as React, a9 as FaDownload, aa as FaHistory, ab as FaCalendar, ac as supabase, ad as React$1, ae as authAPI, o as FaShieldAlt, af as FaQrcode, ag as eventsAPI, ah as FaMapMarkerAlt, ai as FaLink, k as FaCheck, aj as FaEnvelope, ak as contactAPI, al as useNavigate, am as useLocation, an as isAuthenticated, ao as Link, ap as FaBars, aq as FaTachometerAlt, ar as FaToggleOn, as as FaPalette, at as FaProjectDiagram, au as FaBlog, q as FaCogs, av as FaHome, p as FaKey, aw as logout, ax as FaSignOutAlt, ay as Routes, az as Route } from "./index-C1YA_Q0t.js";
 function useMotionValue(initial) {
   const value = useConstant(() => motionValue(initial));
   const { isStatic } = reactExports.useContext(MotionConfigContext);
@@ -142,157 +142,6 @@ function ReorderItemComponent({ children, style = {}, value, as = "li", onDrag, 
   }, onLayoutMeasure: (measured) => registerItem(value, measured), ref: externalRef, ignoreStrict: true, children });
 }
 const ReorderItem = /* @__PURE__ */ reactExports.forwardRef(ReorderItemComponent);
-var withSelector$1 = { exports: {} };
-var withSelector_production = {};
-var shim = { exports: {} };
-var useSyncExternalStoreShim_production = {};
-/**
- * @license React
- * use-sync-external-store-shim.production.js
- *
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-var hasRequiredUseSyncExternalStoreShim_production;
-function requireUseSyncExternalStoreShim_production() {
-  if (hasRequiredUseSyncExternalStoreShim_production) return useSyncExternalStoreShim_production;
-  hasRequiredUseSyncExternalStoreShim_production = 1;
-  var React2 = requireReact();
-  function is2(x2, y2) {
-    return x2 === y2 && (0 !== x2 || 1 / x2 === 1 / y2) || x2 !== x2 && y2 !== y2;
-  }
-  var objectIs = "function" === typeof Object.is ? Object.is : is2, useState = React2.useState, useEffect = React2.useEffect, useLayoutEffect = React2.useLayoutEffect, useDebugValue = React2.useDebugValue;
-  function useSyncExternalStore$2(subscribe, getSnapshot) {
-    var value = getSnapshot(), _useState = useState({ inst: { value, getSnapshot } }), inst = _useState[0].inst, forceUpdate = _useState[1];
-    useLayoutEffect(
-      function() {
-        inst.value = value;
-        inst.getSnapshot = getSnapshot;
-        checkIfSnapshotChanged(inst) && forceUpdate({ inst });
-      },
-      [subscribe, value, getSnapshot]
-    );
-    useEffect(
-      function() {
-        checkIfSnapshotChanged(inst) && forceUpdate({ inst });
-        return subscribe(function() {
-          checkIfSnapshotChanged(inst) && forceUpdate({ inst });
-        });
-      },
-      [subscribe]
-    );
-    useDebugValue(value);
-    return value;
-  }
-  function checkIfSnapshotChanged(inst) {
-    var latestGetSnapshot = inst.getSnapshot;
-    inst = inst.value;
-    try {
-      var nextValue = latestGetSnapshot();
-      return !objectIs(inst, nextValue);
-    } catch (error) {
-      return true;
-    }
-  }
-  function useSyncExternalStore$1(subscribe, getSnapshot) {
-    return getSnapshot();
-  }
-  var shim2 = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
-  useSyncExternalStoreShim_production.useSyncExternalStore = void 0 !== React2.useSyncExternalStore ? React2.useSyncExternalStore : shim2;
-  return useSyncExternalStoreShim_production;
-}
-var hasRequiredShim;
-function requireShim() {
-  if (hasRequiredShim) return shim.exports;
-  hasRequiredShim = 1;
-  {
-    shim.exports = requireUseSyncExternalStoreShim_production();
-  }
-  return shim.exports;
-}
-/**
- * @license React
- * use-sync-external-store-shim/with-selector.production.js
- *
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-var hasRequiredWithSelector_production;
-function requireWithSelector_production() {
-  if (hasRequiredWithSelector_production) return withSelector_production;
-  hasRequiredWithSelector_production = 1;
-  var React2 = requireReact(), shim2 = requireShim();
-  function is2(x2, y2) {
-    return x2 === y2 && (0 !== x2 || 1 / x2 === 1 / y2) || x2 !== x2 && y2 !== y2;
-  }
-  var objectIs = "function" === typeof Object.is ? Object.is : is2, useSyncExternalStore = shim2.useSyncExternalStore, useRef = React2.useRef, useEffect = React2.useEffect, useMemo = React2.useMemo, useDebugValue = React2.useDebugValue;
-  withSelector_production.useSyncExternalStoreWithSelector = function(subscribe, getSnapshot, getServerSnapshot, selector, isEqual) {
-    var instRef = useRef(null);
-    if (null === instRef.current) {
-      var inst = { hasValue: false, value: null };
-      instRef.current = inst;
-    } else inst = instRef.current;
-    instRef = useMemo(
-      function() {
-        function memoizedSelector(nextSnapshot) {
-          if (!hasMemo) {
-            hasMemo = true;
-            memoizedSnapshot = nextSnapshot;
-            nextSnapshot = selector(nextSnapshot);
-            if (void 0 !== isEqual && inst.hasValue) {
-              var currentSelection = inst.value;
-              if (isEqual(currentSelection, nextSnapshot))
-                return memoizedSelection = currentSelection;
-            }
-            return memoizedSelection = nextSnapshot;
-          }
-          currentSelection = memoizedSelection;
-          if (objectIs(memoizedSnapshot, nextSnapshot)) return currentSelection;
-          var nextSelection = selector(nextSnapshot);
-          if (void 0 !== isEqual && isEqual(currentSelection, nextSelection))
-            return memoizedSnapshot = nextSnapshot, currentSelection;
-          memoizedSnapshot = nextSnapshot;
-          return memoizedSelection = nextSelection;
-        }
-        var hasMemo = false, memoizedSnapshot, memoizedSelection, maybeGetServerSnapshot = void 0 === getServerSnapshot ? null : getServerSnapshot;
-        return [
-          function() {
-            return memoizedSelector(getSnapshot());
-          },
-          null === maybeGetServerSnapshot ? void 0 : function() {
-            return memoizedSelector(maybeGetServerSnapshot());
-          }
-        ];
-      },
-      [getSnapshot, getServerSnapshot, selector, isEqual]
-    );
-    var value = useSyncExternalStore(subscribe, instRef[0], instRef[1]);
-    useEffect(
-      function() {
-        inst.hasValue = true;
-        inst.value = value;
-      },
-      [value]
-    );
-    useDebugValue(value);
-    return value;
-  };
-  return withSelector_production;
-}
-var hasRequiredWithSelector$1;
-function requireWithSelector$1() {
-  if (hasRequiredWithSelector$1) return withSelector$1.exports;
-  hasRequiredWithSelector$1 = 1;
-  {
-    withSelector$1.exports = requireWithSelector_production();
-  }
-  return withSelector$1.exports;
-}
-var withSelectorExports = requireWithSelector$1();
 var _listCacheClear;
 var hasRequired_listCacheClear;
 function require_listCacheClear() {
@@ -13966,6 +13815,8 @@ function ManageSkills() {
   const [editing, setEditing] = reactExports.useState(null);
   const [customCategory, setCustomCategory] = reactExports.useState("");
   const [form, setForm] = reactExports.useState({ name: "", category: defaultCategories[0] });
+  const [renamingCategory, setRenamingCategory] = reactExports.useState(null);
+  const [newCategoryName, setNewCategoryName] = reactExports.useState("");
   const load = () => skillsAPI.getAll().then((res) => setSkills(res.data)).catch(() => {
   });
   reactExports.useEffect(() => {
@@ -14007,6 +13858,28 @@ function ManageSkills() {
     await skillsAPI.delete(id);
     load();
   };
+  const openRenameCategory = (category) => {
+    setRenamingCategory(category);
+    setNewCategoryName(category);
+  };
+  const handleRenameCategory = async (e) => {
+    var _a, _b;
+    e.preventDefault();
+    const oldName = renamingCategory;
+    const newName = newCategoryName.trim();
+    if (!newName) return alert("Please enter a category name.");
+    if (newName === oldName) {
+      setRenamingCategory(null);
+      return;
+    }
+    try {
+      await skillsAPI.renameCategory(oldName, newName);
+      setRenamingCategory(null);
+      load();
+    } catch (err) {
+      alert(((_b = (_a = err.response) == null ? void 0 : _a.data) == null ? void 0 : _b.message) || "Error renaming category");
+    }
+  };
   const allCategories = [
     ...defaultCategories,
     ...Object.keys(
@@ -14032,7 +13905,18 @@ function ManageSkills() {
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-6", children: [
       Object.entries(grouped).map(([category, items]) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-neon-green font-mono text-sm mb-2", children: category }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 mb-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-neon-green font-mono text-sm", children: category }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              onClick: () => openRenameCategory(category),
+              className: "text-neon-blue hover:text-white transition-colors text-xs p-1",
+              title: "Rename Category",
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(FaEdit, {})
+            }
+          )
+        ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap gap-2", children: items.map((s) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 px-3 py-2 rounded-lg bg-cyber-gray border border-cyber-border group", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-gray-200 text-sm", children: s.name }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("button", { onClick: () => openEdit(s), className: "text-neon-blue opacity-0 group-hover:opacity-100 transition-opacity text-xs", children: /* @__PURE__ */ jsxRuntimeExports.jsx(FaEdit, {}) }),
@@ -14107,6 +13991,52 @@ function ManageSkills() {
           }
         )
       }
+    ) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: renamingCategory && /* @__PURE__ */ jsxRuntimeExports.jsx(
+      motion.div,
+      {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0 },
+        className: "fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4",
+        children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          motion.div,
+          {
+            initial: { scale: 0.9, opacity: 0 },
+            animate: { scale: 1, opacity: 1 },
+            exit: { scale: 0.9, opacity: 0 },
+            className: "glass rounded-xl p-6 w-full max-w-md",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between mb-4", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-lg font-bold text-white", children: "Rename Category" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("button", { onClick: () => setRenamingCategory(null), className: "text-gray-400 hover:text-white", children: /* @__PURE__ */ jsxRuntimeExports.jsx(FaTimes, {}) })
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("form", { onSubmit: handleRenameCategory, className: "space-y-3", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "block text-gray-400 text-sm mb-1 font-mono", children: [
+                    "Current Name: ",
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-white", children: renamingCategory })
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "input",
+                    {
+                      type: "text",
+                      required: true,
+                      value: newCategoryName,
+                      onChange: (e) => setNewCategoryName(e.target.value),
+                      className: "w-full bg-cyber-gray border border-cyber-border rounded-lg px-4 py-2 text-white focus:border-neon-green focus:outline-none text-sm"
+                    }
+                  )
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("button", { type: "submit", className: "w-full cyber-btn-solid flex items-center justify-center gap-2", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(FaSave, {}),
+                  " Save"
+                ] })
+              ] })
+            ]
+          }
+        )
+      }
     ) })
   ] });
 }
@@ -14118,6 +14048,7 @@ function ManageCertifications() {
   const [uploading, setUploading] = reactExports.useState(false);
   const [uploadError, setUploadError] = reactExports.useState("");
   const fileInputRef = reactExports.useRef(null);
+  const [isReordering, setIsReordering] = reactExports.useState(false);
   const load = () => certificationsAPI.getAll().then((res) => setCertifications(res.data)).catch(() => {
   });
   reactExports.useEffect(() => {
@@ -14125,7 +14056,8 @@ function ManageCertifications() {
   }, []);
   const openNew = () => {
     setEditing(null);
-    setForm({ name: "", issuer: "", color: "neon-blue", file_url: "" });
+    const nextOrderIndex = certifications.length > 0 ? Math.max(...certifications.map((c) => c.order_index || 0)) + 1 : 0;
+    setForm({ name: "", issuer: "", color: "neon-blue", file_url: "", order_index: nextOrderIndex });
     setUploadError("");
     setShowModal(true);
   };
@@ -14175,6 +14107,19 @@ function ManageCertifications() {
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
+  const handleReorder = async (newOrder) => {
+    setCertifications(newOrder);
+    setIsReordering(true);
+    try {
+      const ids = newOrder.map((c) => c.id);
+      await certificationsAPI.updateOrder(ids);
+    } catch (err) {
+      console.error("Failed to save arrangement", err);
+      load();
+    } finally {
+      setIsReordering(false);
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -14214,20 +14159,22 @@ function ManageCertifications() {
         " Add Certification"
       ] })
     ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-3", children: [
-      certifications.map((c) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "cyber-card flex items-center justify-between", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-3 relative", children: [
+      isReordering && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute -top-6 right-0 text-xs font-mono text-neon-blue animate-pulse", children: "Saving arrangement..." }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(ReorderGroup, { axis: "y", values: certifications, onReorder: handleReorder, className: "space-y-3", children: certifications.map((c) => /* @__PURE__ */ jsxRuntimeExports.jsxs(ReorderItem, { value: c, className: "cyber-card flex items-center justify-between cursor-grab active:cursor-grabbing", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-4", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-cyber-border hover:text-white transition-colors cursor-grab active:cursor-grabbing shrink-0 pr-2", children: /* @__PURE__ */ jsxRuntimeExports.jsx(FaGripLines, { className: "text-xl" }) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-${c.color}/10 text-${c.color}`, children: /* @__PURE__ */ jsxRuntimeExports.jsx(FaCertificate, { className: "text-lg" }) }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-white font-semibold", children: c.name }),
             /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-gray-500 text-sm font-mono", children: c.issuer })
           ] })
         ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-2 shrink-0 ml-4", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex gap-2 shrink-0 ml-4 pointer-events-auto", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("button", { onClick: () => openEdit(c), className: "p-2 rounded-lg bg-neon-blue/10 text-neon-blue hover:bg-neon-blue/20 transition-all", children: /* @__PURE__ */ jsxRuntimeExports.jsx(FaEdit, {}) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("button", { onClick: () => handleDelete(c), className: "p-2 rounded-lg bg-neon-red/10 text-neon-red hover:bg-neon-red/20 transition-all", children: /* @__PURE__ */ jsxRuntimeExports.jsx(FaTrash, {}) })
         ] })
-      ] }, c.id)),
+      ] }, c.id)) }),
       certifications.length === 0 && /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-gray-500 text-center py-8 font-mono text-sm", children: "No certifications yet. Add your first one." })
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(AnimatePresence, { children: showModal && /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -18086,6 +18033,157 @@ function getUniqPayload(payload, option, defaultUniqBy2) {
   }
   return payload;
 }
+var withSelector$1 = { exports: {} };
+var withSelector_production = {};
+var shim = { exports: {} };
+var useSyncExternalStoreShim_production = {};
+/**
+ * @license React
+ * use-sync-external-store-shim.production.js
+ *
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+var hasRequiredUseSyncExternalStoreShim_production;
+function requireUseSyncExternalStoreShim_production() {
+  if (hasRequiredUseSyncExternalStoreShim_production) return useSyncExternalStoreShim_production;
+  hasRequiredUseSyncExternalStoreShim_production = 1;
+  var React2 = requireReact();
+  function is2(x2, y2) {
+    return x2 === y2 && (0 !== x2 || 1 / x2 === 1 / y2) || x2 !== x2 && y2 !== y2;
+  }
+  var objectIs = "function" === typeof Object.is ? Object.is : is2, useState = React2.useState, useEffect = React2.useEffect, useLayoutEffect = React2.useLayoutEffect, useDebugValue = React2.useDebugValue;
+  function useSyncExternalStore$2(subscribe, getSnapshot) {
+    var value = getSnapshot(), _useState = useState({ inst: { value, getSnapshot } }), inst = _useState[0].inst, forceUpdate = _useState[1];
+    useLayoutEffect(
+      function() {
+        inst.value = value;
+        inst.getSnapshot = getSnapshot;
+        checkIfSnapshotChanged(inst) && forceUpdate({ inst });
+      },
+      [subscribe, value, getSnapshot]
+    );
+    useEffect(
+      function() {
+        checkIfSnapshotChanged(inst) && forceUpdate({ inst });
+        return subscribe(function() {
+          checkIfSnapshotChanged(inst) && forceUpdate({ inst });
+        });
+      },
+      [subscribe]
+    );
+    useDebugValue(value);
+    return value;
+  }
+  function checkIfSnapshotChanged(inst) {
+    var latestGetSnapshot = inst.getSnapshot;
+    inst = inst.value;
+    try {
+      var nextValue = latestGetSnapshot();
+      return !objectIs(inst, nextValue);
+    } catch (error) {
+      return true;
+    }
+  }
+  function useSyncExternalStore$1(subscribe, getSnapshot) {
+    return getSnapshot();
+  }
+  var shim2 = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? useSyncExternalStore$1 : useSyncExternalStore$2;
+  useSyncExternalStoreShim_production.useSyncExternalStore = void 0 !== React2.useSyncExternalStore ? React2.useSyncExternalStore : shim2;
+  return useSyncExternalStoreShim_production;
+}
+var hasRequiredShim;
+function requireShim() {
+  if (hasRequiredShim) return shim.exports;
+  hasRequiredShim = 1;
+  {
+    shim.exports = requireUseSyncExternalStoreShim_production();
+  }
+  return shim.exports;
+}
+/**
+ * @license React
+ * use-sync-external-store-shim/with-selector.production.js
+ *
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+var hasRequiredWithSelector_production;
+function requireWithSelector_production() {
+  if (hasRequiredWithSelector_production) return withSelector_production;
+  hasRequiredWithSelector_production = 1;
+  var React2 = requireReact(), shim2 = requireShim();
+  function is2(x2, y2) {
+    return x2 === y2 && (0 !== x2 || 1 / x2 === 1 / y2) || x2 !== x2 && y2 !== y2;
+  }
+  var objectIs = "function" === typeof Object.is ? Object.is : is2, useSyncExternalStore = shim2.useSyncExternalStore, useRef = React2.useRef, useEffect = React2.useEffect, useMemo = React2.useMemo, useDebugValue = React2.useDebugValue;
+  withSelector_production.useSyncExternalStoreWithSelector = function(subscribe, getSnapshot, getServerSnapshot, selector, isEqual) {
+    var instRef = useRef(null);
+    if (null === instRef.current) {
+      var inst = { hasValue: false, value: null };
+      instRef.current = inst;
+    } else inst = instRef.current;
+    instRef = useMemo(
+      function() {
+        function memoizedSelector(nextSnapshot) {
+          if (!hasMemo) {
+            hasMemo = true;
+            memoizedSnapshot = nextSnapshot;
+            nextSnapshot = selector(nextSnapshot);
+            if (void 0 !== isEqual && inst.hasValue) {
+              var currentSelection = inst.value;
+              if (isEqual(currentSelection, nextSnapshot))
+                return memoizedSelection = currentSelection;
+            }
+            return memoizedSelection = nextSnapshot;
+          }
+          currentSelection = memoizedSelection;
+          if (objectIs(memoizedSnapshot, nextSnapshot)) return currentSelection;
+          var nextSelection = selector(nextSnapshot);
+          if (void 0 !== isEqual && isEqual(currentSelection, nextSelection))
+            return memoizedSnapshot = nextSnapshot, currentSelection;
+          memoizedSnapshot = nextSnapshot;
+          return memoizedSelection = nextSelection;
+        }
+        var hasMemo = false, memoizedSnapshot, memoizedSelection, maybeGetServerSnapshot = void 0 === getServerSnapshot ? null : getServerSnapshot;
+        return [
+          function() {
+            return memoizedSelector(getSnapshot());
+          },
+          null === maybeGetServerSnapshot ? void 0 : function() {
+            return memoizedSelector(maybeGetServerSnapshot());
+          }
+        ];
+      },
+      [getSnapshot, getServerSnapshot, selector, isEqual]
+    );
+    var value = useSyncExternalStore(subscribe, instRef[0], instRef[1]);
+    useEffect(
+      function() {
+        inst.hasValue = true;
+        inst.value = value;
+      },
+      [value]
+    );
+    useDebugValue(value);
+    return value;
+  };
+  return withSelector_production;
+}
+var hasRequiredWithSelector$1;
+function requireWithSelector$1() {
+  if (hasRequiredWithSelector$1) return withSelector$1.exports;
+  hasRequiredWithSelector$1 = 1;
+  {
+    withSelector$1.exports = requireWithSelector_production();
+  }
+  return withSelector$1.exports;
+}
+var withSelectorExports = requireWithSelector$1();
 var RechartsReduxContext = /* @__PURE__ */ reactExports.createContext(null);
 var noopDispatch = (a) => a;
 var useAppDispatch = () => {

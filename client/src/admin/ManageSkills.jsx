@@ -11,6 +11,8 @@ export default function ManageSkills() {
     const [editing, setEditing] = useState(null);
     const [customCategory, setCustomCategory] = useState('');
     const [form, setForm] = useState({ name: '', category: defaultCategories[0] });
+    const [renamingCategory, setRenamingCategory] = useState(null);
+    const [newCategoryName, setNewCategoryName] = useState('');
 
     const load = () => skillsAPI.getAll().then((res) => setSkills(res.data)).catch(() => { });
 
@@ -55,6 +57,29 @@ export default function ManageSkills() {
         load();
     };
 
+    const openRenameCategory = (category) => {
+        setRenamingCategory(category);
+        setNewCategoryName(category);
+    };
+
+    const handleRenameCategory = async (e) => {
+        e.preventDefault();
+        const oldName = renamingCategory;
+        const newName = newCategoryName.trim();
+        if (!newName) return alert('Please enter a category name.');
+        if (newName === oldName) {
+            setRenamingCategory(null);
+            return;
+        }
+        try {
+            await skillsAPI.renameCategory(oldName, newName);
+            setRenamingCategory(null);
+            load();
+        } catch (err) {
+            alert(err.response?.data?.message || 'Error renaming category');
+        }
+    };
+
     // All unique categories (defaults + any from DB)
     const allCategories = [
         ...defaultCategories,
@@ -83,7 +108,16 @@ export default function ManageSkills() {
             <div className="space-y-6">
                 {Object.entries(grouped).map(([category, items]) => (
                     <div key={category}>
-                        <h3 className="text-neon-green font-mono text-sm mb-2">{category}</h3>
+                        <div className="flex items-center gap-2 mb-2">
+                            <h3 className="text-neon-green font-mono text-sm">{category}</h3>
+                            <button
+                                onClick={() => openRenameCategory(category)}
+                                className="text-neon-blue hover:text-white transition-colors text-xs p-1"
+                                title="Rename Category"
+                            >
+                                <FaEdit />
+                            </button>
+                        </div>
                         <div className="flex flex-wrap gap-2">
                             {items.map((s) => (
                                 <div key={s.id} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-cyber-gray border border-cyber-border group">
@@ -149,6 +183,41 @@ export default function ManageSkills() {
                                 </div>
                                 <button type="submit" className="w-full cyber-btn-solid flex items-center justify-center gap-2">
                                     <FaSave /> {editing ? 'Update' : 'Create'}
+                                </button>
+                            </form>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Rename Category Modal */}
+            <AnimatePresence>
+                {renamingCategory && (
+                    <motion.div
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+                            className="glass rounded-xl p-6 w-full max-w-md"
+                        >
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-lg font-bold text-white">Rename Category</h2>
+                                <button onClick={() => setRenamingCategory(null)} className="text-gray-400 hover:text-white"><FaTimes /></button>
+                            </div>
+                            <form onSubmit={handleRenameCategory} className="space-y-3">
+                                <div>
+                                    <label className="block text-gray-400 text-sm mb-1 font-mono">Current Name: <span className="text-white">{renamingCategory}</span></label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={newCategoryName}
+                                        onChange={(e) => setNewCategoryName(e.target.value)}
+                                        className="w-full bg-cyber-gray border border-cyber-border rounded-lg px-4 py-2 text-white focus:border-neon-green focus:outline-none text-sm"
+                                    />
+                                </div>
+                                <button type="submit" className="w-full cyber-btn-solid flex items-center justify-center gap-2">
+                                    <FaSave /> Save
                                 </button>
                             </form>
                         </motion.div>
